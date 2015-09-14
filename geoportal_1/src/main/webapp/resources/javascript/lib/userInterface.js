@@ -43,12 +43,13 @@ OpenGeoportal.Structure = function() {
 		this.resetHandler();
 		
 		// dialogs
-		this.aboutHandler();
+		// this.aboutHandler();
 		this.contactHandler();
 		this.userHelpHandler();
+		//this.footerHandler();
 
 	};
-
+	
 	this.resetHandler = function() {
 		var that = this;
 		jQuery(".reset").on("click", function() {
@@ -144,6 +145,15 @@ OpenGeoportal.Structure = function() {
 
 	};
 
+	this.footerHandler = function() {
+		jQuery("#footer").mouseenter( function () {
+			$(this).animate({"margin-top": "-220px", "height": "280px"}, 500);
+		});
+		jQuery("#footer").mouseleave( function() {
+			$(this).animate({"margin-top": "5px"},500);
+		});
+	};
+
 	this.aboutHandler = function() {
 		jQuery('#about').dialog({
 			zIndex : 2999,
@@ -176,14 +186,14 @@ OpenGeoportal.Structure = function() {
 	this.userHelpHandler = function() {
 		jQuery('#userGuide').dialog({
 			zIndex : 2999,
-			title : "User Guide",
+			title : " - User Guide - ",
 			resizable : true,
 			height : 425,
-			width : 745,
+			width : 832,
 			autoOpen : false
 		});
 		jQuery("#userGuideLink").click(function() {
-			if (jQuery("#userGuide").length == 0) {
+			if (jQuery("#userGuide").length === 0) {
 				jQuery.get(OpenGeoportal.Utility.JspfLocation + "userGuide.jspf", function(data) {
 					jQuery("#dialogs").append(data);
 					jQuery("#userGuide").dialog({
@@ -207,33 +217,35 @@ OpenGeoportal.Structure = function() {
 		});
 	};
 
-
-
 	this.resizeWindowHandler = function() {
 
 		var minHeight = parseInt(jQuery("#container").css("min-height"));
-		var minWidth = parseInt(jQuery("#container").css("min-width"));
+		var minWidth =  parseInt(jQuery("#container").css("min-width"));
 		
 		var resizeElements = function() {
+                        var containerMargins = parseInt(jQuery("#container").css("margin-left")) + parseInt(jQuery("#container").css("margin-right"));
+	 
+	                var fixedHeights = 201; //set this to contstant because Chrome wasn't computing heights before modifications in localized CSS were being rendered.
 			
-			var headerHeight = jQuery("#header").height();
-			var footerHeight = jQuery("#footer").height();
-			var fixedHeights = headerHeight + footerHeight + 3;
+			var fixedWidths = containerMargins;
+
 			var container$ = jQuery("#container");
 			
 			var oldContainerWidth = container$.width();
-			var newContainerWidth = Math.max(jQuery(window).width(), minWidth);
+			var newContainerWidth = Math.max(jQuery(window).width()-fixedWidths, minWidth);
 
 			var oldContainerHeight = container$.height();
-			var newContainerHeight = Math.max(jQuery(window).height()
-					- fixedHeights, minHeight);
-			
-			//resize the container if there is a change.
+			var newContainerHeight = Math.max(jQuery(window).height() - fixedHeights, minHeight);
+         
+                     	//resize the container if there is a change.
 			if ((newContainerWidth !== oldContainerWidth)||(newContainerHeight !== oldContainerHeight)){
-				container$.height(newContainerHeight).width(newContainerWidth);
+				container$.height(newContainerHeight);
 				jQuery(document).trigger("container.resize", {ht: newContainerHeight, wd: newContainerWidth, minHt: minHeight, minWd: minWidth});
-			}
-			
+				jQuery("#cartTab").height(newContainerHeight);
+				
+
+
+				}
 		};
 		resizeElements();
 		jQuery(window).resize(resizeElements);
@@ -249,7 +261,7 @@ OpenGeoportal.Structure = function() {
 	
 	//this should move to the search view
 	this.toggleSearch = function(thisObj) {
-		var stepTime = 50;
+		var stepTime = 100;
 		var thisId = jQuery(thisObj).attr('id');
 		var hght = jQuery(".searchFormRow").height();
 		jQuery(".olControlModPanZoomBar, .olControlPanel, #mapToolBar, #neCorner, #nwCorner").addClass("slideVertical");
@@ -259,18 +271,22 @@ OpenGeoportal.Structure = function() {
 			jQuery("#searchForm .basicSearch").hide();
 			jQuery("#geosearchDiv").removeClass("basicSearch").addClass(
 					"advancedSearch");
-			jQuery("#searchForm .advancedSearch.searchRow1").show();
+			jQuery("#searchForm .advancedSearch.searchRow1").show(); jQuery("#searchForm .advancedSearch.searchRow2").show(); jQuery("#searchForm .advancedSearch.searchRow3").show(); 	jQuery("#searchForm .advancedSearch.searchRow4").show(); // BEN ADDED Rows 2,3, and 4 to smooth animation
 
 			jQuery('#searchBox').animate(
 							{
-								height : "+=" + hght
+								height : "+=" + (hght * 3)
 							},
 							{
 								queue : false,
 								duration : stepTime,
 								easing : "linear",
 								complete : function() {
-									jQuery("#searchForm .advancedSearch.searchRow2").show();
+									jQuery("#lessSearchOptions").focus();
+                                                                        jQuery(document).trigger("search.setAdvanced")
+								}/*
+
+									//jQuery("#searchForm .advancedSearch.searchRow2").show();
 									jQuery('#searchBox').animate(
 													{
 														height : "+=" + hght
@@ -280,7 +296,7 @@ OpenGeoportal.Structure = function() {
 														duration : stepTime,
 														easing : "linear",
 														complete : function() {
-															jQuery("#searchForm .advancedSearch.searchRow3").show();
+															//jQuery("#searchForm .advancedSearch.searchRow3").show();
 															jQuery('#searchBox').animate(
 																			{
 																				height : "+=" + hght
@@ -290,15 +306,14 @@ OpenGeoportal.Structure = function() {
 																				duration : stepTime,
 																				easing : "linear",
 																				complete : function() {
-																					jQuery("#searchForm .advancedSearch.searchRow4").show();
+																					//jQuery("#searchForm .advancedSearch.searchRow4").show();
 																					jQuery("#lessSearchOptions").focus();
 																					jQuery(document).trigger("search.setAdvanced");
 
 																				}
 																			});
 														}
-													});
-								}
+													});*/
 							});
 
 			jQuery(".slideVertical").animate(
@@ -306,12 +321,25 @@ OpenGeoportal.Structure = function() {
 						"margin-top" : "+=" + hght * 3
 					},
 					{
-						duration : stepTime * 3,
+						duration : stepTime, // BEN MODIFIED
 						easing : "linear",
 						done : function() {
 							jQuery(document).trigger("search.resize");
 						}
 			});
+			//BEN ADDED SECTION...
+			jQuery("#separatorLine").animate(
+                                        {
+                                                "margin-top" : "+=" + hght * 3
+                                        },
+                                        {
+                                                queue: false,
+                                                duration: stepTime, // BEN MODIFIED
+                                                easing: "linear",
+                                                done : function() {
+                                                        jQuery(document).trigger("search.resize");
+                                                }
+                        });//...DONE
 
 		} else if (thisId === 'lessSearchOptions') {
 			jQuery(".slideVertical").animate(
@@ -320,18 +348,31 @@ OpenGeoportal.Structure = function() {
 					},
 					{
 						queue : false,
-						duration : stepTime * 3,
+						duration : stepTime,
 						easing : "linear",
 						done : function() {
 							jQuery(document).trigger("search.resize");
 						}
 			});
+			//BEN ADDED SECTION...
+			jQuery("#separatorLine").animate(
+					{
+						"margin-top" : "-=" + hght * 3
+					},
+					{
+						queue: false,
+						duration: stepTime,
+						easing: "linear",
+						done : function() {
+							jQuery(document).trigger("search.resize");
+						}
+			});//....DONE
 
-			jQuery("#searchForm .advancedSearch.searchRow4").hide();
+			//jQuery("#searchForm .advancedSearch.searchRow4").hide();
 			jQuery('#searchBox')
 					.animate(
 							{
-								height : "-=" + hght
+								height : "-=" + (hght * 3)
 							},
 							{
 								queue : false,
@@ -341,8 +382,14 @@ OpenGeoportal.Structure = function() {
 									// jQuery(".slideVertical").animate({"margin-top":
 									// "-=" + hght, queue: false, duration: 100,
 									// easing: "linear"});
-									jQuery("#searchForm .advancedSearch.searchRow3").hide();
-									jQuery('#searchBox').animate(
+									//jQuery("#searchForm .advancedSearch.searchRow3").hide();
+
+									jQuery("#geosearchDiv").removeClass("advancedSearch").addClass("basicSearch");
+                                                                        jQuery("#searchForm .advancedSearch.searchRow1").hide();jQuery("#searchForm .advancedSearch.searchRow2").hide();jQuery("#searchForm .advancedSearch.searchRow3").hide();jQuery("#searchForm .advancedSearch.searchRow4").hide();  //BEN ADDED ALL searchRow hides here and commented them out above
+                                                                        jQuery("#searchForm .basicSearch").show();
+                                                                      	jQuery("#moreSearchOptions").focus();
+                                                                       	jQuery(document).trigger("search.setBasic");
+									/*jQuery('#searchBox').animate(
 													{
 														height : "-=" + hght
 													},
@@ -351,7 +398,7 @@ OpenGeoportal.Structure = function() {
 														duration : stepTime,
 														easing : "linear",
 														complete : function() {
-															jQuery("#searchForm .advancedSearch.searchRow2").hide();
+															//jQuery("#searchForm .advancedSearch.searchRow2").hide();
 															jQuery('#searchBox').animate(
 																			{
 																				height : "-="
@@ -374,7 +421,7 @@ OpenGeoportal.Structure = function() {
 																					// "linear"});
 																					jQuery("#geosearchDiv").removeClass("advancedSearch")
 																							.addClass("basicSearch");
-																					jQuery("#searchForm .advancedSearch.searchRow1").hide();
+																					jQuery("#searchForm .advancedSearch.searchRow1").hide();jQuery("#searchForm .advancedSearch.searchRow2").hide();jQuery("#searchForm .advancedSearch.searchRow3").hide();jQuery("#searchForm .advancedSearch.searchRow4").hide();  //BEN ADDED ALL searchRow hides here and commented them out above
 																					jQuery("#searchForm .basicSearch").show();
 																					jQuery("#moreSearchOptions").focus();
 																					jQuery(document).trigger("search.setBasic");
@@ -382,7 +429,7 @@ OpenGeoportal.Structure = function() {
 																				}
 																			});
 														}
-													});
+													});*/
 								}
 							});
 

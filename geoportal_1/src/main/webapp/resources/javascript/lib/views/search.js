@@ -30,7 +30,6 @@ OpenGeoportal.Views.Query = Backbone.View
 			initialize : function() {
 				jQuery("#whereField").attr("placeholder", this.model.get("whereExample"));
 				jQuery("#whatField").attr("placeholder", this.model.get("whatExample"));
-
 				this.widgets = OpenGeoportal.ogp.widgets;
 				this.tableControls = OpenGeoportal.ogp.tableControls;
 				this.geocoder = new OpenGeoportal.Geocoder();

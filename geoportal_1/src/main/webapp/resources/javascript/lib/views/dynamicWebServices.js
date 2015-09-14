@@ -78,13 +78,13 @@ OpenGeoportal.Views.WebServices = OpenGeoportal.Views.CartActionView
 			
 			getWfsUrl: function(arrIds){
 				var path = top.location.href.substring(0, top.location.href.lastIndexOf("/"));
-				path += "/dynamic/wfs?ogpids=" + arrIds.join() + "&request=GetCapabilities";
+				path += "/dynamic/wfs?ogpids=" + arrIds.join() // + "&request=GetCapabilities";
 				return path;
 			},
 		
 			getWmsUrl: function(arrIds){
 				var path = top.location.href.substring(0, top.location.href.lastIndexOf("/"));
-				path += "/dynamic/wms?ogpids=" + arrIds.join() + "&request=GetCapabilities";
+				path += "/dynamic/wms?ogpids=" + arrIds.join() //+ "&request=GetCapabilities";
 				return path;
 			},
 			

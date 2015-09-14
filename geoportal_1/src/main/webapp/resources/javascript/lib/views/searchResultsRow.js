@@ -46,10 +46,10 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 		if (typeof model === "undefined") {
 			var layerAttr = null;
 			try {
-
 				layerAttr = this.model.attributes;
 				layerAttr.preview = "on";
 				layerAttr.showControls = true;
+				layerAttr.indexNum = this.$el.index();
 			} catch (err) {
 				console.log(err);
 			}
@@ -59,12 +59,13 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 			// want
 			// "model" to be called
 			var that = this;
-			this.$el.css("opacity", ".5");
+			this.$el.css("opacity", ".5"); this.$el.attr('id', layerId);
 			var to$ = jQuery(".previewedLayers").find(".tableRow").first();
 			if (to$.length === 0){
 				to$ = jQuery(".previewedLayers");
-			}
-			jQuery(e.delegateTarget).effect("transfer", { to: to$, easing: "swing", className: "ui-effects-transfer" }, 400, function(){that.previewed.add(_.clone(layerAttr)); that.$el.css("opacity", "1"); that.model.set({hidden: true}); });
+			};
+
+			jQuery(e.delegateTarget).effect("transfer", { to: to$, easing: "swing", className: "ui-effects-transfer" }, 400, function(){ that.previewed.add(_.clone(layerAttr)); that.$el.css("opacity", "1"); that.model.set({hidden: true}) });
 
 		} else {
 			var update = {};
@@ -83,8 +84,7 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 				}
 				jQuery(e.delegateTarget).effect("transfer", { to: to$, easing: "swing", className: "ui-effects-transfer" }, 400, function(){model.set(update); that.$el.css("opacity", "1"); that.model.set({hidden: true});});
 			}
-		}
-	
+		};
 	},
 	
 	toggleExpand : function() {

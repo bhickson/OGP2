@@ -188,7 +188,7 @@ OpenGeoportal.Views.PreviewTools = Backbone.View.extend({
 					step : 1,
 					value : widthVal, 
 					slide : function(event, ui) {
-
+						//that.model.set({graphicWidth: ui.value});
 					},
 					stop : function(event, ui) {
 						that.model.set({

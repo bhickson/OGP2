@@ -62,7 +62,7 @@ OpenGeoportal.Models.User = Backbone.Model.extend({
 		var institution = loginConfig.repositoryId;
 		var labelPrefix = "";// institution;
 		if (loginConfig.secureDomain.length > 0) {
-			// console.log("setting secureDomain");
+			//console.log("setting secureDomain to " + loginConfig.secureDomain);
 			this.set({
 				secureDomain : loginConfig.secureDomain
 			});
@@ -157,7 +157,6 @@ OpenGeoportal.Models.User = Backbone.Model.extend({
 	},
 	canLoginLogic : function(repository) {
 		// only supporting local login for now
-
 		if (repository.toLowerCase() === this.get("repository").toLowerCase()) {
 			return true;
 		} else {

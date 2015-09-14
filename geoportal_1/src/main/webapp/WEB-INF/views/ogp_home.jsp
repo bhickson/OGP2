@@ -36,7 +36,6 @@ OpenGeoportal.Config.shareBbox="${shareBbox}";
 </head>
 
 <body>
-
 	<%@include file="jspf/header.jspf"%>
 	<%@include file="jspf/search.jspf"%>
 	
@@ -44,13 +43,14 @@ OpenGeoportal.Config.shareBbox="${shareBbox}";
 		<div id="left_col" class="shadowRightOuter">
 			<%@include file="jspf/leftPanel.jspf"%>
 		</div>
+	        <div id="separatorLine"></div>
 		<div id="map"></div>
 	</div>
 	
 	<%@include file="jspf/footer.jspf"%>
 
 	<div id="dialogs" class="hiddenElements">
-		<%@include file="jspf/about.jspf"%>
+		<%@include file="jspf/userGuide.jspf"%>
 		<%@include file="jspf/contact.jspf"%>
 	</div>
 	

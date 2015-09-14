@@ -64,9 +64,10 @@ OpenGeoportal.MapController = function() {
 		this.initBasemaps();
 		this.addMapToolbarElements();
 
-		var center = this.WGS84ToMercator(0, 0);
+		var center = this.WGS84ToMercator(-111.545, 34.464);
 		// set map position
-		this.setCenter(center);
+
+		this.setCenter(center, 6, false, false)
 
 		try {
 			this.registerMapEvents();
@@ -115,14 +116,18 @@ OpenGeoportal.MapController = function() {
 		var zoomBox = new OpenLayers.Control.ZoomBox({
 			title : "Click or draw rectangle on map to zoom in"
 		});
+
 		var that = this;
 		// we could fire an event instead if we wanted to remove previewed as a
 		// dependency
+		
 		var zoomBoxListener = function() {
 			jQuery('.olMap').css('cursor', "-moz-zoom-in");
 			that.previewed.clearGetFeature();
 		};
+
 		zoomBox.events.register("activate", this, zoomBoxListener);
+
 		var panListener = function() {
 			jQuery('.olMap').css('cursor', "-moz-grab");
 			that.previewed.clearGetFeature();
@@ -131,6 +136,7 @@ OpenGeoportal.MapController = function() {
 			title : "Pan by dragging the map"
 		});
 		panHand.events.register("activate", this, panListener);
+		
 		var globalExtent = new OpenLayers.Control.ZoomToMaxExtent({
 			title : "Zoom to global extent"
 		});
@@ -142,8 +148,7 @@ OpenGeoportal.MapController = function() {
 			displayProjection : new OpenLayers.Projection("EPSG:4326")
 		});
 
-		panel.addControls([ globalExtent, nav.previous, nav.next, zoomBox,
-				panHand ]);
+		panel.addControls([ globalExtent, nav.previous, nav.next, zoomBox, panHand ]);
 
 		var zoomBar = new OpenLayers.Control.ModPanZoomBar();
 		var scaleLine = new OpenLayers.Control.ScaleLine();
@@ -160,10 +165,10 @@ OpenGeoportal.MapController = function() {
 	 * @returns {Number} - initial zoom level
 	 */
 	this.getInitialZoomLevel = function() {
-		var initialZoom = 1;
+		var initialZoom = 6; //BEN CHANGED FROM 1
 
 		if (jQuery('#' + this.containerDiv).parent().height() > 810) {
-			initialZoom = 2;
+			initialZoom = 6;
 			// TODO: this should be more sophisticated. width is also important
 			// initialZoom = Math.ceil(Math.sqrt(Math.ceil(jQuery('#' +
 			// this.containerDiv).parent().height() / 256)));
@@ -171,7 +176,7 @@ OpenGeoportal.MapController = function() {
 		return initialZoom;
 	};
 
-	/**
+		/**
 	 * Instantiate the actual OpenLayers map object, set parameters
 	 * 
 	 * @param {object}
@@ -213,8 +218,8 @@ OpenGeoportal.MapController = function() {
 		} else {
 			initialHeight = jQuery("#" + this.containerDiv).parent().height();
 		}
-		jQuery('#' + this.mapDiv).height(initialHeight).width(jQuery("#" + this.containerDiv).parent().width());
-		
+		//jQuery('#' + this.mapDiv).height(initialHeight).width(jQuery("#" + this.containerDiv).parent().width());
+		jQuery('#' + this.mapDiv).height(initialHeight);//.width(jQuery("#" + this.containerDiv).parent().width()); //BEN ADDED
 		// attempt to reload tile if load fails
 		OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
 		OpenLayers.ImgPath = "resources/media/";
@@ -294,29 +299,28 @@ OpenGeoportal.MapController = function() {
 		// register events
 		
 		jQuery(document).on("container.resize", function(e, data) {
-
+		
 			//update the size of the map if the container size actually changed.
 			var map$ = jQuery(".olMap");
 
 			var newHeight = Math.max(data.ht, data.minHt);
 			var oldHeight = map$.height();
-			
+
 			var newWidth = Math.max(data.wd, data.minWd);
 			var oldWidth = map$.width();
-			
+
 			if (newHeight !== oldHeight || newWidth !== oldWidth){
 				map$.height(newHeight).width(newWidth);
 				that.updateSize();
+								
 			}
 			
 		});
-		
 
 		// OpenLayers event
-	
 		this.events.register('zoomend', this, function() {
 			var zoomLevel = that.getZoom();		
-			
+
 			that.basemaps.checkZoom(zoomLevel);
 
 			var mapHeight = Math.pow((zoomLevel + 1), 2) / 2 * 256;
@@ -324,7 +328,7 @@ OpenGeoportal.MapController = function() {
 					.height();
 			if (mapHeight > containerHeight) {
 				mapHeight = containerHeight;
-			}
+			};
 
 			if (jQuery("#" + that.mapDiv).height() != mapHeight) {
 				jQuery("#" + that.mapDiv).height(mapHeight);// calculate min and
@@ -333,17 +337,12 @@ OpenGeoportal.MapController = function() {
 				//console.log("update map size");
 			}
 			if (zoomLevel == 1) {
-				that.setCenter(that.WGS84ToMercator(that.getSearchCenter().lon,
-						0));
-			}
-			
-			
+				that.setCenter(that.WGS84ToMercator(that.getSearchCenter().lon,	0));
+			};
 		});
 		
 		// OpenLayers event
-		this.events.register('moveend', this, function() {
-			//var d = new Date();
-			//console.log("moveend: " + d.getTime());
+		this.events.register('moveend', this, function() {			
 			var newExtent = that.getSearchExtent();
 			var newCenter = that.getSearchCenter();
 
@@ -358,7 +357,6 @@ OpenGeoportal.MapController = function() {
 			clearTimeout(this.moveEventId);
 			
 			var trigger = function(){
-				//console.log("extentChanged triggered");
 				jQuery(document).trigger('map.extentChanged', {
 					mapExtent : newExtent,
 					mapCenter : newCenter
@@ -762,17 +760,12 @@ OpenGeoportal.MapController = function() {
 	
 	this.zIndexHandler = function() {
 		var that = this;
-		jQuery(document)
-				.on(
-						"map.zIndexChange",
-						function(event, data) {
-							// console.log(data);
-							for ( var i in that.getLayersBy("ogpLayerId",
-									data.LayerId)) {
-								that.getLayersBy("ogpLayerId", data.LayerId)[0]
-										.setZIndex(data.zIndex);
-							}
-						});
+		jQuery(document).on("map.zIndexChange",	function(event, data) {
+			for ( var i in that.getLayersBy("ogpLayerId", data.LayerId)) {
+				that.getLayersBy("ogpLayerId", data.LayerId)[0].setZIndex(data.zIndex);
+			};
+		});
+					
 	};
 
 	this.previewLayerHandler = function() {
@@ -1012,7 +1005,8 @@ OpenGeoportal.MapController = function() {
 		var leftCol$ = jQuery("#left_col");
 		var leftColOffset = leftCol$.offset();
 		if (leftCol$.is(":visible")) {
-			xOffset = leftCol$.width() + leftColOffset.left - mapOffset.left;
+			//console.log("mapDiv, leftCol$.width() = " + leftCol$.width() + ", leftColOffset.left = " + leftColOffset.left + ", mapOffset.left = " + mapOffset.left);
+			xOffset = leftCol$.width() + leftColOffset.left; //- mapOffset.left;
 		}
 		var yOffset = jQuery("#tabs").offset().top - mapOffset.top;
 
@@ -1028,8 +1022,8 @@ OpenGeoportal.MapController = function() {
 			fullExtent.right = 20037508.34;
 		} else {
 			fullExtent.left = topLeft.lon;
-		}
-		return fullExtent;
+		};
+		return fullExtent
 	};
 
 	this.adjustExtent = function() {
@@ -1039,11 +1033,11 @@ OpenGeoportal.MapController = function() {
 		var adjust = {};
 		adjust.x = (fullMapWidth - offset.x) / fullMapWidth;
 		adjust.y = (fullMapHeight - offset.y) / fullMapHeight;
+	
 		return adjust;
 	};
 
 	this.getCombinedBounds = function(arrBounds) {
-
 		var newExtent = new OpenLayers.Bounds();
 		for ( var currentIndex in arrBounds) {
 			var currentBounds = arrBounds[currentIndex];
@@ -1118,6 +1112,7 @@ OpenGeoportal.MapController = function() {
 		var mercatorExtent = this.getVisibleExtent();
 		var sphericalMercator = new OpenLayers.Projection('EPSG:3857');
 		var geodetic = new OpenLayers.Projection('EPSG:4326');
+		//console.log("mapDiv, getGeodeticExtent FIRED. Extent = " + mercatorExtent.transform(sphericalMercator, geodetic));
 		return mercatorExtent.transform(sphericalMercator, geodetic);
 	};
 
@@ -1129,13 +1124,13 @@ OpenGeoportal.MapController = function() {
 
 	this.getSearchCenter = function() {
 		var sphericalMercator = new OpenLayers.Projection('EPSG:3857');
-		var geodetic = new OpenLayers.Projection('EPSG:4326');
-		var topLeft = this.getMapOffset();
-		var width = jQuery(".olMap").width();
-		var height = jQuery(".olMap").height();
-		topLeft.x = topLeft.x + width / 2;
-		topLeft.y = topLeft.y - height / 2;
-		var center = this.getLonLatFromViewPortPx(topLeft);
+		var geodetic   = new OpenLayers.Projection('EPSG:4326');
+		var topLeft    = this.getMapOffset();
+		var width      = jQuery(".olMap").width();
+		var height     = jQuery(".olMap").height();
+		topLeft.x      = (width + topLeft.x) / 2;
+		topLeft.y      = (height + topLeft.y) / 2;
+ 		var center     = this.getLonLatFromViewPortPx(topLeft);
 		return center.transform(sphericalMercator, geodetic);
 	};
 
@@ -1209,32 +1204,55 @@ OpenGeoportal.MapController = function() {
 
 	this.zoomToLayerExtent = function(extent) {
 		var layerExtent = OpenLayers.Bounds.fromString(extent);
+		
 		var lowerLeft = this.WGS84ToMercator(layerExtent.left,
 				layerExtent.bottom);
 		var upperRight = this.WGS84ToMercator(layerExtent.right,
 				layerExtent.top);
-
+		
 		var newExtent = new OpenLayers.Bounds();
 		newExtent.extend(new OpenLayers.LonLat(lowerLeft.lon, lowerLeft.lat));
 		newExtent.extend(new OpenLayers.LonLat(upperRight.lon, upperRight.lat));
 
 		var size = newExtent.getSize();
 		var adjustFactor = this.adjustExtent();
-		var newWidth = size.w / adjustFactor.x;
-		var newHeight = size.h / adjustFactor.y;
+		
+                var visExtent = this.getVisibleExtent();
+                var visibleAR = this.getAspectRatio(visExtent);
 
 		var adjustedExtent = new OpenLayers.Bounds();
-		var newWLon = Math.max(upperRight.lon - newWidth, -20037508.34);
-		var newNLat = Math.min(lowerLeft.lat + newHeight, 20037508.34);
+
+		var newWLon = Math.max(upperRight.lon - size.w, -20037508.34);
+		var newNLat = Math.min(lowerLeft.lat +  size.h, 20037508.34);
 		var newELon = Math.min(upperRight.lon, 20037508.34);
 		var newSLat = Math.max(lowerLeft.lat, -20037508.34);
 
 		adjustedExtent.extend(new OpenLayers.LonLat(newWLon, newSLat));
 		adjustedExtent.extend(new OpenLayers.LonLat(newELon, newNLat));
-		// console.log(newExtent);
-		// console.log(adjustedExtent);
-		this.zoomToExtent(adjustedExtent);
 
+		this.zoomToExtent(adjustedExtent);
+		this.leftColCompensate();
+	}
+	
+	this.leftColCompensate = function() {
+		var fullCenter = this.getCenter();
+		if (fullCenter !== null) {
+                var mapExtent = this.getExtent();
+                var mapWidth = mapExtent.getWidth();
+                var mapHeight = mapExtent.getHeight();
+
+                var visExtent = this.getVisibleExtent();
+
+		var searchWidth  = mapWidth  * (1 - ( visExtent.getWidth()  / mapWidth  ));
+		var searchHeight = mapHeight * (1 - ( visExtent.getHeight() / mapHeight ));
+		
+		var centerX = fullCenter.lon - (searchWidth  / 2);
+		var centerY = fullCenter.lat + (searchHeight / 2);
+
+		var zoomL = this.getZoom();
+
+		this.setCenter(new OpenLayers.LonLat(centerX, centerY), zoomL, false, true);
+		};
 	};
 
 	// add layers to OL map
@@ -2082,10 +2100,19 @@ OpenGeoportal.MapController = function() {
 
 	this.hideLayer = function(layerId) {
 		var layers = this.getLayersBy("ogpLayerId", layerId);
-
+		var that = this
 		for ( var i in layers) {
 			layers[i].setVisibility(false);
-		}
+		}/*
+		console.log("layersId: " + layerId);
+		var layerToRemove = that.previewed.findWhere({LayerId :  layerId});
+		if (indexofLTR > -1) {
+			//delete(layerToRemove);
+			console.log("GOT TO HERE")
+		};
+		//console.log("LENGTH OF PREVIEWED: " + this.previewed.length + " index of LTR: " + indexofLTR ); //+ " layerToRemove: " + layerToRemove.layerId );
+		//console.log("REMOVED LAYER FROM PREVIEWED: " + layerToRemove.layerId);
+		*/
 
 	};
 
@@ -2183,7 +2210,7 @@ OpenGeoportal.MapController = function() {
 	},
 	
 	this.getNextZ = function(){
-		return this.getMaxZ() + 5;
+		return parseInt(this.getMaxZ()) + 5;// BEN MODIFIED LINE
 	},
 	
 	
@@ -2199,7 +2226,6 @@ OpenGeoportal.MapController = function() {
 		 * featureLayer = new OpenLayers.Layer.Vector("BBoxTest");
 		 * featureLayer.addFeatures([box]); this.addLayer(featureLayer);
 		 */
-
 		var layerId = layerModel.get("LayerId");
 		// check to see if layer is on openlayers map, if so, show layer
 		var opacitySetting = layerModel.get("opacity");

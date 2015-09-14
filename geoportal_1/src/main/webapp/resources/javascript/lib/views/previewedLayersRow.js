@@ -41,5 +41,13 @@ OpenGeoportal.Views.PreviewedLayersRow = OpenGeoportal.Views.LayerRow.extend({
 			return true;
 		}
 		return false;
-	}
+	},
+
+	zIndexSetter: function(){
+		if (this.model.get("preview") === "on") {
+			console.log("previewedLayersRow.js, Line 48: zIndexSetter");
+		}
+	}	
+
+	//this.$el.index()
 });

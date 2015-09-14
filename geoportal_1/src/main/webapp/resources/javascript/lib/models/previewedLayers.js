@@ -180,6 +180,7 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 			if (model.has("zIndex")){
 				comp = model.get("zIndex");
 			}
+			
 			return comp;
 		};
 		

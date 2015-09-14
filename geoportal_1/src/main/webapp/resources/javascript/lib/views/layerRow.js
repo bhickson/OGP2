@@ -13,7 +13,7 @@ if (typeof OpenGeoportal.Views === 'undefined') {
 OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	tagName : "div",
 	className : "tableRow",
-	id      : function() { return this.model.get("LayerId") },
+	id	: function() { return this.model.get("LayerId")} , //model.get("LayerId"), //BEN ADDED LINE
 	events : {
 		"click .viewMetadataControl" : "viewMetadata",
 		"click .previewControl" : "togglePreview",
@@ -43,7 +43,8 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 			that.render.apply(that, arguments);
 		});
 		this.listenTo(this.model, "change:showControls change:hidden", this.render);
-		
+		this.listenTo(this.model, "change:changeZIndex", this.render);
+			
 		this.subClassInit();
 		this.addSubClassEvents();
 		//console.log("init render");
@@ -51,9 +52,11 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 		this.render();
 	},
 	
+
 	subClassInit: function(){
 		//nop
 	},
+
 	subClassEvents: {},
 	
 	addSubClassEvents: function(){
@@ -174,11 +177,13 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 		}
 	},
 	
-	togglePreview : function(e) {
+	togglePreview: function(e) {
+
 		var layerId = this.model.get("LayerId");
 		var model = this.previewed.findWhere({
 			LayerId : layerId
 		});
+
 		if (typeof model === "undefined") {
 			var layerAttr = null;
 			try {
@@ -234,6 +239,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 				LayerId : layerId
 			});
 			return newmodel;
+
 		} else {
 			return model;
 		}

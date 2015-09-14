@@ -17,11 +17,18 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 				this.listenTo(this.model, "change:mode", this.showPanel);
 
 				var width = this.model.get("openWidth");
-				var margin = width - jQuery("#roll_right").width();
+				var margin = width - 28; //chrome calculating #roll_right.width() before localized css loads.  instead passing integer
+				//var margin = width - jQuery("#roll_right").width() -3 ; //BEN ADDED " -3"
+
+                                var tabsHeight = jQuery("#container").height() + "px";
+
 				jQuery("#left_col").show().width(width).css({
 					"margin-left" : "-" + margin  + "px"
 				});
-
+				jQuery("#container").css("border-left","1px solid #999999"); //BEN ADDED LINE
+				
+				// BEN ADDED LINES. SETS THE HEIGHT OF THE ELEMENT WHEN SO THAT IT EXPANDS ALL OF SEARCH COLUMN EVEN WHEN VIEWED WITH NO SEARCH RESULTS.
+				//jQuery("#searchTab").css("height",tabsHeight); jQuery("#cart").css("height",tabsHeight);
 			},
 			events : {
 				"click .arrow_right" : "goRight",
@@ -95,17 +102,20 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 				}
 
 				var panelWidth = this.model.get("openWidth");
-				var panelOffset = panelWidth - jQuery("#roll_right").width();
+				var panelOffset = panelWidth - jQuery("#roll_right").width() + 5;// BEN ADDED ' + 15'
 
 				this.$el.show().width(panelWidth).css({
 					"margin-left" : -1 * panelOffset
 				});
+
+				jQuery("#container").css('border-left',"none"); //BEN ADDED LINE
+				
 				var that = this;
 				this.$el.add(".slideHorizontal").animate({
 					'margin-left' : '+=' + panelOffset
 				}, {
 					queue : false,
-					duration : 500,
+					duration : 200,
 					complete : function() {
 
 						jQuery(this).trigger("adjustContents");
@@ -123,21 +133,22 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 			},
 
 			showPanelMidLeft : function() {
-
+				console.log("showPanelMidLeft");
 				var panelWidth = this.model.get("openWidth");
-				var panelOffset = panelWidth - jQuery("#roll_right").width();
+				var panelOffset = panelWidth - jQuery("#roll_right").width() + 5; //BEN ADDED ' + 15'
 				var that = this;
-				
+	
 				this.$el.show().animate({
 					width : panelWidth
 				}, {
 					queue : false,
-					duration : 500,
+					duration : 200,
 					complete : function() {
 						jQuery(".slideHorizontal").css({
 							'margin-left' : panelOffset
 						}).not(".corner").fadeIn();
-						
+		                                jQuery("#container").css('border-left',"none"); //BEN ADDED LINE
+
 						jQuery(this).trigger("adjustContents");
 						that.resizablePanel();
 					}
@@ -146,24 +157,26 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 			},
 
 			showPanelClosed : function() {
+				console.log("showPanelClosed");
 				// display full width map
 				if (jQuery(".slideHorizontal").is(":hidden")) {
 					jQuery(".slideHorizontal").not(".corner").show();
 				}
 				var that = this;
 				var panelWidth = this.model.get("openWidth");
-				var panelOffset = panelWidth - jQuery("#roll_right").width();
+				var panelOffset = panelWidth - jQuery("#roll_right").width() + 5;//BEN ADDED ' + 5'
 				
 				this.$el.add(".slideHorizontal").animate({
 					'margin-left' : '-=' + panelOffset
 				}, {
 					queue : false,
-					duration : 500,
+					duration : 200,
 					complete : function() {
 
 						jQuery("#roll_right").show();
-					}
-				});
+		                                jQuery("#container").css('border-left',"1px solid #999999"); //BEN ADDED LINE
+						}
+					});
 				
 				this.$el.resizable( "disable" );
 			},
@@ -181,7 +194,7 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 					'width' : jQuery('#container').width()
 				}, {
 					queue : false,
-					duration : 500,
+					duration : 200,
 					complete : function() {
 						jQuery(this).trigger("adjustContents");
 					}
@@ -215,7 +228,6 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 					},
 					prevWidth: null,
 					resize : function(event, ui) {
-
 						var delta = ui.size.width - this.prevWidth;
 						this.prevWidth = ui.size.width;
 						//var newMargin = that.model.get("alsoMovesMargin") + delta;
@@ -227,7 +239,6 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 					},
 					
 					stop : function(event, ui) {
-						// console.log("resize stop");
 						var newWidth = ui.size.width;
 						that.model.set({
 							openWidth : newWidth
