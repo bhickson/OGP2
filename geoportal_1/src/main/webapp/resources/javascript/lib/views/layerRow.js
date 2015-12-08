@@ -164,7 +164,6 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	},
 
 	updateView: function(e, data){
-
 		if (this.model.get("LayerId") === data.LayerId){
 			if (e.type === "previewLayerOff"){
 				if (this.model.has("hidden")){
@@ -178,7 +177,6 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	},
 	
 	togglePreview: function(e) {
-
 		var layerId = this.model.get("LayerId");
 		var model = this.previewed.findWhere({
 			LayerId : layerId
@@ -282,7 +280,6 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	},
 
 	render : function() {
-
 		if (this.skipLayer()){
 			this.$el.html("");
 			this.$el.addClass("hiddenRow");

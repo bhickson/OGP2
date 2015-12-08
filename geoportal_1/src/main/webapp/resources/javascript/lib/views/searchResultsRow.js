@@ -59,7 +59,7 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 			// want
 			// "model" to be called
 			var that = this;
-			this.$el.css("opacity", ".5"); this.$el.attr('id', layerId);
+			this.$el.css("opacity", ".5");
 			var to$ = jQuery(".previewedLayers").find(".tableRow").first();
 			if (to$.length === 0){
 				to$ = jQuery(".previewedLayers");
