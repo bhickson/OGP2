@@ -132,7 +132,6 @@ OpenGeoportal.Views.Login = Backbone.View
 				var dialogContent = "";
 				var type = this.model.get("type");
 				var authUrl = this.model.get("authUrl");
-				console.log("getLoginContent FIRED WITH authUrl " + authUrl);
 				if (type == "form") {
 					dialogContent = '<form><table>'
 							+ '<tr><td>'
