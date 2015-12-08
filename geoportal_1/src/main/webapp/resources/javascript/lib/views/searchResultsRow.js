@@ -158,7 +158,21 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 		var match = this.cart.findWhere({LayerId: this.model.get("LayerId")});
 		if (typeof match === "undefined"){
 			var that = this;
-			jQuery(e.currentTarget).effect("transfer", { to: ".shoppingCartIcon", easing: "swing", className: "ui-effects-transfer-to-cart inCart" }, 400, function(){that.cart.toggleCartState(that.model);});
+	                var pmodel = this.previewed.findWhere({ LayerId : this.model.get("LayerId") });  //Looks for model in previewed layers
+                	jQuery(e.currentTarget).effect("transfer", { to: ".shoppingCartIcon", easing: "swing", className: "ui-effects-transfer-to-cart inCart" }, 400, function(){that.cart.toggleCartState(that.model);});
+			if (typeof pmodel === "undefined") {
+				// if model doesn't exist in previewed layers already, add it
+                                try {
+	                                layerAttr = this.model.attributes;
+                	                layerAttr.preview = "on";
+                        	        layerAttr.showControls = true;
+                                	layerAttr.indexNum = this.$el.index();
+        	                } catch (err) {
+	                                console.log(err);
+				};
+                                this.previewed.add(_.clone(layerAttr)); this.$el.css("opacity", "1"); this.model.set({hidden: true}) 
+
+                        };
 		} else {
 			this.cart.toggleCartState(this.model);
 		}
