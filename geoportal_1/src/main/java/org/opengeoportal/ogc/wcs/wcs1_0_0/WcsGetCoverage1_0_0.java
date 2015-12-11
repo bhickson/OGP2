@@ -96,8 +96,8 @@ public class WcsGetCoverage1_0_0 {
 		String bbox = "&bbox=" + Double.toString(xMin) + "," + Double.toString(yMin) + "," + Double.toString(xMax) + "," + Double.toString(yMax);
 		Double dwidth = (Math.abs(xMax - xMin))/resX;
 		Double dheight = (Math.abs(yMax - yMin))/resY;
-		int width = dwidth.intValue();
-		int height = dheight.intValue();
+		int  width = (int) Math.round(dwidth);
+		int height = (int) Math.round(dheight);
 		
 		String widthHeight = "&width=" + width + "&height=" + height;
 		
