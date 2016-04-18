@@ -4,23 +4,27 @@
 		<a href="http://library.arizona.edu"></a>
 	</div>
 	<div id="ogpHeader">
-		<div id="logo" onclick="location.href=location.href">
-		<!--<div id="logoGraphic"></div>-->
-			<div class="logoText">Spatial Data Explorer</div>
-		</div>
-		<div id="top_menu">
-			<button onclick="location='http://library.arizona.edu'" href="http://library.arizona.edu" class="uaLibraryLink button headerButton">UA Libraries</button>
-			<span class="separator">|</span>	
-			<button class="reset button headerButton">Reset</button> 
-			<span class="separator">|</span> 
-			<button id="userGuideLink" class="infoLinks button headerButton">User Guide</button>
-			<span class="separator">|</span> 
-			<!--<button id="aboutLink" class="infoLinks button headerButton">About</button> 
-			<span class="separator">|</span>-->
-                	<button id="contactLink" class="infoLinks button headerButton">Contact</button>
-			<span class="separator">|</span> 
-			<button id="headerLogin" class="infoLinks login button headerButton">Login</button>
-			<!--<button id="disabledButton" class="infoLinks button headerButton">Login</button>-->
+		<div style="display:inline-block; padding-left: 10px;">
+			<div id="logo" onclick="location.href=location.href">
+			<!--<div id="logoGraphic"></div>-->
+				<div class="logoText">Spatial Data Explorer</div>
+			</div>
+			<div id="top_menu">
+				<button onclick="location='http://library.arizona.edu'" href="http://library.arizona.edu" class="uaLibraryLink button headerButton">UA Libraries</button>
+				<span class="separator">|</span>
+				<button onclick="location='http://libguides.library.arizona.edu/GIS'" href="http://libguides.library.arizona.edu/GIS" class="landingPageLink button headerButton">Library GIS Guide</button>
+				<span class="separator">|</span>
+				<button class="reset button headerButton">Reset</button> 
+				<span class="separator">|</span> 
+				<button id="userGuideLink" class="infoLinks button headerButton">User Guide</button>
+				<span class="separator">|</span> 
+				<!--<button id="aboutLink" class="infoLinks button headerButton">About</button> 
+				<span class="separator">|</span>-->
+				<button id="contactLink" class="infoLinks button headerButton">Contact</button>
+				<span class="separator">|</span> 
+				<button id="headerLogin" class="infoLinks login button headerButton">Login</button>
+				<!--<button id="disabledButton" class="infoLinks button headerButton">Login</button>-->
+			</div>
 		</div>
 	</div>
 </div>

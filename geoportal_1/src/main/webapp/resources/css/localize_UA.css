@@ -1,302 +1,233 @@
 @CHARSET "UTF-8";
 @import url("https://brand.arizona.edu/sites/default/files/v2/ua-brand-fonts/milo.css");
 
-#logoGraphic {
-		background: url("../media/ua_block_rgb_0.png") no-repeat scroll 0px -12px rgba(0,0,0,0);
-		background-size: 70px;
-		height: 50px;
-		width: 60px;
-		padding: 8px;
-}
-
-#universityLibrary {
-	height: 45px;
-	min-width: 1050px;
-	padding-bottom: 10px;
-	width: 300px;
-	position: relative;
-	top: 1px;
-	left:20px;
-}
-
-#logo {
-	padding-top: 10px;
-	padding-left: 20px;
-	color: #0C234B;
-	font-size:43px;
-}
-
-#logo > div {
-	font-color: #FFFFFF;
-    	display: inline-block;
-}
-
-#logo > div.logoText {
-	position: relative;
-	left:10px;
-}
 
 body {
-	background-color: #ffffff;
-	font-family: MiloWeb,Verdana, arial, sans-serif;
+        background-color: #ffffff;
+        font-family: MiloWeb,Verdana, arial, sans-serif;
 }
 
-div.olMap { width:100%; }
-
+/************************************************************HEADER STYLING*/
 #header {
-	height: 135px;
-	border-bottom:none;
-	margin-top: 5px;
+        height: 160px;
+        border-bottom:none;
+        //margin-top: 2px;
 }
 
-.headerButton {
-	color: #0C234B;
-	font-family: MiloWeb, Verdana;
-	font-size: 15px;
-	text-decoration:underline;
-	padding:4px;
-	border-radius:2px;
-}
-.headerButton:hover{
-	text-decoration:none;
-	color: white;
-	background:#0c234b;
+#universityHeader {
+        background:#999;
+        overflow-x:hidden;
+	border-bottom: 1px solid white;
 }
 
-#searchBox {
-	top:85px;
-	background-color: #0c234b;
-	-webkit-box-shadow: inset 0px 0px 0px 5px #ffffff;
-	-moz-box-shadow: inset 0px 0px 0px 5px #ffffff;
-	box-shadow: inset 0px 0px 0px 8px #ffffff;
-	border-bottom:none;
-	color: #999999;
-	text-align: center;
-/*	margin-left: 5px;
-	margin-right: 5px;*/
-	width: 100%	
+#universityText {
+        color:white;
+        height: 25px;
+        position:relative;
+        left:10px;
+        background:url("../media/university-of-arizona-logo-white.png") no-repeat scroll 0px -1px;
+        background-size:250px;
 }
 
 #ogpHeader {
-	background-color: white;
-	color: #0C234B;
-	height: 55px;
-}
-#left_col {
-	padding-right: 4px;
+        background-color: #227db2;
+        color: #0C234B;
+        height: 80px;
+        text-align: center;
 }
 
-.tableCell > .cellWrapper {
-	font-size:12px;
+#logo {
+        padding-top: 5px;
+        padding-left: 0;
+        color: #fff;
+        font-size:43px;
 }
 
-.searchFormRow > label {
-	color: white;
-	font-family: MiloWeb, Verdana, arial;
-	font-size: 17px;
+.logoText {
+        font-color: #FFFFFF;
+        display: inline-block;
+        position: relative;
+        margin-left: 0;
+
 }
 
-.whereBox {
-	font-weight: normal;
+.headerButton {
+        color: #fff;
+        font-family: MiloWeb, Verdana;
+        font-size: 15px;
+        text-decoration:underline;
+        padding: 0px 10px;
+        border-radius:2px;
 }
-
-.ui-tabs .ui-tabs-panel {
-	border-left: 1px solid #999999;
-}
-
-.basicSearch.basicSearchButtons.searchFormRow {
-    margin-left: 0px;
+.headerButton:hover{
+        text-decoration:none;
+        color: white;
+        background:#0c234b;
 }
 
 #top_menu {
-	margin-top: 9px;
+        font-weight:bold;
+        float: none;
+        margin-top: 0;
+        margin-right: 0;
 }
 
-.styledSelect>ul {
-        max-height: none;
+/******************************************************FOOTER STYLING*/
+#footer {
+        overflow: hidden;
+        background: #fff;
+        z-index: 6000;
+        overflow-y:hidden;
+	border-top:1px solid #727272;
+	height:35px;
 }
 
-.previewControls > div {
-	box-shadow: 0px 3px 6px -4px #262626;
-	top: 0px;
-	vertical-align: top;
+#footerInfo {
+        position:relative;
+	top: 5px;
+        width:250px;
+        margin-right:-25px;
+        float: right;
+        transition: all 0.5s ease;
+        font-size:15px;
+        border-radius:3px;
+	padding-left:10px;
 }
 
-.previewControls > div:hover {
-        top: -1px;
+#footerInfo:hover {
+        transition:all 0.5s ease;
+        background-color:#acacac;
 }
 
 
-.colorControl {
-	border-radius: 3px;
-	vertical-align: bottom;
-	position: relative;
-	border-color: #909090;
-	top: 1px;
+#footerInfo a {
+        color: black;
 }
 
-#roll_right {
-	width: 33px;
-	text-align: center;
-	border-top: 1px solid #999999;
+#footer a:hover{
+        color: white
+}
+
+.footer__section {
+        width: 25%;
+        float: left;
+        margin-right:2%;
+        font-size:1.3em;
+}
+
+.footer__section ul {
+	margin-left:1em;
+}
+
+.footer__section li {
+        display: list-item;
+        text-align: -webkit-match-parent;
+        list-style:none;
+        margin: 1em 0;
+}
+
+.footer_a {
+	color:#0c234b;
+}
+
+#footerLogos {
+        margin-left:0px;
+	border-radius:3px;
+	position:relative;
+	top:5px;
+}
+
+#footerLogos:hover {
+        transition:all 0.5s ease;
+        background-color:#acacac;
+}
+
+
+#footerLogos .institutionLogo {
+        background-image: url("../media/UA_UL_RGB_Alt.png");
+        background-repeat: no-repeat;
+        background-size: auto 30px;
+        width: 200px;
+        height: 30px;
+	position:relative;
+	left:10px;
+}
+
+#ogpImage {
+        height:25px;
+        padding-top:2px;
+        padding-left:5px;
+        position:absolute;
+}
+
+
+/******************************************************SEARCH BOX STYLING*/
+#searchBox {
+        top:107px;
+        background-color: #fff;
+        /*-webkit-box-shadow: inset 0px 0px 0px 2px #ffffff;
+        -moz-box-shadow: inset 0px 0px 0px 2px #ffffff;
+        box-shadow: inset 0px 0px 0px 2px #ffffff;*/
+        border-bottom: 1px solid #727272;
+        color: #999999;
+        width: 100%
 }
 
 #searchForm {
-	text-align: initial;
-}
-
-#searchCol1 {
-	left:0px;
-	display: inline-block;
-	position: relative;
-	vertical-align: top;
-}
-#searchCol2 {
-	left:0px;
-	display: inline-block;
-	position: relative;
-	vertical-align: top;
-}
-#searchCol3 {
-	left:0px;
-	display: inline-block;
-	position: relative;
-	vertical-align: top;
+        padding: 10px;
+	width:auto;
+	margin: 0 auto;
+	display:table;
 }
 
 .searchCol {
-	top: 12px;
-	margin-right: 30px;
+        top: 12px;
+        margin-right: 30px;
+	display: inline-block;
+	vertical-align: top;
+	position: unset;
 }
 
-#map {
-	top: 0px;
-	left: 0px;
+.basicSearch.basicSearchButtons.searchFormRow {
+	margin: 0 auto;
+	width:100%;
+}
+
+.whereBox {
+        font-weight: normal;
+}
+
+.searchFormRow > label {
+        color: #0755AC;
+	font-weight: 500;
+        font-family: MiloWeb, Verdana, arial;
+        font-size: 17px;
+	width:auto;
+}
+
+.dropdown .ui-menu-item>a>div.checkOn {
+        width:14px;
+        height:14px;
+        background-position: -91px -90px;
+        margin-top:2px;
+}
+
+.dropdown .ui-menu-item>a>div.checkOff {
+        width:14px;
+        height:14px;
+        background-position: -67px -90px;
+        //margin-top:2px;
 }
 
 .searchToggle {
-	font-family: MiloWeb,Verdana, arial;
-	font-size:13px;
-	text-decoration:none;
+        font-family: MiloWeb,Verdana, arial;
+        font-size:13px;
+        text-decoration:none;
 }
 
 .searchToggle:hover {
         color: #ffffff;
-	text-decoration:underline;
-}
-
-#separatorLine {
-	height:0px;
-	border-top:1px solid #999999;
-	width:100%;
-	position:relative;
-	z-index:1199;
-}
-
-#footer {
-	border-top: 1px solid #999999;
-	border-bottom: 1px solid #999999;
-	overflow: hidden;
-	display: inline-block;
-	background: #efefef;
-	height:50px;
-	margin-top:5px;
-	padding-top:2px;
-	z-index: 6000;
-	position: absolute;
-	overflow-y:hidden;
-}
-
-#footer a:hover{
-	color: white
-}
-
-#container {
-	border-bottom:1px solid #999999;
-	border-right: 1px solid #999999;
-	margin-left:5px;
-	margin-right:5px;
-}
-
-#searchResults >.tableWrapper > .rowContainer::-webkit-scrollbar {
-	-webkit-appearance:none;
-	width:8px;
-}
-
-#searchResults >.tableWrapper > .rowContainer::-webkit-scrollbar-thumb {
-	border-radius:6px;
-	background-color:rgba(0,0,0,0.4);
-	-webkit-box-shadow: 0 0 1px rgba(255,255,255,0.5);
-}
-
-.tableRow {
-	width: 99%;
-	border: 1px solid #cccccc;
-	border-radius: 3px;
-	margin: 1px;
-	line-height: 2;
-}
-
-.previewedLayers .tableRow {
-	border-color: #ffffff;
-	background-color: #afd0e3;
-}
-
-.tableRow.rowHover {
-        border-bottom: #cbcbcb 2px solid !important;
-        border-top: #bababa 2px solid !important;
-	border-left: #a9a9a9 2px solid;
-	border-right: #dcdcdc 2px solid;
-	border-radius: 5px;
-}
-
-.previewedLayers .tableRow.rowHover {
-	cursor: all-scroll;
-}
-
-.resultsNumber {
-	color: #151515;
-}
-
-.tableCell {
-	vertical-align: middle;
-}
-
-
-#searchForm {
-	padding-left: 10px;	
-}
-
-.infoControl:hover {
-	background-color:grey;
-	box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.4);
-}
-
-.previewControl {
-	background-position:-67px -90px;
-	width: 14px;
-	height:14px;
-}
-
-.previewControl:hover{
-	background-color:grey;
-	box-shadow:0px 0px 3px 1px rgba(0,0,0,0.4);
-}
-
-.checkOn {
-	background-position: -91px -90px;
-}
-
-.previewedLayers {
-	border-radius: 3px;
-	background-color: #efefef;
-}
-
-#universityFooter {
-	position: relative;
-	top: 9px;
-	display:inline;
-	left: 20px;
+        text-decoration:underline;
 }
 
 .searchButton {
@@ -320,11 +251,108 @@ div.olMap { width:100%; }
         cursor: pointer;
         color: #000000;
         text-shadow: -1px 1px 2px #ffffff;
-	height: 23px;
+        height: 23px;
 }
 
 .searchButton:hover{
-	box-shadow: 0px 0px 5px 1px #ffffff;
+        box-shadow: 0px 0px 5px 1px #ffffff;
+}
+
+#searchTabText>div {
+        color:black;
+        font-size:16px
+}
+
+.shadowDownOuter {
+	-moz-box-shadow:none;
+	-webkit-box-shadow:none;
+	box-shadow:none;
+}
+
+.labelText {
+	color: #0755AC;
+	font-weight: 500;
+}
+
+#moreSearchOptions {
+	color: #0755AC;
+}
+
+#lessSearchOptions {
+	color:#0755AC;
+}
+
+#searchCol3 {
+	margin:0px;
+}
+/*******************************************************CONTAINER STYLES*/
+#searchResults >.tableWrapper > .rowContainer::-webkit-scrollbar {
+        -webkit-appearance:none;
+        width:8px;
+}
+
+#searchResults >.tableWrapper > .rowContainer::-webkit-scrollbar-thumb {
+        border-radius:6px;
+        background-color:rgba(0,0,0,0.4);
+        -webkit-box-shadow: 0 0 1px rgba(255,255,255,0.5);
+}
+
+.tableRow {
+        width: 99%;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        margin: 1px;
+        line-height: 2;
+}
+
+.previewedLayers .tableRow {
+        border-color: #ffffff;
+        background-color: #afd0e3;
+}
+
+.tableRow.rowHover {
+        border-bottom: #cbcbcb 2px solid !important;
+        border-top: #bababa 2px solid !important;
+        border-left: #a9a9a9 2px solid;
+        border-right: #dcdcdc 2px solid;
+        border-radius: 5px;
+}
+
+.previewedLayers .tableRow.rowHover {
+        cursor: all-scroll;
+}
+
+.resultsNumber {
+        color: #151515;
+}
+
+.tableCell {
+        vertical-align: middle;
+}
+
+.infoControl:hover {
+        background-color:grey;
+        box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.4);
+}
+
+.previewControl {
+        background-position:-67px -90px;
+        width: 14px;
+        height:14px;
+}
+
+.previewControl:hover{
+        background-color:grey;
+        box-shadow:0px 0px 3px 1px rgba(0,0,0,0.4);
+}
+
+.checkOn {
+        background-position: -91px -90px;
+}
+
+.previewedLayers {
+        border-radius: 3px;
+        background-color: #efefef;
 }
 
 #mapClearButton {
@@ -349,11 +377,11 @@ div.olMap { width:100%; }
         text-decoration: none;
         text-shadow: 0px 1px 2px #ffffff;
         font-weight: 600;
-	top: -1px;
+        top: -1px;
 }
 
 #mapClearButton:hover {
-	border: 1px solid #858585;
+        border: 1px solid #858585;
         font-weight: 600;
         color: #000000;
         background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #bcc9d1), color-stop(1, #e4eaed));
@@ -366,154 +394,51 @@ div.olMap { width:100%; }
 }
 
 .tableHeader {
-	background: linear-gradient(#cccccc, #8f8f8f) repeat scroll 0 0 transparent;
-    	background: #cccccc;
-    	background: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#8f8f8f));
-    	background: -webkit-linear-gradient(#cccccc, #8f8f8f);
-    	background: -moz-linear-gradient(top, #cccccc, #8f8f8f);
-    	background: -ms-linear-gradient(#cccccc, #8f8f8f);
-    	background: -o-linear-gradient(#cccccc, #8f8f8f);
-    	background: linear-gradient(#cccccc, #8f8f8f);
-   	border-bottom: 1px solid #5c5c5c;
-   	padding: 2px;
-}
-
-#searchTabText>div {
-	color:black;
-	font-size:16px
-}
-
-#lessSearchOptions {
-	color: #ffffff;
-} 
-
-#moreSearchOptions {
-	color: #ffffff;
-}
-
-.offsetColor:hover {
-	color: #0c234b;
-	text-shadow: 0px 0px 15px white;
-}
-
-#ogpLink {
-	transition: all 0.5s ease;
-	font-size:15px;
-	border-radius:3px;
-	padding:18px;
-}
-
-#ogpLink:hover {
-        transition:all 0.5s ease;
-        background-color:#acacac;
-}
-
-#footerInfo {
-	line-height:25px;
-	display: inline-block;
-	height: 25px;
-	position: absolute;
-	right: 0px;
-	top: 8px;
-	margin-right:-10px;
-	width:250px;
-	margin-right:-20px;
-}	
-
-#ogpImage {
-	height:22px;
-	position:relative;
-	top:5px;
-}
-
-#header a {
-	display: block;
-	width: 220px;
-	height: 25px;
-	position:fixed;
-	left:10px;
-	top:5px;
-}
-
-#universityText {
-	color:white;
-	height:	25px;
-	position:relative;
-	left:10px;
-	background:url("../media/university-of-arizona-logo-white.png") no-repeat scroll 0px -1px;
-	background-size:250px;
-}
-
-#footerInfo a {
-	color: black;
+        background: linear-gradient(#cccccc, #8f8f8f) repeat scroll 0 0 transparent;
+        background: #cccccc;
+        background: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#8f8f8f));
+        background: -webkit-linear-gradient(#cccccc, #8f8f8f);
+        background: -moz-linear-gradient(top, #cccccc, #8f8f8f);
+        background: -ms-linear-gradient(#cccccc, #8f8f8f);
+        background: -o-linear-gradient(#cccccc, #8f8f8f);
+        background: linear-gradient(#cccccc, #8f8f8f);
+        border-bottom: 1px solid #5c5c5c;
+        padding: 2px;
 }
 
 #cartTabTextInner {
-	font-size:16px;
-}
-
-#universityHeader {
-	background:#999;
-	overflow-x:hidden;
-}
-
-.dropdown .ui-menu-item>a>div.checkOn {
-	width:14px;
-	height:14px;
-	background-position: -91px -90px;
-	margin-top:2px;
-}
-
-.dropdown .ui-menu-item>a>div.checkOff {
-	width:14px;
-	height:14px;
-	background-position: -67px -90px;
-	margin-top:2px;
-}
-
-.columnCheck:hover {
-	box-shadow: 0px 0px 3px 1px rgba(0,0,0,0.4);
-	background-color:grey;
+        font-size:16px;
 }
 
 .viewMetadataControl {
-	height:16px;
+        height:16px;
 }
 
-.footer__section {
-	width: 25%;
-	float: left;
-	margin-right:2%;
-	font-size:1.3em;
+.olLayerGoogleCopyright {
+	z-index: 1100;
 }
 
-.footer__section li {
-	display: list-item;
-	text-align: -webkit-match-parent;
-	list-style:none;
-	margin: 1em 0;}
-
-.footer_a { color:#0c234b; };
-
-.footer__section ul { margin-left:1em; }	
-
-.olLayerGoogleCopyright { z-index: 1100; }
-
-#infoBubbles { display:none; }
-
-#disabledButton {color: #8591a5;}
-#disabledButton:hover {color:#8591a5;background-color:white;text-decoration:underline;cursor:auto;}
-
-.dropdown .showAll { color:white; }
-.dropdown .showAll:hover {color:white;}}
-
-/*
-#footerLogos .institutionLogo {
-	background: url("../media/ogp-institutions.png") no-repeat scroll -9px
-		-59px transparent;
-	height: 30px;
-	width: 66px;
+#disabledButton {
+	color: #8591a5;
 }
 
+#disabledButton:hover {
+	color:#8591a5;
+	background-color:white;
+	text-decoration:underline;
+	cursor:auto;
+}
 
-*/
+.dropdown .showAll {
+	color:white;
+}
+
+.dropdown .showAll:hover {
+	color:white;
+}
+
+.olControlScale{
+        top: 5em;
+        left: 0em;
+        z-index:20000;
+}

@@ -143,7 +143,6 @@ OpenGeoportal.Models.PreviewLayer = OpenGeoportal.Models.ProtocolAware.extend({
 		this.set({
 			previewType : previewType
 		});
-
 		return previewType;
 	},
 

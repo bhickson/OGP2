@@ -121,7 +121,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 				if (this.$("previewedLayers").length > 0){
 					previewedHeight = this.$("previewedLayers").height();
 				};
-				var ht = Math.ceil(jQuery(document).height() - $scrollTarget.offset().top - previewedHeight - jQuery("#footer").height() - 11); //BEN ADDED - 11
+				var ht = Math.ceil(jQuery(document).height() - $scrollTarget.offset().top - previewedHeight - jQuery("#footer").height());
 				$scrollTarget.height(ht);
 			},
 
@@ -142,7 +142,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 								var layerId = $(this).attr("id")
 								var index = $(this).index();
 
-								var zindex = (numPreviewedLayers - index) * 5 + 335  //openLayers sets minimum index to 335 and increments by 5. Using this to stay equation to consistent.
+								var zindex = (numPreviewedLayers - index) * 5 + 335;  //openLayers sets minimum index to 335 and increments by 5. Using this equation to stay consistent.
 
 								jQuery(document).trigger("map.zIndexChange", {
 									zIndex : zindex,

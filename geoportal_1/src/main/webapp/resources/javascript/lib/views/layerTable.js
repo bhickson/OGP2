@@ -668,6 +668,7 @@ OpenGeoportal.Views.LayerTable = Backbone.View
 											hasAccess = loginModel.hasAccessLogic(access, institution);
 											canLogin = loginModel.canLoginLogic(institution);
 										}
+
 										return that.tableControls.renderPreviewControl(previewable, hasAccess, canLogin, stateVal);
 									}
 								} ]);

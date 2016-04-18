@@ -1,21 +1,17 @@
 <div id="footer">
-	<div id=universityLibrary>
-		<a href="http://library.arizona.edu">
-			<img src="../resources/media/UA_UL_RGB_Alt.png" style="height:41px;position:relative;top:2px;">
-		</a>
-	</div>
-	<!-- <div id="footerLogos">
-		<div class="institutionLogo" title="Tufts"
-			onclick="location.href='http://tufts.edu'"></div>
-		<div class="itLogo infoLinks" title="TTS"
+	<div id="footerLogos">
+		<div class="institutionLogo" title="University of Arizona Libraries" onclick="location.href='http://library.arizona.edu'"></div>
+		
+		<!--<div class="itLogo infoLinks" title="TTS"
 			onclick="location.href='https://it.tufts.edu/'">Technology
 			Services</div>
 		<div class="gisLogo infoLinks" title="GIS@Tufts"
-			onclick="location.href='http://gis.tufts.edu'">GIS@Tufts.edu</div>
+			onclick="location.href='http://gis.tufts.edu'">GIS@Tufts.edu</div>-->
 		
-	</div>-->
+	</div>
 	<div id="footerInfo">
 		<a id="ogpLink" href="http://www.opengeoportal.org"> Powered by 
 			<img src="../resources/media/OGP_logo.png" id="ogpImage">
 		</a>
 	</div>
+</div>

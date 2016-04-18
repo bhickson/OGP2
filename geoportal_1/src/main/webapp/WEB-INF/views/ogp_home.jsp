@@ -43,7 +43,6 @@ OpenGeoportal.Config.shareBbox="${shareBbox}";
 		<div id="left_col" class="shadowRightOuter">
 			<%@include file="jspf/leftPanel.jspf"%>
 		</div>
-	        <div id="separatorLine"></div>
 		<div id="map"></div>
 	</div>
 	

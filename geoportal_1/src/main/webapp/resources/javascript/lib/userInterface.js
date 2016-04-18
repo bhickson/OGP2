@@ -46,7 +46,6 @@ OpenGeoportal.Structure = function() {
 		// this.aboutHandler();
 		this.contactHandler();
 		this.userHelpHandler();
-		//this.footerHandler();
 
 	};
 	
@@ -193,7 +192,7 @@ OpenGeoportal.Structure = function() {
 			autoOpen : false
 		});
 		jQuery("#userGuideLink").click(function() {
-			if (jQuery("#userGuide").length === 0) {
+			if (jQuery("#userGuide").length == 0) {
 				jQuery.get(OpenGeoportal.Utility.JspfLocation + "userGuide.jspf", function(data) {
 					jQuery("#dialogs").append(data);
 					jQuery("#userGuide").dialog({
@@ -222,32 +221,27 @@ OpenGeoportal.Structure = function() {
 	this.resizeWindowHandler = function() {
 
 		var minHeight = parseInt(jQuery("#container").css("min-height"));
-		var minWidth =  parseInt(jQuery("#container").css("min-width"));
+		var minWidth = parseInt(jQuery("#container").css("min-width"));
 		
 		var resizeElements = function() {
-                        var containerMargins = parseInt(jQuery("#container").css("margin-left")) + parseInt(jQuery("#container").css("margin-right"));
-	 
-	                var fixedHeights = 201; //set this to contstant because Chrome wasn't computing heights before modifications in localized CSS were being rendered.
-			
-			var fixedWidths = containerMargins;
-
+			var headerHeight = jQuery("#header").height();
+			var footerHeight = jQuery("#footer").height();
+			var fixedHeights = headerHeight + footerHeight + 3;
 			var container$ = jQuery("#container");
 			
 			var oldContainerWidth = container$.width();
-			var newContainerWidth = Math.max(jQuery(window).width()-fixedWidths, minWidth);
+			var newContainerWidth = Math.max(jQuery(window).width(), minWidth); 
 
 			var oldContainerHeight = container$.height();
-			var newContainerHeight = Math.max(jQuery(window).height() - fixedHeights, minHeight);
+			var newContainerHeight = Math.max(jQuery(window).height()
+					- fixedHeights, minHeight);
          
                      	//resize the container if there is a change.
 			if ((newContainerWidth !== oldContainerWidth)||(newContainerHeight !== oldContainerHeight)){
-				container$.height(newContainerHeight);
+				container$.height(newContainerHeight).width(newContainerWidth);	
 				jQuery(document).trigger("container.resize", {ht: newContainerHeight, wd: newContainerWidth, minHt: minHeight, minWd: minWidth});
-				jQuery("#cartTab").height(newContainerHeight);
-				
+			}
 
-
-				}
 		};
 		resizeElements();
 		jQuery(window).resize(resizeElements);
@@ -274,7 +268,6 @@ OpenGeoportal.Structure = function() {
 			jQuery("#geosearchDiv").removeClass("basicSearch").addClass(
 					"advancedSearch");
 			jQuery("#searchForm .advancedSearch.searchRow1").show(); jQuery("#searchForm .advancedSearch.searchRow2").show(); jQuery("#searchForm .advancedSearch.searchRow3").show(); 	jQuery("#searchForm .advancedSearch.searchRow4").show(); // BEN ADDED Rows 2,3, and 4 to smooth animation
-
 			jQuery('#searchBox').animate(
 							{
 								height : "+=" + (hght * 3)
@@ -329,20 +322,7 @@ OpenGeoportal.Structure = function() {
 							jQuery(document).trigger("search.resize");
 						}
 			});
-			//BEN ADDED SECTION...
-			jQuery("#separatorLine").animate(
-                                        {
-                                                "margin-top" : "+=" + hght * 3
-                                        },
-                                        {
-                                                queue: false,
-                                                duration: stepTime, // BEN MODIFIED
-                                                easing: "linear",
-                                                done : function() {
-                                                        jQuery(document).trigger("search.resize");
-                                                }
-                        });//...DONE
-
+			//BEN ADDED SECTION...	jQuery("#separatorLine").animate({"margin-top" : "+=" + hght * 3 },{queue: false,duration: stepTime, easing: "linear",done : function(){jQuery(document).trigger("search.resize"); }});//...DONE
 		} else if (thisId === 'lessSearchOptions') {
 			jQuery(".slideVertical").animate(
 					{
@@ -356,19 +336,6 @@ OpenGeoportal.Structure = function() {
 							jQuery(document).trigger("search.resize");
 						}
 			});
-			//BEN ADDED SECTION...
-			jQuery("#separatorLine").animate(
-					{
-						"margin-top" : "-=" + hght * 3
-					},
-					{
-						queue: false,
-						duration: stepTime,
-						easing: "linear",
-						done : function() {
-							jQuery(document).trigger("search.resize");
-						}
-			});//....DONE
 
 			//jQuery("#searchForm .advancedSearch.searchRow4").hide();
 			jQuery('#searchBox')
