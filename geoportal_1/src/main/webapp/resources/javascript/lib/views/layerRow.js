@@ -80,7 +80,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 		this.metadataViewer.viewMetadata(this.model);
 	},
 	
-	handlePreviewLink: function(){
+	handlePreviewLink: function() {
 		//if there is a previewLink, prefer it
 		var url = this.getPreviewLink();
 		
@@ -382,8 +382,6 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 		bbox.west = currModel.get("MinX");
 		bbox.east = currModel.get("MaxX");
 		jQuery(document).trigger("map.showBBox", bbox);
-		// console.log("triggered map.showBBox");
-
 	},
 	
 	hideBounds : function() {

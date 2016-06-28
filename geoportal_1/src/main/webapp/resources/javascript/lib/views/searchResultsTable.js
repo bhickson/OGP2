@@ -69,9 +69,18 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 			afterRender: function(){
 				var that = this;
 				var previewed$ = this.$(".previewedLayers");
-				this.previewedLayersTable = new OpenGeoportal.Views.PreviewedLayersTable({el: previewed$[0], collection: this.previewed, tableConfig: this.tableConfig});
-				this.tableConfig.listenTo(this.tableConfig, "change:visible", function(model){that.renderHeaders.apply(that, arguments); that.updateSubviews.call(that);
-					that.previewedLayersTable.render();that.adjustColumnSizes(); that.resizeColumns();});
+				this.previewedLayersTable = new OpenGeoportal.Views.PreviewedLayersTable({
+					el: previewed$[0],
+					collection: this.previewed,
+					tableConfig: this.tableConfig
+				});
+				this.tableConfig.listenTo(this.tableConfig, "change:visible", function(model) {
+					that.renderHeaders.apply(that, arguments);
+					that.updateSubviews.call(that);
+					that.previewedLayersTable.render();
+					that.adjustColumnSizes();
+					that.resizeColumns();
+				});
 			},
 			
 			scrollOffset: 200,
@@ -119,9 +128,10 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 				}
 				var previewedHeight = 0;
 				if (this.$("previewedLayers").length > 0){
-					previewedHeight = this.$("previewedLayers").height();
+					previewedHeight = this.$("previewedLayers").outerHeight(true);
 				};
-				var ht = Math.ceil(jQuery(document).height() - $scrollTarget.offset().top - previewedHeight - jQuery("#footer").height());
+
+				var ht = Math.floor(jQuery(document).outerHeight(true) - $scrollTarget.offset().top - previewedHeight - jQuery("#footer").outerHeight(true) );
 				$scrollTarget.height(ht);
 			},
 
@@ -142,7 +152,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 								var layerId = $(this).attr("id")
 								var index = $(this).index();
 
-								var zindex = (numPreviewedLayers - index) * 5 + 335;  //openLayers sets minimum index to 335 and increments by 5. Using this equation to stay consistent.
+								var zindex = (numPreviewedLayers - index) * 5 + 50;
 
 								jQuery(document).trigger("map.zIndexChange", {
 									zIndex : zindex,
@@ -264,7 +274,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 			},
 			
 			render : function() {
-				//console.log("full render");
+				// console.log("full render");
 				var that = this;
 				var previewedTable = null;
 				if (this.$(".previewedLayers").length > 0){
