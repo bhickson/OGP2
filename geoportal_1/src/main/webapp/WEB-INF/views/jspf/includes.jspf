@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="resources/javascript/leaflet/leaflet_1.0.0-rc1/plugins/leaflet-history-master/leaflet-history-src.css" />
 <link rel="stylesheet" href="resources/javascript/leaflet/leaflet_1.0.0-rc1/plugins/leaflet-zoomBox/L.Control.ZoomBox.css" />
 <link rel="stylesheet" href="resources/javascript/leaflet/leaflet_1.0.0-rc1/plugins/Leaflet-coordinates-0.1.5/Leaflet.Coordinates-0.1.5.css" />
-<link rel="stylesheet" href="resources/css/fonts/font-awesome-4.6.1/font-awesome.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
 <link rel="icon" type="image/png" href="../resources/media/ua_favicon-color.png" size="16x16">
 <link rel="icon" type="image/png" href="../resources/media/ua_favicon-color.png" size="32x32">
 
