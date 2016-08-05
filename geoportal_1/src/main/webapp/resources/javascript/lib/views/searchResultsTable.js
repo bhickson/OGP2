@@ -122,6 +122,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 			},
 			
 			setFrameHeight: function(){
+				var cartContainer = $("#cartTab .rowContainer");
 				var $scrollTarget = this.$el.children(".tableWrapper").children(".rowContainer");
 				if ($scrollTarget.length === 0){
 					return;
@@ -131,8 +132,10 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 					previewedHeight = this.$("previewedLayers").outerHeight(true);
 				};
 
-				var ht = Math.floor(jQuery(document).outerHeight(true) - $scrollTarget.offset().top - previewedHeight - jQuery("#footer").outerHeight(true) );
-				$scrollTarget.height(ht);
+				var ht = Math.floor($("#map").height() - ($scrollTarget.offset().top - $("#container").offset().top));
+
+				cartContainer.height(ht);
+				$scrollTarget.height(ht - previewedHeight);
 			},
 
 			// BEN ADDED FUNCTION
@@ -147,12 +150,11 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 					connectWith: ".sortable",
 					stop:
 						function(event, ui) {
-							var numPreviewedLayers = $(".previewedLayers .rowContainer").length;
+							var numPreviewedLayers = OpenGeoportal.ogp.map.previewLayerGroup.getLayers().length;
 							$(".previewedLayers .rowContainer").children(".tableRow").each( function(){
 								var layerId = $(this).attr("id")
 								var index = $(this).index();
-
-								var zindex = (numPreviewedLayers - index) * 5 + 50;
+								var zindex = (numPreviewedLayers - index) + 200;
 
 								jQuery(document).trigger("map.zIndexChange", {
 									zIndex : zindex,
@@ -274,7 +276,6 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 			},
 			
 			render : function() {
-				// console.log("full render");
 				var that = this;
 				var previewedTable = null;
 				if (this.$(".previewedLayers").length > 0){
