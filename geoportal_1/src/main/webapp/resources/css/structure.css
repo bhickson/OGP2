@@ -1359,6 +1359,40 @@ Repositories
                 -36px transparent;
 }
 
+.columbiaIcon {
+	background: url("../media/src_columbia.png") no-repeat scroll -0px
+		-0px transparent;
+}
+
+.stanfordIcon {
+	background: url("../media/src_stanford.png") no-repeat scroll -0px
+		-0px transparent;
+}
+
+.nygisIcon {
+	background: url("../media/nygis_icon.png") no-repeat scroll -0px
+		-0px transparent;
+}
+
+.pasdaIcon {
+	background: url("../media/pasda_icon.png") no-repeat scroll -0px
+		-0px transparent;
+}
+
+.ct_deepIcon {
+	background: url("../media/ctdeep_icon.png") no-repeat scroll -0px
+		-0px transparent;
+}
+
+.faoIcon {
+	background: url("../media/src_un.png") no-repeat scroll -0px
+		-0px transparent;
+}
+
+.usgsIcon {
+	background: url("../media/usgs_icon.png") no-repeat scroll -0px
+		-0px transparent;
+}
 
 /**************
 Backbone table view
