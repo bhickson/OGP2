@@ -4,12 +4,15 @@
 
 body {
         background-color: #ffffff;
-        font-family: MiloWeb,Verdana, arial, sans-serif;
+}
+
+body, .ui-widget, .ui-widget button, .headerButton, .searchFormRow > label, .searchToggle {
+	font-family: MiloWeb, Verdana, arial, sans-serif;
 }
 
 /************************************************************HEADER STYLING*/
 #header {
-        height: 160px;
+        height: 163px;
         border-bottom:none;
         //margin-top: 2px;
 }
@@ -53,7 +56,6 @@ body {
 
 .headerButton {
         color: #fff;
-        font-family: MiloWeb, Verdana;
         font-size: 15px;
         text-decoration:underline;
         padding: 0px 10px;
@@ -79,7 +81,7 @@ body {
         z-index: 6000;
         overflow-y:hidden;
 	border-top:1px solid #727272;
-	height:35px;
+	height:38px;
 }
 
 #footerInfo {
@@ -134,7 +136,8 @@ body {
         margin-left:0px;
 	border-radius:3px;
 	position:relative;
-	top:5px;
+	top:3px;
+	padding: 2px;
 }
 
 #footerLogos:hover {
@@ -200,9 +203,10 @@ body {
 .searchFormRow > label {
         color: #0755AC;
 	font-weight: 500;
-        font-family: MiloWeb, Verdana, arial;
+        /*font-family: MiloWeb, Verdana, arial;*/
         font-size: 17px;
 	width:auto;
+	margin-right: 7px;
 }
 
 .dropdown .ui-menu-item>a>div.checkOn {
@@ -220,7 +224,7 @@ body {
 }
 
 .searchToggle {
-        font-family: MiloWeb,Verdana, arial;
+        /*font-family: MiloWeb,Verdana, arial;*/
         font-size:13px;
         text-decoration:none;
 }
@@ -259,7 +263,7 @@ body {
 }
 
 #searchTabText>div {
-        color:black;
+        color:white;
         font-size:16px
 }
 
@@ -286,6 +290,21 @@ body {
 	margin:0px;
 }
 /*******************************************************CONTAINER STYLES*/
+#roll_right {
+	border-right: 1px solid #727272
+}
+
+#left_col > .ui-resizable-se {
+	right: -4px;
+	width: 5px !important;
+	background: white;
+	background: linear-gradient(to right, white, #7d7d7d);
+	background: -webkit-linear-gradient(left, white, #7d7d7d);
+	background: -o-linear-gradient(right, white, #7d7d7d);
+	background: -o-linear-gradient(right, white, #7d7d7d);
+	top: 0px;
+}
+
 #searchResults >.tableWrapper > .rowContainer::-webkit-scrollbar {
         -webkit-appearance:none;
         width:8px;
@@ -323,7 +342,11 @@ body {
 }
 
 .resultsNumber {
-        color: #151515;
+        color: white;
+}
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+	text-shadow:none;
 }
 
 .tableCell {
@@ -394,14 +417,13 @@ body {
 }
 
 .tableHeader {
-        background: linear-gradient(#cccccc, #8f8f8f) repeat scroll 0 0 transparent;
-        background: #cccccc;
+        background: linear-gradient(#227db2, #4e97c1) repeat scroll 0 0 transparent;
         background: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#8f8f8f));
         background: -webkit-linear-gradient(#cccccc, #8f8f8f);
         background: -moz-linear-gradient(top, #cccccc, #8f8f8f);
         background: -ms-linear-gradient(#cccccc, #8f8f8f);
         background: -o-linear-gradient(#cccccc, #8f8f8f);
-        background: linear-gradient(#cccccc, #8f8f8f);
+        background: linear-gradient(#227db2, #4e97c1);
         border-bottom: 1px solid #5c5c5c;
         padding: 2px;
 }
@@ -412,10 +434,6 @@ body {
 
 .viewMetadataControl {
         height:16px;
-}
-
-.olLayerGoogleCopyright {
-	z-index: 1100;
 }
 
 #disabledButton {
@@ -430,15 +448,21 @@ body {
 }
 
 .dropdown .showAll {
-	color:white;
+	color: #0755AC;
 }
 
 .dropdown .showAll:hover {
-	color:white;
+	color: #8591a5;
 }
 
-.olControlScale{
-        top: 5em;
-        left: 0em;
-        z-index:20000;
+
+.shadowRightOuter {
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
 }
+
+.bBox {
+	opacity:0;
+}
+
