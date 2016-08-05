@@ -39,7 +39,7 @@ OpenGeoportal.Views.LayerTable = Backbone.View
 				var that = this;
 
 				jQuery(document).on("panelResizing adjustContents", "#left_col", function() {
-					$(".viewport").width( $("#container").width() - $("#left_col").width());
+					$(".viewport").width( $("#map").width() - $("#left_col").width());
 					that.adjustColumnSizes();
 				});
 			},
@@ -119,10 +119,9 @@ OpenGeoportal.Views.LayerTable = Backbone.View
 			render : function() {
 				var that = this;
 				var template$ = this.getTable();
-				
-				
-				var rowcount = 0;
+
 				var rows = [];
+				var rowcount = 0;
 
 				this.collection.each(function(model) {
 					if (!that.shouldProcessRow(model)){return;}
@@ -130,16 +129,14 @@ OpenGeoportal.Views.LayerTable = Backbone.View
 					rows.push(row.el);
 					rowcount++;
 				});
-				
+
 				if (rowcount === 0){
-					this.handleEmptyTable(template$);
-					
+					this.handleEmptyTable(template$);					
 				} else {
 					template$.find(".rowContainer").first().prepend(rows);
 				}
-				
+
 				this.$el.html(template$);
-				
 				this.updateColWidths();
 				this.resizeColumns();
 				this.$el.trigger("render");

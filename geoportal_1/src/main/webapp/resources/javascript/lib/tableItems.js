@@ -160,6 +160,11 @@ OpenGeoportal.TableItems = function TableItems() {
 			return "";
 		}
 		repository = repository.toLowerCase();
+
+		/*Some Universities (e.g. Columbia) have their solr records listed with
+		* institution as short and full name (e.g. Columbia and Columbia University)*/
+		if (repository.split(" ").length > 0) { repository = repository.split(" ")[0] }
+
 		var params = {};
 		params.tooltip = "";
 		params.displayClass = "undefinedInstitution";

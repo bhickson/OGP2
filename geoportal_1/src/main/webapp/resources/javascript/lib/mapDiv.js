@@ -251,6 +251,9 @@ OpenGeoportal.MapController = function() {
 			if (newHeight !== oldHeight || newWidth !== oldWidth){
 				map$.height(newHeight).width(newWidth);
 				that.invalidateSize();
+
+				jQuery("#left_col").trigger("adjustContents");
+
 			}
 			
 		});
@@ -646,12 +649,13 @@ OpenGeoportal.MapController = function() {
 		var urlArraySize = 1;
 		var urlArray = [];
 		var populateUrlArray = function(addressArray) {
-			if (addressArray.length == 1) {
+			if (addressArray == undefined) { urlArray.push(layerModel.get("Location").ArcGISRest) }
+			else if (addressArray.length == 1) {
 				for (var i = 0; i < urlArraySize; i++) {
 					urlArray[i] = addressArray[0];
 				}
 			} else {
-				urlArray = addressArray;
+				urlArray.push(addressArray);
 			}
 
 		};
@@ -671,7 +675,7 @@ OpenGeoportal.MapController = function() {
 				&& useTilecache) {
 			populateUrlArray(layerModel.get("Location").tilecache);
 		} else {
-			populateUrlArray(layerModel.get("Location").wms);
+			try {populateUrlArray(layerModel.get("Location").wms);} catch (err) {console.log('no wms array');}
 		}
 
 		return urlArray;
@@ -1364,6 +1368,7 @@ OpenGeoportal.MapController = function() {
 		var layerModel = this.previewed.findWhere({
 			LayerId : layerId
 		});
+
 		if (typeof layerModel === "undefined") {
 			throw new Error(
 					"This layer can't be found in the PreviewedLayers collection.");
@@ -1381,7 +1386,6 @@ OpenGeoportal.MapController = function() {
 		userSLD.layerType = dataType;
                 userSLD.fillColor = userColor;
                 userSLD.strokeWidth = userWidth;
-	
 		if (dataType == "polygon") {
 			userSLD.strokeColor = this.getBorderColor(userColor);
 			userSLD.strokeWidth -= 1
@@ -1392,6 +1396,7 @@ OpenGeoportal.MapController = function() {
 		} else {
 			console.log("Unknown Data Type");
 		}
+
 		var newSLD = {
 			layers : wmsName,
 			sld_body : this.createSLDFromParams(userSLD)
@@ -1400,7 +1405,7 @@ OpenGeoportal.MapController = function() {
 		layerModel.set({
 			sld: userSLD
 		});
-		
+
 		try {
 			var layer = this.getLayerByOGPId(this.previewLayerGroup, layerId);
 			layer.setParams(newSLD);
@@ -1512,16 +1517,17 @@ OpenGeoportal.MapController = function() {
 	this.getLayerName = function(layerModel, url) {
 		var layerName = layerModel.get("Name");
 		var wmsNamespace = layerModel.get("WorkspaceName");
+		// if there isn't a workspace name field (i.e. undefined value), set it blank
+		if (wmsNamespace == undefined) wmsNamespace = "";
 		//if there is a workspace name listed and the layername doesn't already contain one, prepend it
 		var qualifiedName = layerName;
 		if ((wmsNamespace.length > 0) && (layerName.indexOf(":") == -1)) {
+
 			qualifiedName = wmsNamespace + ":" + layerName;
 		}
-
 		layerModel.set({
 			qualifiedName : qualifiedName
 		});
-
 		// tilecache and GeoServer names are different for Harvard layers
 		if (layerModel.get("Institution") === "Harvard") {
 			var tilecacheName = layerName.substr(layerName.indexOf(".") + 1);
@@ -1595,7 +1601,9 @@ OpenGeoportal.MapController = function() {
 		// we do a check to see if the layer exists before we add it
 		jQuery("body").bind(layerModel.get("LayerId") + 'Exists',
 				function() {
+
 					var layerName = that.getLayerName(layerModel, wmsArray[0]);
+
 					var newLayer = L.tileLayer.wms(wmsArray[0], {
 						layers: layerName,
 						format: "image/png",
@@ -1608,7 +1616,7 @@ OpenGeoportal.MapController = function() {
 						zIndex: zIndex,
 						identify: false
 			                });
-					
+
 					newLayer.on('load', function() {
 						if (!newLayer.getContainer().classList.contains('tiles-loaded')) {
 							newLayer.getContainer().className += ' tiles-loaded';
@@ -1620,12 +1628,11 @@ OpenGeoportal.MapController = function() {
 						style = that.setStyle(layerId);
 						newLayer.setParams(style);
 					}
-					
+
 					newLayer.addTo(that.previewLayerGroup);
 
 					//For some reason the loading indicator won't fire on initial layer load without this....
 					that.fireEvent('dataloading', {layer: newLayer});
-
 					try {
 						layerModel.set({zIndex: zIndex});
 					} catch (e){
@@ -1637,6 +1644,7 @@ OpenGeoportal.MapController = function() {
 	};
 	
 	this.addArcGISRestLayer = function(layerModel) {
+		L.esri.Support.cors = false;
 		if (this.previewLayerGroup == undefined) {
                         this.previewLayerGroup = L.layerGroup().addTo(this);
                 }
@@ -1656,60 +1664,74 @@ OpenGeoportal.MapController = function() {
 		this.createPane(layerId);	
 
 		layerUrl = layerModel.get("Location").ArcGISRest + "/";
-		layerUrl += layerModel.get("Location").layerId;
-
-		dataType = layerModel.get("DataType");
-
-		if (dataType == "Point" || dataType == "point" ) {
-			var newLayer = new L.esri.featureLayer({
-				url: layerUrl,
-				id: layerId,
-				pointToLayer: function (geojson, latlng) {
-					return L.circleMarker(latlng, {
-						pane: layerId,
-						weight: 1,
-						radius: 4,
-						color: 'black',
-					        fillColor: 'red',
-						fillOpacity: 0.8,
-						className: layerId 
-					});
-				}
-			})
-		} else if (dataType == "Line" || dataType == "line" ) {
-			var newLayer = new L.esri.featureLayer({
-				url: layerUrl,
-                                id: layerId,
-				pane: layerId,
-				className: layerId,
-                                style: function (feature) {
-					return { color: 'blue', weight: 2 }
-				}
-			});
-		} else if (dataType == "Polygon" || dataType == "polygon" ) {
-                        var newLayer = new L.esri.featureLayer({
-                                url: layerUrl,
-                                id: layerId,
-				pane: layerId,
-				className: layerId,
-				style: function (feature) {
-					return { color:'white', weight: 2, fillOpacity: 0.8 }
-				}
-                        });
-		} else {
-			alert("Unknown data type. Unable to display layer");
-			return;
-		}
-
-		$("."+layerId).css('z-index','400');
 
 		var that = this;
 
-		// we do a cursory check to see if the layer exists before we add it
 		jQuery("body").bind(layerModel.get("LayerId") + 'Exists', function() {
-			that.previewLayerGroup.addLayer(newLayer);
+			var dataType = layerModel.get("DataType");
+			console.log("dataType: " + dataType);
+			if (dataType == "Point" || dataType == "point" ) {
+				var newLayer = new L.esri.featureLayer({
+					url: layerUrl,
+					id: layerId,
+					pointToLayer: function (geojson, latlng) {
+						return L.circleMarker(latlng, {
+							pane: layerId,
+							weight: 1,
+							radius: 4,
+							color: 'black',
+							fillColor: 'red',
+							fillOpacity: 0.8,
+							className: layerId 
+						});
+					}
+				})
+			} else if (dataType == "Line" || dataType == "line" ) {
+				var newLayer = new L.esri.featureLayer({
+					url: layerUrl,
+		                        id: layerId,
+					pane: layerId,
+					className: layerId,
+		                        style: function (feature) {
+						return { color: 'blue', weight: 2 }
+					}
+				});
+			} else if (dataType == "Polygon" || dataType == "polygon" ) {
+		                var newLayer = new L.esri.featureLayer({
+		                        url: layerUrl,
+		                        id: layerId,
+					pane: layerId,
+					className: layerId,
+					style: function (feature) {
+						return { color:'black', fillColor: "white",  weight: 2, fillOpacity: 0.8 }
+					}
+		                });
+			} else if (dataType == "Raster" || dataType == "raster") {
+				var newLayer = new L.esri.tiledMapLayer({
+					url: layerUrl,//'http://www.orthos.dhses.ny.gov/arcgis/rest/services/2001/MapServer'
+					zIndex: zIndex,
+					id: layerId
+
+				});
+			} else {
+				alert("Unknown data type. Unable to display layer");
+				return;
+			};
+		
+			if (layerModel.isVector()) {
+				$("."+layerId).css('z-index','400');
+			}
+			//newLayer.addTo(that);	
+			newLayer.addTo(that.previewLayerGroup);
+			console.log(that.previewLayerGroup);	
 			//For some reason the loading indicator won't fire on initial layer load without this....
 			that.fireEvent('dataloading', {layer: newLayer});
+			try {
+				layerModel.set({zIndex: zIndex});
+			} catch (e){
+				console.log("failed!");
+				console.log(e);
+			}
 		});
 
 		this.layerExists(layerModel);
@@ -1820,6 +1842,7 @@ OpenGeoportal.MapController = function() {
 		try {
 			var type = currModel.get("previewType");
 			var previewOnFunction = this.getPreviewMethod(type, "onHandler");
+
 			try {
 				previewOnFunction.call(this, currModel);
 			} catch (e) {
