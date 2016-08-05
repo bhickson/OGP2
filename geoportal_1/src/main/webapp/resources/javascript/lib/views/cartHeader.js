@@ -51,7 +51,6 @@ OpenGeoportal.Views.CartHeader = Backbone.View.extend({
 	},
 	
 	removeRows: function() {
-
 		this.collection.remove(this.getCheckedRows());
 	},
 	

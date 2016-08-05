@@ -33,7 +33,6 @@ public class ConfigController {
 	
 	@RequestMapping(value="repositories", method=RequestMethod.GET, produces="application/json")
 	public @ResponseBody List<RepositoryConfig> getRepositoryConfig() throws Exception {
-
 		return repositoryConfigRetriever.getConfig();
 	}
 	

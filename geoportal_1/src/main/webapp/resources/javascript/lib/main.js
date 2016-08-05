@@ -21,7 +21,6 @@ if (typeof OpenGeoportal == 'undefined') {
 $(window)
 	.load(
 			function() {
-
 					// ogp will hold instances
 					
 					OpenGeoportal.ogp = {};
@@ -83,7 +82,6 @@ $(window)
 												model : OpenGeoportal.ogp.appState.get("queryTerms"),
 												el : "form#searchForm"
 											});
-											
 											ogp.results = new OpenGeoportal.ResultsCollection();
 										} catch (e) {
 											console.log(e);
@@ -113,15 +111,3 @@ $(window)
 					/* downtime notice --does this still work? */
 					// ogp.ui.showDowntimeNotice();
 				});
-$(window)
-	.load(
-		function() {
-			/* For reasons unknown, if there is a localized Css specified with new heights
-  			*  for the header and footer divs, Chrome won't recognize the loaclized Css in
-  			*  time for the calculation in resizeWindowHandler (userInterface.js).  Need to
-  			*   manually trigger resize for the function to run again after the DOM is ready.
-  			*   As of now this won't let the welcome bubble hang around, so need a better
-  			*   work around	*/ 
-			//$(window).trigger('resize');
-			}
-	);

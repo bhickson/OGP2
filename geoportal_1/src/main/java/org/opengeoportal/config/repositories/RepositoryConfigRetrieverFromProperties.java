@@ -50,7 +50,7 @@ public class RepositoryConfigRetrieverFromProperties implements RepositoryConfig
 		//and a list of which should be selected by default
 		
 		List<SearchRepository> repositories = searchConfigRetriever.getSearchRepositories();
-		
+
 		List<String> configElements = new ArrayList<String>();
 		configElements.add(SHORT_NAME_KEY);
 		configElements.add(FULL_NAME_KEY);
