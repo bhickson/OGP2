@@ -124,6 +124,9 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 			setFrameHeight: function(){
 				var cartContainer = $("#cartTab .rowContainer");
 				var $scrollTarget = this.$el.children(".tableWrapper").children(".rowContainer");
+				
+				var scrollOffset = Math.max(cartContainer.offset().top, $scrollTarget.offset().top);
+
 				if ($scrollTarget.length === 0){
 					return;
 				}
@@ -132,7 +135,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 					previewedHeight = this.$("previewedLayers").outerHeight(true);
 				};
 
-				var ht = Math.floor($("#map").height() - ($scrollTarget.offset().top - $("#container").offset().top));
+				var ht = Math.floor($("#map").height() - (scrollOffset - $("#container").offset().top));
 
 				cartContainer.height(ht);
 				$scrollTarget.height(ht - previewedHeight);
