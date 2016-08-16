@@ -64,19 +64,12 @@ OpenGeoportal.Views.LeftPanel = Backbone.View
 			},
 
 			setAlsoMoves : function() {
-				/*if (!jQuery(".olControlPanel,.olControlModPanZoomBar,.olControlMousePosition,.googleLogo")
-						.hasClass("slideHorizontal")) {
-					jQuery(".olControlPanel,.olControlModPanZoomBar,.olControlMousePosition,.googleLogo")
-							.addClass("slideHorizontal");
-				}*/
 				if (!$(".leaflet-left").hasClass("slideHorizontal")) {
 					$(".leaflet-left").addClass("slideHorizontal")	
 				}
 				if (!$(".leaflet-top").hasClass("slideVertical")) {
 					$(".leaflet-top").addClass("slideVertical")
 				}
-				// beyond extent arrows "#nwCorner" and "#swCorner" also have
-				// class "slideHorizontal"
 			},
 
 			showPanel : function() {

@@ -190,6 +190,8 @@ OpenGeoportal.MapController = function() {
 		for (i = 0; i < this.controls.length; i++) {
 			this.controls[i].addTo(this);
 		};
+		OpenGeoportal.ogp.structure.panelView.setAlsoMoves();
+
 
 	};
 
@@ -1347,8 +1349,6 @@ OpenGeoportal.MapController = function() {
 		//for now, don't wait for wmsinfo response to start loading the layer; perhaps only call if there is an error
 		jQuery("body").trigger(model.get("LayerId") + 'Exists');
 
-		//jQuery(document).trigger({type: "showLoadIndicator", loadType: "getWmsInfo", layerId: model.get("LayerId")});
-
 	};
 
 	this.layerExists = function(layerModel) {
@@ -1388,7 +1388,9 @@ OpenGeoportal.MapController = function() {
                 userSLD.strokeWidth = userWidth;
 		if (dataType == "polygon") {
 			userSLD.strokeColor = this.getBorderColor(userColor);
+			console.log("borderColor:",this.getBorderColor(userColor));
 			userSLD.strokeWidth -= 1
+			console.log("strokeWidth", userSLD.strokeWidth);
 		} else if (dataType == "point") {
 			userSLD.strokeColor = "#000";
 		} else if (dataType == "line") {
@@ -1624,7 +1626,7 @@ OpenGeoportal.MapController = function() {
 					});
 					
 					var defaultColor = layerModel.get("color");
-					if (layerModel.isVector() && defaultColor != "#aaaaaa") {
+					if (layerModel.isVector() && defaultColor != "#003300") {
 						style = that.setStyle(layerId);
 						newLayer.setParams(style);
 					}
