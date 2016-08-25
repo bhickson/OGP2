@@ -243,6 +243,7 @@ OpenGeoportal.Structure = function() {
                                 $("#showSearchResults").css({'margin-top': rollRightMarginTop});
 
 			}
+
 		};
 		resizeElements();
 		jQuery(window).resize(resizeElements);
@@ -258,157 +259,175 @@ OpenGeoportal.Structure = function() {
 	
 	//this should move to the search view
 	this.toggleSearch = function(thisObj) {
-		var stepTime = 100;
+		var moveTime = 200;
+		var fadeTime = 200;
+		var dropTime = 200;
 		var thisId = jQuery(thisObj).attr('id');
 		var hght = jQuery(".searchFormRow").height();
-		jQuery(".olControlModPanZoomBar, .olControlPanel, #mapToolBar, #neCorner, #nwCorner").addClass("slideVertical");
+		jQuery("#mapToolBar, #neCorner, #nwCorner").addClass("slideVertical");
 		
 		if (thisId === 'moreSearchOptions') {
 
-			jQuery("#searchForm .basicSearch").hide();
-			jQuery("#geosearchDiv").removeClass("basicSearch").addClass(
-					"advancedSearch");
-			jQuery("#searchForm .advancedSearch.searchRow1").show(); jQuery("#searchForm .advancedSearch.searchRow2").show(); jQuery("#searchForm .advancedSearch.searchRow3").show(); 	jQuery("#searchForm .advancedSearch.searchRow4").show(); // BEN ADDED Rows 2,3, and 4 to smooth animation
-			jQuery('#searchBox').animate(
-							{
-								height : "+=" + (hght * 3)
-							},
-							{
-								queue : false,
-								duration : stepTime,
-								easing : "linear",
-								complete : function() {
-									jQuery("#lessSearchOptions").focus();
-									var viewportHeight = $("#container").height() - (hght*3);
-									jQuery(".viewport").height(viewportHeight);
-                                                                        jQuery(document).trigger("search.setAdvanced")
-								}/*
+			$(".advancedSearch").css({opaticy:0});
+			$("#moreSearchOptions").animate({opacity:0},{duration:50, complete: function() {$(this).hide()}});
+			jQuery("#searchCol1").animate(
+				{ width:342 },
+				{	queue:false,
+					duration: moveTime,
+					easing:"linear",
+					complete: function() {
+						$("#searchCol1 .basicSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete: function() {
+							$(this).hide({duration:0, complete: function () {
+								$("#searchCol1 .advancedSearch.searchRow1").show({duration:0, complete: function () {
+									$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear"})
+								} });
+							} });
+						} });
+					}
+				}
+			);
+                         
+			jQuery("#searchCol2").animate(
+                                { width:322 },
+                                {       queue:false,
+                                        duration:moveTime,
+                                        easing:"linear",
+                                        complete: function() {
+						$("#geosearchDiv").removeClass("basicSearch");
+						$(".checkOption").removeClass("basicSearch");
+                                        }
+                                }
+                        );
 
-									//jQuery("#searchForm .advancedSearch.searchRow2").show();
-									jQuery('#searchBox').animate(
-													{
-														height : "+=" + hght
-													},
-													{
-														queue : false,
-														duration : stepTime,
-														easing : "linear",
-														complete : function() {
-															//jQuery("#searchForm .advancedSearch.searchRow3").show();
-															jQuery('#searchBox').animate(
-																			{
-																				height : "+=" + hght
-																			},
-																			{
-																				queue : false,
-																				duration : stepTime,
-																				easing : "linear",
-																				complete : function() {
-																					//jQuery("#searchForm .advancedSearch.searchRow4").show();
-																					jQuery("#lessSearchOptions").focus();
-																					jQuery(document).trigger("search.setAdvanced");
+			jQuery("#searchCol3").animate(
+				{ width:300 },
+				{	queue:false,
+					duration:moveTime,
+					easing:"linear",
+					complete: function() {
+						$("#searchCol3 .basicSearch").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete: function() {$(this).hide();
+							$("#searchCol3 .advancedSearch.searchRow1").show({duration:0, complete: function () {
+								$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear"});
+							} });
+							$("#searchCol3 .advancedSearch.searchRow2").show({duration:0, complete: function () {
+								$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear"});
+							} });
+						 } })
+					}
+				}
+			);
 
-																				}
-																			});
-														}
-													});*/
-							});
+			setTimeout(function(){
+				$("#geosearchDiv").addClass("advancedSearch");
+                                $(".checkOption").addClass("advancedSearch");
+				jQuery("#searchForm .advancedSearch.searchRow1").show();
+				jQuery("#searchForm .advancedSearch.searchRow2").show();
+				jQuery("#searchForm .advancedSearch.searchRow3").show();
+				jQuery("#searchForm .advancedSearch.searchRow4").show();
 
-			jQuery(".slideVertical").animate(
-					{
-						"margin-top" : "+=" + hght * 3
-					},
-					{
-						duration : stepTime, // BEN MODIFIED
-						easing : "linear",
-						done : function() {
-							jQuery(document).trigger("search.resize");
-						}
-			});
-			//BEN ADDED SECTION...	jQuery("#separatorLine").animate({"margin-top" : "+=" + hght * 3 },{queue: false,duration: stepTime, easing: "linear",done : function(){jQuery(document).trigger("search.resize"); }});//...DONE
+				jQuery('#searchBox').animate(
+		                        { height : "+=" + (hght * 3) },
+			                {	queue : false,
+		                                duration : dropTime,
+		                                easing : "linear",
+		                                complete : function() {
+		                                        jQuery("#lessSearchOptions").focus();
+		                                        var viewportHeight = $("#container").height() - (hght*3);
+		                                        jQuery(".viewport").height(viewportHeight);
+		                                        jQuery(document).trigger("search.setAdvanced")
+							$("#lessSearchOptions").show({duration:0, complete: function() {
+								$(this).animate({opacity:1},{duration:50})
+							} })
+		                                }
+		                        }
+		                );
+
+
+		                jQuery(".slideVertical").animate(
+		                        { "margin-top" : "+=" + hght * 3 },
+		                        {	queue: false,
+		                                duration : dropTime,
+		                                easing : "linear",
+		                                done : function() {
+		                                        jQuery(document).trigger("search.resize");
+		                                }
+		                        }
+		                );
+			}, fadeTime + moveTime);
+		
 		} else if (thisId === 'lessSearchOptions') {
+
+			$(".basicSearch").css({opaticy:0});
+			$("#lessSearchOptions").animate({opacity:0},{duration:50, complete: function() {$(this).hide()}});
 			jQuery(".slideVertical").animate(
-					{
-						"margin-top" : "-=" + hght * 3
-					},
-					{
-						queue : false,
-						duration : stepTime,
-						easing : "linear",
-						done : function() {
-							jQuery(document).trigger("search.resize");
-						}
-			});
+				{ "margin-top" : "-=" + hght * 3 },
+				{	queue : false,
+					duration : dropTime,
+					easing : "linear",
+					done : function() {
+						jQuery(document).trigger("search.resize");
+					}
+				}
+			);
 
-			//jQuery("#searchForm .advancedSearch.searchRow4").hide();
-			jQuery('#searchBox')
-					.animate(
-							{
-								height : "-=" + (hght * 3)
-							},
-							{
-								queue : false,
-								duration : stepTime,
-								easing : "linear",
-								complete : function() {
-									// jQuery(".slideVertical").animate({"margin-top":
-									// "-=" + hght, queue: false, duration: 100,
-									// easing: "linear"});
-									//jQuery("#searchForm .advancedSearch.searchRow3").hide();
+			jQuery('#searchBox').animate(
+				{ height : "-=" + (hght * 3) },
+				{	queue : false,
+					duration : dropTime,
+					easing : "linear",
+					complete : function() {
+						$("#searchForm .advancedSearch.searchRow3").hide();
+						$("#searchForm .advancedSearch.searchRow4").hide();
 
-									jQuery("#geosearchDiv").removeClass("advancedSearch").addClass("basicSearch");
-                                                                        jQuery("#searchForm .advancedSearch.searchRow1").hide();
-									jQuery("#searchForm .advancedSearch.searchRow2").hide();
-									jQuery("#searchForm .advancedSearch.searchRow3").hide();
-									jQuery("#searchForm .advancedSearch.searchRow4").hide();
-                                                                        jQuery("#searchForm .basicSearch").show();
-                                                                      	jQuery("#moreSearchOptions").focus();
-                                                                       	jQuery(document).trigger("search.setBasic");
-									jQuery(".viewport").height($("#container").height());
-									/*jQuery('#searchBox').animate(
-													{
-														height : "-=" + hght
-													},
-													{
-														queue : false,
-														duration : stepTime,
-														easing : "linear",
-														complete : function() {
-															//jQuery("#searchForm .advancedSearch.searchRow2").hide();
-															jQuery('#searchBox').animate(
-																			{
-																				height : "-="
-																						+ hght
-																			},
-																			{
-																				queue : false,
-																				duration : stepTime,
-																				easing : "linear",
-																				complete : function() {
-																					// jQuery(".slideVertical").animate({"margin-top":
-																					// "-="
-																					// +
-																					// hght,
-																					// queue:
-																					// false,
-																					// duration:
-																					// 100,
-																					// easing:
-																					// "linear"});
-																					jQuery("#geosearchDiv").removeClass("advancedSearch")
-																							.addClass("basicSearch");
-																					jQuery("#searchForm .advancedSearch.searchRow1").hide();jQuery("#searchForm .advancedSearch.searchRow2").hide();jQuery("#searchForm .advancedSearch.searchRow3").hide();jQuery("#searchForm .advancedSearch.searchRow4").hide();  //BEN ADDED ALL searchRow hides here and commented them out above
-																					jQuery("#searchForm .basicSearch").show();
-																					jQuery("#moreSearchOptions").focus();
-																					jQuery(document).trigger("search.setBasic");
+						$("#geosearchDiv").removeClass("advancedSearch").addClass("basicSearch");
+						$(".checkOption").removeClass("advancedSearch").addClass("basicSearch");
 
-																				}
-																			});
-														}
-													});*/
+						$("#searchCol1 .advancesdSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+							$(this).hide();
+							$("#searchCol1 .basicSearch").show({duration:0,complete: function() {
+								$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+									$("#searchCol1").animate({width:310}, {queue:false,duration:moveTime,easing:"linear"});
+								} });
+							} });
+						} });
+						$("#searchCol1 .advancedSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+							$(this).hide();
+							$("#searchCol1 .basicSearch").show({duration:0,complete: function() {
+								$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+									$("#searchCol1").animate({width:310}, {queue:false,duration:moveTime,easing:"linear"});
+								} });
+							} });
+						} });
+
+						jQuery("#searchCol2").animate(
+								{ width:310 },
+								{       queue:false,
+								        duration:moveTime,
+								        easing:"linear"
 								}
-							});
+						);
 
+						$("#searchCol3 .advancedSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+							$(this).hide();
+						} });
+						$("#searchCol3 .advancedSearch.searchRow2").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+							$(this).hide();
+							$("#searchCol3 .basicSearch").show({duration:0,complete: function() {
+								$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear"});
+								$("#searchCol3").animate({width:160}, {queue:false,duration:moveTime,easing:"linear", complete: function () {
+									$("#moreSearchOptions").show({duration:0, complete: function() {
+										$(this).animate({opacity:1},{duration:50})
+									} })
+								} });
+							} })
+						} });
+
+                                              	jQuery("#moreSearchOptions").focus();
+                                               	jQuery(document).trigger("search.setBasic");
+						jQuery(".viewport").height($("#container").height());
+					}
+				}
+			)
 		}
 	};
 
