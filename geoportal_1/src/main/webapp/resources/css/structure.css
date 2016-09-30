@@ -124,10 +124,13 @@ li.searchAttribution.ui-widget-content.ui-menu-divider {
 
 .dropdown .ui-menu-item > a > div.showOnly {
 	font-size: 10px;
+	font-weight:bold;
     position: absolute;
     right: 31px;
     height: 20px;
     display: none;
+	padding: 0px 3px 0px 3px;
+	background: white;
 }
 
 .dropdown .ui-menu-item > a.ui-state-focus > div.showOnly {
@@ -330,6 +333,7 @@ li.searchAttribution.ui-widget-content.ui-menu-divider {
 #map {
 	opacity: 0;
 	min-width: 1100px;
+	left: 0px;
 	
 }
 /* left column panel */
@@ -692,6 +696,7 @@ textarea:focus {
 	position: absolute;
 	/*width: 340px;*/
 	margin-right: 42px;
+	overflow: inherit;
 }
 
 #searchCol1 {

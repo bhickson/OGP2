@@ -271,7 +271,7 @@ OpenGeoportal.Structure = function() {
 			$(".advancedSearch").css({opaticy:0});
 			$("#moreSearchOptions").animate({opacity:0},{duration:50, complete: function() {$(this).hide()}});
 			jQuery("#searchCol1").animate(
-				{ width:342 },
+				{ width:343 },
 				{	queue:false,
 					duration: moveTime,
 					easing:"linear",
