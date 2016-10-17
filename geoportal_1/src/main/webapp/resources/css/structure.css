@@ -99,9 +99,11 @@ zoom: 1;
     color: #FFFFFF;
 }
 
-li.searchAttribution.ui-widget-content.ui-menu-divider {
+li.searchAttribution {
     border: medium none;
     margin: 0;
+    float: right;
+    margin-right: 5px;
 }
 
 #mapClearButton {
