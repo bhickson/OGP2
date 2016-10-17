@@ -104,7 +104,7 @@ OpenGeoportal.MapController = function() {
 	this.createLeafletControls = function() {
 		var extentHistory = L.control.historyControl({
 			position: "topleft"
-		});				
+		});
 
 		var zoomBox = L.control.zoomBox({
 			modal:false,
@@ -1388,9 +1388,7 @@ OpenGeoportal.MapController = function() {
                 userSLD.strokeWidth = userWidth;
 		if (dataType == "polygon") {
 			userSLD.strokeColor = this.getBorderColor(userColor);
-			console.log("borderColor:",this.getBorderColor(userColor));
 			userSLD.strokeWidth -= 1
-			console.log("strokeWidth", userSLD.strokeWidth);
 		} else if (dataType == "point") {
 			userSLD.strokeColor = "#000";
 		} else if (dataType == "line") {
@@ -1671,7 +1669,6 @@ OpenGeoportal.MapController = function() {
 
 		jQuery("body").bind(layerModel.get("LayerId") + 'Exists', function() {
 			var dataType = layerModel.get("DataType");
-			console.log("dataType: " + dataType);
 			if (dataType == "Point" || dataType == "point" ) {
 				var newLayer = new L.esri.featureLayer({
 					url: layerUrl,
@@ -1709,8 +1706,7 @@ OpenGeoportal.MapController = function() {
 					}
 		                });
 			} else if (dataType == "Raster" || dataType == "raster") {
-				var newLayer = new L.esri.tiledMapLayer({
-					url: layerUrl,//'http://www.orthos.dhses.ny.gov/arcgis/rest/services/2001/MapServer'
+				var newLayer = new L.tileLayer(layerUrl,{
 					zIndex: zIndex,
 					id: layerId
 
@@ -1725,7 +1721,6 @@ OpenGeoportal.MapController = function() {
 			}
 			//newLayer.addTo(that);	
 			newLayer.addTo(that.previewLayerGroup);
-			console.log(that.previewLayerGroup);	
 			//For some reason the loading indicator won't fire on initial layer load without this....
 			that.fireEvent('dataloading', {layer: newLayer});
 			try {

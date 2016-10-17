@@ -279,7 +279,7 @@ OpenGeoportal.Structure = function() {
 						$("#searchCol1 .basicSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete: function() {
 							$(this).hide({duration:0, complete: function () {
 								$("#searchCol1 .advancedSearch.searchRow1").show({duration:0, complete: function () {
-									$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear"})
+									$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear",complete: function() {$("#searchCol1").css({overflow:"unset"})}})
 								} });
 							} });
 						} });
@@ -382,14 +382,6 @@ OpenGeoportal.Structure = function() {
 						$("#geosearchDiv").removeClass("advancedSearch").addClass("basicSearch");
 						$(".checkOption").removeClass("advancedSearch").addClass("basicSearch");
 
-						$("#searchCol1 .advancesdSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
-							$(this).hide();
-							$("#searchCol1 .basicSearch").show({duration:0,complete: function() {
-								$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
-									$("#searchCol1").animate({width:310}, {queue:false,duration:moveTime,easing:"linear"});
-								} });
-							} });
-						} });
 						$("#searchCol1 .advancedSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
 							$(this).hide();
 							$("#searchCol1 .basicSearch").show({duration:0,complete: function() {
