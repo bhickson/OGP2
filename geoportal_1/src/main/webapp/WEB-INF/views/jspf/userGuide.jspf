@@ -1122,31 +1122,41 @@
 						</p>
 						<ol>
 							<li>
-								<p class="MsoListParagraphCxSpMiddle">
-									<span style="color: black; text-decoration: none"><b>Reset</b></span> <span style="color: black"> - restores the OpenGeoportal to its
-										default state, erasing any previously entered search criteria and
-										emptying your Cart</span>
-								</p>
-							</li>
-							<li>
-								<p class="MsoListParagraphCxSpMiddle">
-									<span style="color: black; text-decoration: none"><b>Help</b></span>
-									<span style="color: black"> - Launches this guide</span>
-								</p>
-							</li>
-							<li>
-								<p class="MsoListParagraphCxSpMiddle">
-									<span style="color: black; text-decoration: none"><b>Contact</b></span>
-									<span style="color: black"> - Opens a dialog displaying the contact
-									information for the site manager.</span>
-								</p>
-							</li>
-							<li>
-								<p class="MsoListParagraphCxSpMiddle">
-									<span style="color: black; text-decoration: none"><b>Login</b></span> <span style="color: black"> - Allows you to log into your
-										institution's portal and access restricted data.</span>
-								</p>
-							</li>
+                                                                <p class="MsoListParagraphCxSpFirst">
+                                                                        <span style="color: black; text-decoration: none"><b>UA Libraries</b></span>
+                                                                        <span style="color: black"> - Links to the University of Arizona Libraries main page.</span>
+                                                                </p>
+                                                        </li>
+                                                        <li>
+                                                                <p class="MsoListParagraphCxSpMiddle">
+                                                                        <span style="color: black; text-decoration: none"><b>Library GIS Guide</b></span>
+                                                                        <span style="color: black"> - Links to the Libraries GIS Libguide page where more resources related to GIS and geospatial data held.</span>
+                                                                </p>
+                                                        </li>
+                                                        <li>
+                                                                <p class="MsoListParagraphCxSpMiddle">
+                                                                        <span style="color: black; text-decoration: none"><b>UserGuide</b></span>
+                                                                        <span style="color: black"> - Launches this guide.</span>
+                                                                </p>
+                                                        </lr>
+                                                        <li>
+                                                                <p class="MsoListParagraphCxSpMiddle">
+                                                                        <span style="color: black; text-decoration: none"><b>Contact</b></span>
+                                                                        <span style="color: black"> - Opens a dialog displaying the contact information for the manager of this site.</span>
+                                                                </p>
+                                                        </li>
+                                                        <li>
+                                                                <p class="MsoListParagraphCxSpMiddle">
+                                                                        <span style="color: black; text-decoration: none"><b>Reset</b></span> <span style="color: black"> - restores the OpenGeoportal to its
+                                                                                default state, erasing any previously entered search criteria and
+                                                                                emptying your Cart</span>
+                                                                </p>
+                                                        <li>
+                                                                <p class="MsoListParagraphCxSpLast">
+                                                                        <span style="color: black; text-decoration: none"><b>Login</b></span>
+                                                                        <span style="color: black"> - Allows you to log into your institution's portal and access restricted data.</span>
+                                                                </p>
+                                                        </li>
 						</ol>
 					</li>
 				</ol>
