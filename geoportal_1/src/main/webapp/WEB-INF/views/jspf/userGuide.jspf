@@ -12,7 +12,7 @@
 			<span class="button" style="position:relative; left:10px; color: blue; height: 15px; width: 100%">- Scroll To Table of Contents -</span>
 		</div>
 
-		<div class="WordSection1" style="overflow-x: hidden; top:20px; position:absolute; left:0px; right:0px; bottom:0px; padding-left:5px; padding-right:5px">
+		<div class="WordSection1" style="overflow:auto; top:20px; position:absolute; left:0px; right:0px; bottom:0px; padding-left:5px; padding-right:5px">
 
 			<div id="ugOverview" style="border-bottom:#a9a9a9;">
 				<p class="MsoListParagraph">
@@ -57,13 +57,7 @@
 										<b><span style="text-decoration: none">Working With The Map</span></b>
 									</a>
 								</p>
-
 								<ol>
-									<li>
-										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">Global Zoom</span>
-										</p>
-									</li>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
 											<span style="color: black; text-decoration: none">Back</span>
@@ -76,17 +70,12 @@
 									</li>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">Zoom In</span>
+											<span style="color: black; text-decoration: none">Zoom To Area</span>
 										</p>
 									</li>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">Pan</span>
-										</p>
-									</li>
-									<li>
-										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">Zoom Slider Bar</span>
+											<span style="color: black; text-decoration: none">Zoom In and Out</span>
 										</p>
 									</li>
 								</ol>
@@ -234,7 +223,7 @@
 						</p>
 						<ol type="I">
 							<li>
-								<p class="MsoListParagraphCxSpMiddle">
+								<p class="MsoListParagraphCxSpFirst">
 									<span style="color: black">Remove</span>
 								</p>
 							</li>
@@ -249,13 +238,8 @@
 								</p>
 							</li>
 							<li>
-								<p class="MsoListParagraphCxSpMiddle">
+								<p class="MsoListParagraphCxSpLast">
 									<span style="color: black">Share</span>
-								</p>
-							</li>
-							<li>
-								<p class="MsoListParagraphCxSpMiddle">
-									<span style="color: black">Map It</span>
 								</p>
 							</li>
 						</ol>
@@ -319,13 +303,6 @@
 								<ol>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">Global
-												Zoom</span> <img src="resources/media/userGuide_UA/globalZoom.png"><span style="color: black"> Restores the highest level view
-												available</span>
-										</p>
-									</li>
-									<li>
-										<p class="MsoListParagraphCxSpMiddle">
 											<span style="color: black; text-decoration: none">Back</span> <img src="resources/media/userGuide_UA/backExtent.png"><span style="color: black"> Backs you up to previously viewed
 												map extents</span>
 										</p>
@@ -339,7 +316,7 @@
 									</li>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">Zoom In</span>
+											<span style="color: black; text-decoration: none">Zoom To Area</span>
 											<img src="resources/media/userGuide_UA/zoomInBox.png"><span style="color: black"> switches the cursor to a magnifying
 												glass icon which, when clicked, zooms in to the identified point
 												on the map. Hold down the left-click to drag and draw a box over
@@ -348,17 +325,8 @@
 									</li>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">Pan
-												Control</span> <img src="resources/media/userGuide_UA/panControl.png"><span style="color: black"> switches the cursor to a hand icon
-												which, when the left click is held down, allows you to drag and
-												pan the map</span>
-										</p>
-									</li>
-									<li>
-										<p class="MsoListParagraphCxSpMiddle">
-											<span style="color: black; text-decoration: none">The Zoom Slider Bar displays for each
-												map, allowing you to zoom in or zoom out by clicking the ends of
-												the slider bar, or by dragging the slider up or down on the bar.</span>
+											<span style="color: black; text-decoration: none">The Zoom In and Out Buttons displays for each
+												map, allowing you to zoom in or zoom out to specific zoom levels.  Zoom In abilities are also available by double clicking at a location on the map.  Zoom Out abilities are available by holding <b>Shift</b> on your keyboard  while double clicking on the map.</span>
 										</p>
 									</li>
 								</ol>
@@ -371,7 +339,7 @@
 									</p>
 								<p class="MsoNormal" style="line-heigh:normal"><span style="color: black">
 								By default, whenever you zoom into, out of, or pan on the map, or if you conduct a text search,
-								the search tab will populate on the left side of the screen.  The tab contains several columns
+								the search tab on the left side of the screen will re-populate with search results representative to the area you are viewing.  The tab contains several columns
 								of information are available for each layer: Cart status, Data Type, Layer Name, Dataset Originator, 
 								Repository, Layer Metadata Information, and Preview Status.</span>
 								</p>
@@ -436,11 +404,7 @@
 											</p><ol type="a">
 												<li>
 													<p class="MsoListParagraphCxSpMiddle">
-														Using the map navigation controls provided, you can easily navigate around the map.  By
-														default the OpenGeoportal will populate the search window on the left based on the viewable
-														extent of the map.  As you move around, you may notice that the results will automatically
-														update, based on the map extent.  If you use your mouse cursor to hover over each available
-														layer listed in the search results, you can see its extent previewed in blue on the map.
+														Using the map navigation controls provided, you can easily navigate around the map.  By	default the OpenGeoportal will populate the search results based on the viewable extent of the map.  As you move around, you may notice that the results will automatically update as your viewing area changes.  If you use your mouse cursor to hover over each available layer listed in the search results, you can see its extent previewed in blue on the map.
 													</p>
 												</li>
 											</ol>
@@ -504,7 +468,7 @@
 														<p class="MsoListParagraphCxSpMiddle">
 															<span style="color: black">Where</span>
 															- Just the same as in the basic search option, this allows you to specify
-															a location for the data you are looking for.
+															a location for the data you are looking for. The results are populated from an OpenStreetMap geocoder.
 														</p>
 														<p class="MsoNormal">
 															<img src="resources/media/userGuide_UA/whereAdvSearch.png" width="600px">
@@ -609,7 +573,7 @@
 														<p class="MsoListParagraphCxSpMiddle">
 															<span style="color: black"><b>Topic</b></span> - Allows you to search for data that includes
 															information related to a particular subject or data theme.  Click on the topic menu to show
-															the list of topics.
+															the list of topics.  These topic categories are correspond to the  Internation Organization for Standards (ISO) metadata standard Topic Categories (ISO 19115).
 														</p><br>
 														<p class="MsoNormal">
 															<img id="Picture366" src="resources/media/userGuide_UA/topicsAdvSearch.png" border="0">
@@ -930,37 +894,34 @@
 								<ul>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<b><span style="color: black">Google Hybrid</span></b><span style="color: black"> - The Hybrid view shows a map
-												depicting roads, parks, borders, and more, overlayed on
-												satellite imagery.</span>
+											<b><span style="color: black">Grayscale </span></b><span style="color: black"> - A simplified basemap showing roads, jurisdictional boundaries, land and major bodies of water in a grayscale format.</span>
 										</p>
 									</li>
 									<li>
 
 										<p class="MsoListParagraphCxSpMiddle">
-											<b><span style="color: black">Google Satellite </span></b><span style="color: black">- The Satellite view shows aerial
-												imagery of roads, parks, borders, and more.</span>
+											<b><span style="color: black">Streets </span></b><span style="color: black">- A colorful basemap highlighting major and minor roadways and showing topography and public lands.</span>
 										</p>
 									</li>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<b><span style="color: black">Google Streets </span></b><span style="color: black">- The Map view shows a map with a
-												traditional depiction of roads, parks, borders, and more.</span>
+											<b><span style="color: black">Black </span></b><span style="color: black">- A basic basemaps utilizing darker shades of gray to highlight roadways, waterbodies, and topography over a black background.</span>
 										</p>
 									</li>
 									<li>
 										<p class="MsoListParagraphCxSpMiddle">
-											<b><span style="color: black">Google Physical - </span></b><span style="color: black">This shows the topography and
-												physical features of the land along with major roads. </span>
+											<b><span style="color: black">Streets/Satellite  </span></b><span style="color: black">- A satellite imagery background with jurisdictional boundaries, roadways, and labels overlayed.</span>
+										</p>
+									</li>
+									<li>
+										<p class="MsoListParagraphCxSpMiddle">
+											<b><span style="color: black">Outdoors </span></b><span style="color: black">- A colorful basebap highlighting natural features, trails, and parks with topo lines depicting elevation contours.</span>
 										</p>
 									</li>
 									<li>
 										<p class="MsoListParagraphCxSpLast">
-											<b><span style="color: black">Open Street Map</span></b><span style="color: black"> - This option is a free, editable
-												source of geographic data, which is built similar to
-												Wikipedia. OSM has mapped some parts of the world not easily
-												available from other sources.</span>
-										</p>
+                                                                                        <b><span style="color: black">World Imagery </span></b><span style="color: black">- Satellite Imagery only.</span>
+                                                                                </p>
 									</li>
 								</ul>
 							</li>

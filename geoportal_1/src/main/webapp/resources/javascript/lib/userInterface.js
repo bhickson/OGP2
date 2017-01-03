@@ -208,12 +208,12 @@ OpenGeoportal.Structure = function() {
 						top : -10,
 						left : -30
 					});
-					jQuery('.WordSection1').scrollTo(document.getElementById('ugOverview'),0);
 					jQuery('#userGuide').dialog("open");
+					$('.WordSection1').scrollTo(0, document.getElementById('ugOverview'));
 				});
 			} else {
-                                jQuery('.WordSection1').scrollTo(document.getElementById('ugOverview'),0);
 				jQuery('#userGuide').dialog("open");
+				$('.WordSection1').scrollTo(0, document.getElementById('ugOverview'));
 			}
 			analytics.track("Help", "Show User Guide");
 		});
