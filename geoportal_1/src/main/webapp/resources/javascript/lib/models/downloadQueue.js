@@ -214,7 +214,7 @@ OpenGeoportal.Models.DownloadRequest = OpenGeoportal.Models.AbstractQueueItem.ex
 			_.each(failed, function(status){
 				failedIds.push(status.id);
 			});
-			text += "The following layers failed to download: " + failedIds.join(", ");
+			text += "The following layers failed to download: " + failedIds.join(", ") + "\nIt is possible that your download area is too large.";
 		}
 
 		var emailedIds = [];
