@@ -84,12 +84,18 @@ OpenGeoportal.ResultsCollection = Backbone.Collection.extend({
 				console.log([solrLayer["LayerId"], err]);
 			}
 			solrLayer.Location = locationParsed;
-				
-			arrModels.push(solrLayer);
-		});
 
-		return arrModels;
-	},
+	                // Collapse these values to "Paper Map".
+        	        var dType = solrLayer.DataType;
+                	dType = dType.replace(/\s/g, "").toLowerCase();
+	                if (dType === "scannedmap" || dType === "papermap") {
+        	            solrLayer.DataType = "Paper Map";
+                	}
+
+				arrModels.push(solrLayer);
+			});
+			return arrModels;
+		},
 	    
 	enableFetch: function() {
 	      this.fetchOn = true;

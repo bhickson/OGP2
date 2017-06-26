@@ -1366,6 +1366,10 @@ Repositories
                 -36px transparent;
 }
 
+.polimiIcon {
+	background: url("../media/ogp-institutions.png") no-repeat scroll -78px -35px transparent;
+}
+
 .columbiaIcon {
 	background: url("../media/src_columbia.png") no-repeat scroll -0px
 		-0px transparent;
