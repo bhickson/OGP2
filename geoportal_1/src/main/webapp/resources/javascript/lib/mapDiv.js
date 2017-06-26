@@ -1285,32 +1285,6 @@ OpenGeoportal.MapController = function() {
 		return rows;
 	};
 
-	this.startService = function(layerModel) {
-		// if layer has a startService value in the location field, try to start
-		// the service via the provided url
-		var requestObj = {};
-		requestObj.AddLayer = [ layerModel.get("qualifiedName") ];
-		requestObj.ValidationKey = "OPENGEOPORTALROCKS";
-		var params = {
-			url : layerModel.get("Location").serviceStart,
-			dataType : "jsonp",
-			data : requestObj,
-			type : "GET",
-			traditional : true,
-			statusCode : {
-				200 : function() {
-					jQuery("body").trigger(
-							layerModel.get("LayerId") + 'Exists');
-				},
-				500 : function() {
-					throw new Error("layer could not be added");
-				}
-			}
-		};
-
-		jQuery.ajax(params);
-	};
-
 	this.setWmsLayerInfo = function(model) {
 		var queryData = {
 			ogpid : model.get("LayerId")
@@ -1377,9 +1351,9 @@ OpenGeoportal.MapController = function() {
 		var dataType = layerModel.get("DataType").toLowerCase();
 
 		var userSLD = {};
-		// we need this for now, since the tilecache name and geoserver name for
-		// layers is different for Harvard layers
+		
 		var wmsName = layerModel.get("qualifiedName");
+
 		var userColor = layerModel.get("color");
 		var userWidth = layerModel.get("graphicWidth");
 		userSLD.layerName = wmsName;
@@ -1528,25 +1502,7 @@ OpenGeoportal.MapController = function() {
 		layerModel.set({
 			qualifiedName : qualifiedName
 		});
-		// tilecache and GeoServer names are different for Harvard layers
-		if (layerModel.get("Institution") === "Harvard") {
-			var tilecacheName = layerName.substr(layerName.indexOf(".") + 1);
-			tilecacheName = tilecacheName.substr(layerName.indexOf(":") + 1);
-			
-			layerModel.set({
-				tilecacheName : tilecacheName
-			});
-			
-			//see if used url matches the tilecache url
-			if (layerModel.get("Location").tilecache[0] === url){
-				layerName = layerModel.get("tilecacheName")
-			} else {
-				layerName = qualifiedName;
-			}
-		} else {
-			layerName = qualifiedName;
-		}
-
+	
 		return layerName;
 	};
 	
