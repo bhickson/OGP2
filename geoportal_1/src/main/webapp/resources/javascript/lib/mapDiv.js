@@ -1060,14 +1060,16 @@ OpenGeoportal.MapController = function() {
 				break
 			} 
 		};
-
+		
 		var layerId = layer.wmsParams.layers;
-
+		
 		if (typeof this !== "undefined") {
 			var mapObject = this;
+			console.log("previewed",this.previewed);
 			var layerModel = this.previewed.findWhere({
                                 qualifiedName : layerId
                         });
+			console.log("layerModel",layerModel)
 
 			// generate the query string
 			var layerId = layerModel.attributes.LayerId;
@@ -1502,6 +1504,8 @@ OpenGeoportal.MapController = function() {
 		layerModel.set({
 			qualifiedName : qualifiedName
 		});
+
+		layerName = qualifiedName;
 	
 		return layerName;
 	};
