@@ -64,7 +64,7 @@ OpenGeoportal.MapController = function() {
 		this.initBasemaps();
 		this.addMapToolbarElements();
 
-		var center = this.WGS84ToMercator(0, 0);
+		var center = this.WGS84ToMercator(-111.543, 34.464);
 		// set map position
 		this.setCenter(center);
 
@@ -160,10 +160,10 @@ OpenGeoportal.MapController = function() {
 	 * @returns {Number} - initial zoom level
 	 */
 	this.getInitialZoomLevel = function() {
-		var initialZoom = 1;
+		var initialZoom = 6;
 
 		if (jQuery('#' + this.containerDiv).parent().height() > 810) {
-			initialZoom = 2;
+			initialZoom = 6;
 			// TODO: this should be more sophisticated. width is also important
 			// initialZoom = Math.ceil(Math.sqrt(Math.ceil(jQuery('#' +
 			// this.containerDiv).parent().height() / 256)));

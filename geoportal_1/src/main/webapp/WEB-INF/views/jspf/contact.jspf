@@ -5,14 +5,16 @@
 
 	<div>
 		<h3>Project Management:</h3>
-		Patrick Florance, Manager of Geospatial Technology Services, UIT,
-		Tufts University
+	 	Geoportal Manager
+		<div>Office of Digital Innovation and Stewardship</div>
+		University of Arizona
 	</div>
-
+<!--
 	<div id="contactLogos">
 		<div class="gisLogo" title="GIS@Tufts"
 			onclick="location.href='http://gis.tufts.edu/'"></div>
 		<div class="itLogo" title="UIT"
 			onclick="location.href='http://uit.tufts.edu/'"></div>
 	</div>
+-->
 </div>

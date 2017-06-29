@@ -43,7 +43,7 @@ OpenGeoportal.Structure = function() {
 		this.resetHandler();
 		
 		// dialogs
-		this.aboutHandler();
+		//this.aboutHandler();
 		this.contactHandler();
 		this.userHelpHandler();
 

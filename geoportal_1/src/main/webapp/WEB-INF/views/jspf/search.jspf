@@ -1,7 +1,7 @@
 
 <div id="searchBox" class="searchBox shadowDownOuter">
 	<form id="searchForm" onsubmit="return false;">
-		<div id="searchCol1" class="searchCol">
+		<div id="searchCol2" class="searchCol">
 			<div id="geosearchDiv"
 				class="basicSearch whereBox searchFormRow searchRow1">
 				<label for="whereField"><span class="labelText">Where:</span></label>
@@ -19,12 +19,12 @@
 				<div id="topicDropdown" class="searchFormInput"></div>
 			</div>
 		</div>
-		<div id="searchCol2" class="searchCol">
-			<div class="basicSearch whatBox searchFormRow">
+		<div id="searchCol1" class="searchCol">
+			<div class="basicSearch keywordBox searchFormRow">
 				<label for="whatField"> <span class="labelText">What:</span>
 				</label> <input id="whatField" type="search" />
 			</div>
-			<div class="advancedSearch searchFormRow searchRow1">
+			<div class="advancedSearch searchFormRow keywordBox searchRow1">
 				<label for="advancedKeywordText">Keyword:</label> <input
 					name="advancedKeywordText" type="search" class="searchFormInput"
 					id="advancedKeywordText" />

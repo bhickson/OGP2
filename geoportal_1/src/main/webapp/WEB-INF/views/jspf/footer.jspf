@@ -1,17 +1,17 @@
 <div id="footer">
-	<!-- <div id="footerLogos">
-		<div class="institutionLogo" title="Tufts"
-			onclick="location.href='http://tufts.edu'"></div>
-		<div class="itLogo infoLinks" title="TTS"
+	<div id="footerLogos">
+		<div class="institutionLogo" title="University of Arizona Libraries" onclick="location.href='http://library.arizona.edu'"></div>
+		
+		<!--<div class="itLogo infoLinks" title="TTS"
 			onclick="location.href='https://it.tufts.edu/'">Technology
 			Services</div>
 		<div class="gisLogo infoLinks" title="GIS@Tufts"
-			onclick="location.href='http://gis.tufts.edu'">GIS@Tufts.edu</div>
+			onclick="location.href='http://gis.tufts.edu'">GIS@Tufts.edu</div>-->
 		
-	</div>-->
-	<span id="footerInfo"> <span id="ogpLink" class="infoLinks"
-		onclick="location.href='http://www.opengeoportal.org'">Powered
-			by OpenGeoportal</span>
-	</span>
+	</div>
+	<div id="footerInfo">
+		<a id="ogpLink" href="http://www.opengeoportal.org"> Powered by 
+			<img src="../resources/media/OGP_logo.png" id="ogpImage">
+		</a>
+	</div>
 </div>
-
