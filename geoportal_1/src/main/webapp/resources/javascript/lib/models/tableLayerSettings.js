@@ -23,13 +23,13 @@ if (typeof OpenGeoportal.Models == 'undefined') {
  */
 
 OpenGeoportal.Models.RowSetting = Backbone.Model.extend({
-	// idAttribute: "LayerId",
+	// idAttribute: "layer_slug_s",
 	defaults : {
 		expanded : false
 	},
 	validate : function(model) {
-		if (!model.changed.has("LayerId") || !model.changed.has("expanded")) {
-			return "Both 'layerId' and 'expanded' parameters required";
+		if (!model.changed.has("layer_slug_s") || !model.changed.has("expanded")) {
+			return "Both 'layerSlug' and 'expanded' parameters required";
 		}
 		if (typeof model.changed.expanded != "boolean") {
 			return "'expanded' must be a boolean value";
@@ -43,16 +43,16 @@ OpenGeoportal.Models.RowSetting = Backbone.Model.extend({
 OpenGeoportal.TableRowSettings = Backbone.Collection.extend({
 	model : OpenGeoportal.Models.RowSetting,
 
-	setExpandState : function(currentLayerId, state) {
+	setExpandState : function(currentlayer_slug_s, state) {
 
 		var layerModel = this.findWhere({
-			LayerId : currentLayerId
+			layer_slug_s : currentlayer_slug_s
 		});
 
 		if (typeof layerModel === "undefined") {
 			if (state) {
 				this.add({
-					LayerId : currentLayerId,
+					layer_slug_s : currentlayer_slug_s,
 					expanded : true
 				});
 			}
@@ -66,9 +66,9 @@ OpenGeoportal.TableRowSettings = Backbone.Collection.extend({
 			}
 		}
 	},
-	isExpanded : function(layerId) {
+	isExpanded : function(layerSlug) {
 		var layerModel = this.findWhere({
-			LayerId : layerId
+			layer_slug_s : layerSlug
 		});
 
 		if (typeof layerModel === "undefined") {

@@ -44,7 +44,7 @@ OpenGeoportal.Models.PreviewLayer = OpenGeoportal.Models.ProtocolAware.extend({
 	// browseGraphic, previewUrl
 	supportedAttributesByType : [ {
 		type : "wms",
-		discriminator : "DataType",
+		discriminator : "layer_geom_type_s",
 		attributes : {
 			raster : {
 				getFeature : false,
@@ -102,39 +102,40 @@ OpenGeoportal.Models.PreviewLayer = OpenGeoportal.Models.ProtocolAware.extend({
 	} ],
 
 	setPreviewType : function() {
-		if (!this.has("Location")){
+		if (!this.has("dct_references_s")){
 			return "noPreview";
 		}
-		var locationObj = this.get("Location");
+		var referencesObj = this.get("dct_references_s");
 		
-		if (_.isEmpty(locationObj)){
+		if (_.isEmpty(referencesObj)){
 			return "noPreview";
 		}
 		var previewType = "default";
 
-		if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(locationObj,
-				[ "wms" ])) {
+		if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(
+				referencesObj,
+				[ "http://www.opengis.net/def/serviceType/ogc/wms" ])) {
 			previewType = "wms";
 		} else if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(
-				locationObj, [ "arcgisrest" ])) {
-			previewType = "arcgisrest";
+				referencesObj, [ "urn:x-esri:serviceType:ArcGIS#TiledMapLayer" ])) {
+			previewType = "arcgisrest";  // FIXME
 		} else if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(
-				locationObj, [ "tilecache" ])) {
+				referencesObj, [ "urn:x-esri:serviceType:ArcGIS#ImageMapLayer" ])) {
+			previewType = "arcgisrest";  // FIXME
+		} else if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(
+				referencesObj, [ "tilecache" ])) {
 			// if we're here, the location field has a tilecache value, but no
 			// wms value or arcgisrest value
 			previewType = "tilecache";
 		} else if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(
-				locationObj, [ "imagecollection" ])) {
+				referencesObj, [ "imagecollection" ])) {
 			// {"imageCollection": {"path": "furtwangler/17076013_03_028a.tif",
 			// "url": "http://gis.lib.berkeley.edu:8080/geoserver/wms",
 			// "collectionurl":
 			// "http://www.lib.berkeley.edu/EART/mapviewer/collections/histoposf"}}
 			previewType = "imagecollection";
 		} else if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(
-				locationObj, [ "arcgisrest" ])) {
-			previewType = "arcgisrest";
-		} else if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(
-				locationObj, [ "externalLink" ])) {
+				referencesObj, [ "externalLink" ])) {
 			previewType = "externalLink";
 		}
 
@@ -194,21 +195,21 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 	},
 	
 	changeLayerStyle : function(model, val, options) {
-		var layerId = model.get("LayerId");
+		var layerSlug = model.get("layer_slug_s");
 		// tell map to change the linewidth/pointsize/borderwidth for this layer
 		// this event should be attached to the model, so it only fires once;
 		// better yet, have a map view that listens for this change event
 		jQuery(document).trigger("map.styleChange", {
-			LayerId : layerId
+			layer_slug_s : layerSlug
 		});
 	},
 	
 	changeLayerOpacity : function(model, val, options) {
 		var value = model.get("opacity");
-		var layerId = model.get("LayerId");
+		var layerSlug = model.get("layer_slug_s");
 		// tell map to change the opacity for this layer
 		jQuery(document).trigger("map.opacityChange", {
-			LayerId : layerId,
+			layer_slug_s : layerSlug,
 			opacity : value
 		});
 	},
@@ -217,17 +218,17 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 		this.sort();
 
 		var value = model.get("zIndex");
-		var layerId = model.get("LayerId");
+		var layerSlug = model.get("layer_slug_s");
 		// tell map to change the zIndex for this layer
 		jQuery(document).trigger("map.zIndexChange", {
-			LayerId : layerId,
+			layer_slug_s : layerSlug,
 			zIndex : value
 		});
 	},
 	
 	changeGetFeatureState : function(model, val, options) {
 		var value = model.get("getFeature");
-		var layerId = model.get("LayerId");
+		var layerSlug = model.get("layer_slug_s");
 		// tell map to change the getFeature status for this layer
 		var mapEvent = null;
 		if (value) {
@@ -239,7 +240,7 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 			mapEvent = "map.getFeatureInfoOff";
 		}
 		jQuery(document).trigger(mapEvent, {
-			LayerId : layerId
+			layer_slug_s : layerSlug
 		});
 		
 		this.checkGetFeatureState();
@@ -267,15 +268,15 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 	changePreview : function(model, val, options) {
 		// console.log(arguments);
 		var preview = model.get("preview");
-		var layerId = model.get("LayerId");
+		var layerSlug = model.get("layer_slug_s");
 		if (preview === "on") {
 			jQuery(document).trigger("previewLayerOn", {
-				LayerId : layerId
+				layer_slug_s : layerSlug
 			});// show layer on map
 		} else {
 
 			jQuery(document).trigger("previewLayerOff", {
-				LayerId : layerId
+				layer_slug_s : layerSlug
 			});
 			// also set getFeature state to off.
 			if (model.has("getFeature")) {
@@ -284,12 +285,11 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 				});
 			}
 		}
-		// console.log(model.get("LayerId") + " changed preview to " + preview);
 	},
 
-	isPreviewed : function(layerId) {
+	isPreviewed : function(layerSlug) {
 		var currModel = this.findWhere({
-			LayerId : layerId
+			layer_slug_s : layerSlug
 		});
 		var stateVal = false;
 		if (typeof currModel !== "undefined") {
@@ -302,8 +302,8 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 	},
 
 	getLayerModel : function(resultModel) {
-		var layerId = resultModel.get("LayerId");
-		var arrModel = this.where({LayerId: layerId});
+		var layerSlug = resultModel.get("layer_slug_s");
+		var arrModel = this.where({layer_slug_s: layerSlug});
 		var layerModel;
 		if (arrModel.length > 1){
 			throw new Error("There are " + arrModel.length + " layers in the previewed layers collection.  This should never happen.");
@@ -313,7 +313,7 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 		} else {
 			this.add(resultModel.attributes);
 			layerModel = this.findWhere({
-				LayerId : layerId
+				layer_slug_s : layerSlug
 			});
 		}
 		return layerModel;
@@ -321,12 +321,12 @@ OpenGeoportal.PreviewedLayers = Backbone.Collection.extend({
 
 	clearGetFeature : function(turnOnModel) {
 		// console.log("clearGetFeature");
-		var layerId = "dummy";
+		var layerSlug = "dummy";
 		if (typeof turnOnModel !== "undefined") {
-			layerId = turnOnModel.get("LayerId");
+			layerSlug = turnOnModel.get("layer_slug_s");
 		}
 		this.each(function(model) {
-			if (model.get("LayerId") === layerId) {
+			if (model.get("layer_slug_s") === layerSlug) {
 				return;
 			}
 			if (model.get("getFeature")) {

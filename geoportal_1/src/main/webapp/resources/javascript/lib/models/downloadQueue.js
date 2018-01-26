@@ -36,31 +36,34 @@ OpenGeoportal.Models.AbstractQueueItem = Backbone.Model.extend({
 	},
 
 	submitRequest : function() {
+		console.log("submitRequest FIRED");
 		var that = this;
 		var params = {
-				url : this.get("requestUrl"),
-				data : this.getRequestParams(),
-				dataType : "json",
-				type : "POST",
-				success : function(data) {
-					that.set({
-						requestId : data.requestId,
-						status: "PROCESSING"
-					});
-				},
-				error : function() {
-					that.set({
-						status: "COMPLETE_FAILED"
-					});
-				}
-			};
+			url : this.get("requestUrl"),
+			data : this.getRequestParams(),
+			dataType : "json",
+			type : "POST",
+			success : function(data) {
+				that.set({
+					requestId : data.requestId,
+					status: "PROCESSING"
+				});
+			},
+			error : function() {
+				that.set({
+					status: "COMPLETE_FAILED"
+				});
+			}
+		};
+		console.log("params: ", params);
 
-			jQuery.ajax(params);
+		jQuery.ajax(params);
 
 	},
 
 	handleStatusChange : function() {
 		var status = this.get("status");
+		console.log("handleStatusChange: ", status);
 		// do some stuff depending on the item's status
 		if ((status == "COMPLETE_SUCCEEDED")
 				|| (status == "COMPLETE_PARTIAL")) {
@@ -85,11 +88,13 @@ OpenGeoportal.Models.AbstractQueueItem = Backbone.Model.extend({
 	},
 
 	handleDownload : function() {
+		console.log("handleDownload FIRED");
 		var statuses = this.get("layerStatuses");
 		var doDownload = false;
 		var i = null;
 
 		if (typeof statuses !== "undefined") {
+			console.log("statuses: ", statuses);	
 			for (i in statuses) {
 				var responseType = statuses[i].responseType;
 				if (responseType === "download") {
@@ -157,14 +162,16 @@ OpenGeoportal.Models.DownloadRequest = OpenGeoportal.Models.AbstractQueueItem.ex
 			var layerRequests = [];
 			_.each(layerModels, function(model) {
 				layerRequests.push({
-					layerId : model.get("LayerId"),
+					layerSlug : model.get("layer_slug_s"),
 					format : model.get("requestedFormat")
 				});
 			});
 
 			requestObj.layers = layerRequests;
 
-			requestObj.bbox = requestObj.bbox.toBBoxString();
+			var obbox = requestObj.bbox
+			requestObj.bbox = obbox.getWest()+","+obbox.getEast()+","+obbox.getNorth()+","+obbox.getSouth(); // W E N S
+			//requestObj.bbox = requestObj.bbox.toBBoxString();
 			
 			return JSON.stringify(requestObj);
 
@@ -251,7 +258,7 @@ validate : function(attrs, options) {
 
 });
 
-OpenGeoportal.Models.GeoCommonsRequest = OpenGeoportal.Models.AbstractQueueItem.extend({
+/*OpenGeoportal.Models.GeoCommonsRequest = OpenGeoportal.Models.AbstractQueueItem.extend({
 
 	defaults : {
 		requestId : "",
@@ -325,7 +332,7 @@ OpenGeoportal.Models.GeoCommonsRequest = OpenGeoportal.Models.AbstractQueueItem.
 		//nop
 		alert("failed to export layers to GeoCommons!");
 	}
-});
+});*/
 
 OpenGeoportal.Models.ImageRequest = OpenGeoportal.Models.AbstractQueueItem.extend({
 /*

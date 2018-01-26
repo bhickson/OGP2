@@ -35,10 +35,11 @@ OpenGeoportal.Views.CartActionView = Backbone.View.extend({
 		var that = this;
 
 		var arrItems = this.collection.filter(function(model) {
-
+			amod = model
+			filterMod = that.cartFilter(amod);
 			return that.cartFilter(model);
-
 		});
+		
 		return arrItems;
 	},
 

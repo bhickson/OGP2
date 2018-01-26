@@ -45,7 +45,7 @@ OpenGeoportal.Views.Query = Backbone.View
 						}).addClass("searchButton");
 				
 				this.solrAutocomplete(
-						jQuery("#advancedOriginatorText"), "OriginatorSort");
+						jQuery("#advancedOriginatorText"), "dc_creator_sm");
 				
 				this.createInstitutionsMenu();
 				this.createDataTypesMenu();

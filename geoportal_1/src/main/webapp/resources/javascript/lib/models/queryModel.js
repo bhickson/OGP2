@@ -180,7 +180,7 @@ OpenGeoportal.Models.QueryTerms = Backbone.Model.extend({
 
 		var dateFrom = this.get("dateFrom");
 		var dateTo = this.get("dateTo");
-		solr.addFilter(solr.createDateRangeFilter("ContentDate",
+		solr.addFilter(solr.createDateRangeFilter("solr_year_i",
 				dateFrom, dateTo));
 
 		var dataTypes = this.get("dataType");// columnName,
@@ -198,19 +198,19 @@ OpenGeoportal.Models.QueryTerms = Backbone.Model.extend({
             dataTypes = _.without(dataTypes, "Paper Map");
         }
 
-		solr.addFilter(solr.createFilter("DataType", dataTypes,
+		solr.addFilter(solr.createFilter("layer_geom_type_s", dataTypes,
 				"{!tag=dt}"));
 
 		var repositories = this.get("repository");
 		//console.log(repositories);
-		solr.addFilter(solr.createFilter("Institution", repositories,
+		solr.addFilter(solr.createFilter("dct_provenance_s", repositories,
 				"{!tag=insf}"));
 
 		solr.addFilter(solr.createAccessFilter(this.get("displayRestrictedAdvanced")));
 
 		var originator = this.get("originator");
 		// TODO: should this be a filter?
-		solr.addFilter(solr.createFilter("Originator", originator,
+		solr.addFilter(solr.createFilter("dc_creator_sm", originator,
 				null, "AND"));
 
 		var isoTopic = this.get("isoTopic");

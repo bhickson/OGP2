@@ -28,36 +28,36 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 
 	this.viewMetadata = function(model) {
 		var location = model.get("Location");
-		var layerId = model.get("LayerId");
+		var layerSlug = model.get("layer_slug_s");
 		// should store this somewhere else; some sort of
 		// config
 		var values = [ "metadataLink", "purl", "libRecord" ];
 		if (OpenGeoportal.Utility.hasLocationValue(location, values)) {
 			// display external metadata in an iframe
 			var url = OpenGeoportal.Utility.getLocationValue(location, values);
-			this.viewExternalMetadata(layerId, url);
+			this.viewExternalMetadata(layerSlug, url);
 		} else {
-			this.viewMetadataFromOgp(layerId);
+			this.viewMetadataFromOgp(layerSlug);
 		}
 	};
 	
 
-	this.viewExternalMetadata = function(layerId, url) {
+	this.viewExternalMetadata = function(layerSlug, url) {
 		var document = this.template.genericIframe({
 			iframeSrc : url,
 			iframeClass : "metadataIframe"
 		});
-		var dialog$ = this.renderMetadataDialog(layerId, document);
+		var dialog$ = this.renderMetadataDialog(layerSlug, document);
 		dialog$.dialog("open");
 	};
 	
-	this.viewMetadataFromOgp = function(layerId){
+	this.viewMetadataFromOgp = function(layerSlug){
 		try {
 			
 			var document = null;
 			var params = {
 					url: "getMetadata",
-					data: {id: layerId},
+					data: {id: layerSlug},
 					async: false,
 					success: function(data){
 						document = data;
@@ -65,8 +65,8 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 			}
 			jQuery.ajax(params);
 
-			var dialog$ = this.renderMetadataDialog(layerId, document);
-			this.addMetadataDownloadButton(dialog$, layerId);
+			var dialog$ = this.renderMetadataDialog(layerSlug, document);
+			this.addMetadataDownloadButton(dialog$, layerSlug);
 			this.addScrollMetadataToTop();
 
 			dialog$.dialog("open");
@@ -77,7 +77,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 	};
 
 
-	this.renderMetadataDialog = function(layerId, document) {
+	this.renderMetadataDialog = function(layerSlug, document) {
 		var dialogId = "metadataDialog";
 		if (typeof jQuery('#' + dialogId)[0] == 'undefined') {
 			jQuery('#dialogs').append(this.template.genericDialogShell({
@@ -90,7 +90,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		// can't pass the document directly into the template; it just evaluates
 		// as a string
 		metadataDialog$.html(this.template.metadataContent({
-			layerId : layerId
+			layerSlug : layerSlug 
 		})).find("#metadataContent").append(document);
 		try {
 			metadataDialog$.dialog("destroy");
@@ -131,7 +131,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		});
 	};
 
-	this.addMetadataDownloadButton = function(metadataDialog$, layerId) {
+	this.addMetadataDownloadButton = function(metadataDialog$, layerSlug) {
 		var buttonId = "metadataDownloadButton";
 		if (jQuery("#" + buttonId).length == 0) {
 			var params = {};
@@ -146,17 +146,17 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		jQuery("#" + buttonId).off();
 		var that = this;
 		jQuery("#" + buttonId).on("click", function() {
-			that.downloadMetadata(layerId);
+			that.downloadMetadata(layerSlug)
 		});
 	};
 
 
 
-	this.downloadMetadata = function downloadMetadata(layerId) {
-		var iframeSource = "getMetadata/xml?download=true&id=" + layerId;
+	this.downloadMetadata = function downloadMetadata(layerSlug) {
+		var iframeSource = "getMetadata/xml?download=true&id=" + layerSlug;
 		this.iframeDownload("metadataDownloadIframe", iframeSource);
 
-		// this.analytics.track("Metadata", "Download Metadata", layerId);
+		// this.analytics.track("Metadata", "Download Metadata", layerSlug);
 	};
 
 	this.iframeDownload = function(iframeClass, iframeSrc) {

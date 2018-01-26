@@ -219,7 +219,7 @@ OpenGeoportal.Structure = function() {
 			var container$ = jQuery("#container");
 			
 			var oldContainerWidth = container$.width();
-			var newContainerWidth = Math.max(jQuery(window).width(), minWidth);
+			var newContainerWidth = Math.max(jQuery(window).width()-1, minWidth);
 
 			var oldContainerHeight = container$.height();
 			var newContainerHeight = Math.max(jQuery(window).outerHeight(true) - fixedHeights, minHeight);

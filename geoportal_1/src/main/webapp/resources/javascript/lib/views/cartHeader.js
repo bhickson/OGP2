@@ -86,7 +86,7 @@ OpenGeoportal.Views.CartHeader = Backbone.View.extend({
 			that.collection.each(function(model){
 				var isTrue = false;
 				_.each(arrRows, function(appModel){
-					if (model.get("LayerId") === appModel.get("LayerId")){
+					if (model.get("layer_slug_s") === appModel.get("layer_slug_s")){
 						model.set({actionAvailable: "yes"});
 						isTrue = true;
 					} 

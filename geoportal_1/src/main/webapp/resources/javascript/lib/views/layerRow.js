@@ -13,7 +13,7 @@ if (typeof OpenGeoportal.Views === 'undefined') {
 OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	tagName : "div",
 	className : "tableRow",
-	attributes : function() { return {"layerid": this.model.get("LayerId") } },
+	attributes : function() { return {"layerid": this.model.get("layer_slug_s") } },
 	events : {
 		"click .viewMetadataControl" : "viewMetadata",
 		"click .previewControl" : "togglePreview",
@@ -96,10 +96,10 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	
 	getPreviewLink: function(){
 		var url = null;
-		if (this.model.has("Location")){
-			if (typeof this.model.get("Location").previewLink !== "undefined"){
+		if (this.model.has("dct_references_s")){
+			if (typeof this.model.get("dct_references_s").previewLink !== "undefined"){
 				//go to the previewLink url
-				url = this.model.get("Location").previewLink;
+				url = this.model.get("dct_references_s").previewLink;
 			}
 		}
 		return url;
@@ -109,7 +109,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 		var url = null;
 		var model = this.model;
 		//try to assemble a link from the config
-		var rep = OpenGeoportal.Config.Repositories.findWhere({id: model.get("Institution").toLowerCase()});
+		var rep = OpenGeoportal.Config.Repositories.findWhere({id: model.get("dct_provenance_s").toLowerCase()});
 				
 		if (typeof rep == "undefined"){
 				throw new Error("Repository could not be found");
@@ -128,7 +128,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 			if (nodeType == "ogp1"){
 //http://calvert.hul.harvard.edu:8080/opengeoportal/openGeoPortalHome.jsp?layer=HARVARD.SDE.GLB_INWTRA&minX=-557.578125&minY=-85.051128779807&maxX=557.578125&maxY=85.051128779807
 				var params = {
-						layer: model.get("LayerId"),
+						layer: model.get("layer_slug_s"),
 						minX: model.get("MinX"),
 						minY: model.get("MinY"),
 						maxX: model.get("MaxX"),
@@ -140,14 +140,14 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 //http://localhost:8080/ogp/?ogpids=HARVARD.SDE.GLB_BAILEY&bbox=-180%2C-85.051129%2C180%2C85.051129
 				var bbox = [ model.get("MinX"), model.get("MinY"),model.get("MaxX"), model.get("MaxY")].join();
 				var params = {
-						ogpids: model.get("LayerId"),
+						ogpids: model.get("layer_slug_s"),
 						bbox: bbox
 						};
 				url += "/?" + jQuery.param(params);
 
 			} else if (nodeType == "geoweb"){
 
-					url += "/layer/" + model.get("LayerId");
+					url += "/layer/" + model.get("layer_slug_s");
 	
 			}
 			
@@ -162,7 +162,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 
 	updateView: function(e, data){
 
-		if (this.model.get("LayerId") === data.LayerId){
+		if (this.model.get("layer_slug_s") === data.layer_slug_s){
 			if (e.type === "previewLayerOff"){
 				if (this.model.has("hidden")){
 					this.model.set({hidden: false});
@@ -175,9 +175,9 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	},
 	
 	togglePreview : function(e) {
-		var layerId = this.model.get("LayerId");
+		var layerSlug = this.model.get("layer_slug_s");
 		var model = this.previewed.findWhere({
-			LayerId : layerId
+			layer_slug_s : layerSlug
 		});
 		if (typeof model === "undefined") {
 			var layerAttr = null;
@@ -211,9 +211,9 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	},
 
 	getModelFromPreviewed: function(){
-		var layerId = this.model.get("LayerId");
+		var layerSlug = this.model.get("layer_slug_s");
 		var model = this.previewed.findWhere({
-			LayerId : layerId
+			layer_slug_s : layerSlug
 		});
 		if (typeof model === "undefined") {
 			// get the attributes for the layer retrieved from solr
@@ -231,7 +231,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 			// "model" to be called
 			this.previewed.add(_.clone(layerAttr));
 			var newmodel = this.previewed.findWhere({
-				LayerId : layerId
+				layer_slug_s : layerSlug
 			});
 			return newmodel;
 		} else {
@@ -373,11 +373,13 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	
 	showBounds : function() {
 		var currModel = this.model;
+		// The solr_geom bbox is in the format 'Envelope(xmin xmax ymax ymin)'.  Need to parse
+		bb_list = currModel.get("solr_geom").split("(")[1].split(")")[0].split(" ");
 		var bbox = {};
-		bbox.south = currModel.get("MinY");
-		bbox.north = currModel.get("MaxY");
-		bbox.west = currModel.get("MinX");
-		bbox.east = currModel.get("MaxX");
+		bbox.south = parseFloat(bb_list[3]);
+		bbox.north = parseFloat(bb_list[2]);
+		bbox.west =  parseFloat(bb_list[0]);
+		bbox.east =  parseFloat(bb_list[1]);
 		jQuery(document).trigger("map.showBBox", bbox);
 	},
 	

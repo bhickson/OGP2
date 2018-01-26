@@ -175,7 +175,7 @@ OpenGeoportal.Solr = function() {
 		}
 		if (column === null) {
 			column = this.SortColumn;
-		} else if (_.contains([ "score", "ContentDate", "Access" ], column)) {
+		} else if (_.contains([ "score", "solr_year_i", "dc_rights_s" ], column)) {
 			// nothing to do, sortColumn
 			// doesn't need adjustment
 		} else {
@@ -207,10 +207,11 @@ OpenGeoportal.Solr = function() {
 	this.MetadataRequest = "FgdcText";
 	this.CountRequest = "CountOnly";
 
-	this.SearchRequestColumns = [ "Name", "Institution", "Access", "DataType",
-			"LayerDisplayName", "Publisher", "GeoReferenced", "Originator",
-			"Location", "MinX", "MaxX", "MinY", "MaxY", "ContentDate",
-			"LayerId", "score", "WorkspaceName", "CollectionId", "Availability" ];
+	this.SearchRequestColumns = [ "layer_id_s", "dct_provenance_s", "dc_rights_s",
+        		              "layer_geom_type_s", "dc_title_s", "dc_publisher_s",
+				      "dc_creator_sm", "dct_references_s", "solr_geom",
+				      "dct_issued_s", "layer_slug_s", "uuid", "score",
+				      "dct_isPartOf_sm", "dc_type_s", "dc_format_s"]
 
 	// this function returns a Solr fl clause specifying the columns to return
 	// for the passed request
@@ -219,7 +220,7 @@ OpenGeoportal.Solr = function() {
 	this.getReturnedColumns = function getReturnedColumns(requestType) {
 		var returnedColumns = "";
 		if (requestType == this.MetadataRequest) {
-			returnedColumns = "LayerId,FgdcText";
+			returnedColumns = "layer_slug_s,FgdcText";
 		} else if (requestType == this.CountRequest) {
 			returnedColumns = "";
 		} else if (requestType == this.SearchRequest) {
@@ -233,11 +234,11 @@ OpenGeoportal.Solr = function() {
 	};
 
 	this.getURL = function() {
-
 		var query = jQuery.param(this.getSearchParams(), true);
 		return this.getServerName() + "?" + query;
 
 	};
+
 
 	/***************************************************************************
 	 * Keyword/text components
@@ -429,10 +430,10 @@ OpenGeoportal.Solr = function() {
 	 */
 	this.createAccessFilter = function(arrDisplayRestricted) {
 
-		var accessFilter = this.createFilter("Institution",
+		var accessFilter = this.createFilter("dct_provenance_s",
 				arrDisplayRestricted);
 		if (accessFilter.length > 0) {
-			accessFilter += " OR Access:Public";
+			accessFilter += " OR dc_rights_s:Public";
 		}
 		return accessFilter;
 	};
@@ -498,7 +499,7 @@ OpenGeoportal.Solr = function() {
 	// values in previous version.
 	this.LayerWithinMap = {
 		term : "LayerWithinMap",
-		boost : 80.0
+		boost : 10.0
 	};
 
 	this.LayerMatchesScale = {
@@ -507,12 +508,12 @@ OpenGeoportal.Solr = function() {
 	};
 	this.LayerMatchesCenter = {
 		term : "LayerMatchesCenter",
-		boost : 15.0
+		boost : 2.0
 	};
 
 	this.LayerAreaIntersection = {
 		term : "LayerAreaIntersection",
-		boost : 30.0
+		boost : 0.5
 	};
 
 	// all we need is "bounds", which in the application is the map extent
@@ -524,19 +525,19 @@ OpenGeoportal.Solr = function() {
 		 */
 		// bf clauses are additive
 		// var area = this.getBoundsArea(bounds);
-		var bf_array = [
-				this.classicLayerMatchesArea(bounds) + "^"
-						+ this.LayerMatchesScale.boost,
-				this.classicLayerAreaIntersectionScore(bounds) + "^"
-						+ this.LayerAreaIntersection.boost,
-				this.classicCenterRelevancyClause() + "^"
-						+ this.LayerMatchesCenter.boost,
-				this.classicLayerWithinMap(bounds) + "^"
-						+ this.LayerWithinMap.boost ];
+		var bq_array = [
+				this.classicLayerWithinMap(bounds) + "^" + this.LayerWithinMap.boost,
+				this.getCenterRelevancyQuery() + "^" + this.LayerMatchesCenter.boost
+				];
+		
+		var intersectionQueries = this.layerBboxIntersectionQueries(bounds);
+                for (i=0; i<intersectionQueries.length; i++) {
+			bq_array.push(intersectionQueries[i]);
+		}
 		var params = {
-			bf : bf_array,
-			fq : [ this.getIntersectionFilter() ],
-			intx : this.getIntersectionFunction(bounds)
+			bq : bq_array
+			//fq : [ this.getIntersectionFilter() ],
+			//intx : this.getIntersectionFunction(bounds)
 		};
 
 		return params;
@@ -598,6 +599,7 @@ OpenGeoportal.Solr = function() {
 		return layerMatchesCenter;
 	};
 
+	/*
 	this.classicCenterRelevancyClause = function() {
 		var center = this.getCenter();
 		var clause = "sum("
@@ -606,8 +608,21 @@ OpenGeoportal.Solr = function() {
 		clause += this.layerNearCenterClause(center.centerY, "MinY", "MaxY")
 				+ ")";
 		return clause;
-	};
+	};*/
 
+	this.getCenterRelevancyQuery = function() {
+		var center = this.getCenter();
+		
+		centerX = center.centerX;
+		centerY = center.centerY;
+		
+		query = '(solr_geom:"Contains(ENVELOPE(';
+		query +=  + centerX + ', ' + centerX + ', ' + centerY + ', ' + centerY;
+		query += '))")';
+		
+		return query
+	};
+	
 	/**
 	 * return a search element to boost the scores of layers whose scale matches
 	 * the displayed map scale specifically, it compares their area
@@ -691,6 +706,44 @@ OpenGeoportal.Solr = function() {
 		return clause;
 	};
 
+	this.layerBboxIntersectionQueries = function(bounds) {
+		var mapMaxX = bounds.maxX;
+		var mapMinX = bounds.minX;
+		var mapMinY = bounds.minY;
+		var mapMaxY = bounds.maxY;
+
+		var stepCount = 3;                              // using a 3x3 grid
+
+		var mapDeltaX = Math.abs(mapMaxX - mapMinX);
+
+		var mapXStepSize = mapDeltaX / (stepCount);// + 1.);
+
+		var mapDeltaY = Math.abs(mapMaxY - mapMinY);
+
+		var mapYStepSize = mapDeltaY / (stepCount);// + 1.);
+
+		var queries = []
+		for (var i = 0; i < stepCount; i++) {           //iterate over rows in grid
+
+			for (var j = 0; j < stepCount; j++) {   //iterate over columns in grid
+				var query = ""
+					subMinX = mapMinX + (i * mapXStepSize);
+				subMaxX = mapMinX + ((i+1) * mapXStepSize);
+				subMinY = mapMinY + (j * mapYStepSize);
+				subMaxY = mapMinY + ((j+1) * mapYStepSize);
+
+
+				query += '(solr_geom:"Intersects(ENVELOPE(';
+				query += subMinX + ', ' + subMaxX + ', ' + subMaxY + ', ' + subMinY;
+				query += '))")';
+				query += "^" + this.LayerAreaIntersection.boost
+
+					queries.push(query);
+			}
+		}
+		return queries
+	};
+
 	/**
 	 * compute a score for layers within the current map the layer's MinX and
 	 * MaxX must be within the map extent in X and the layer's MinY and MaxY
@@ -716,7 +769,9 @@ OpenGeoportal.Solr = function() {
 		layerWithinMap += "map(MaxY," + mapMinY + "," + mapMaxY + ",1,0))";
 		layerWithinMap += ",4,4,1,0),0)";
 
-		return layerWithinMap;
+		mapContains = '(solr_geom:"IsWithin(ENVELOPE(' + mapMinX + ', ' + mapMaxX + ', ' + mapMaxY + ', ' + mapMinY + '))")';
+		//return layerWithinMap;
+		return mapContains
 	};
 
 	// Helpers
@@ -771,7 +826,7 @@ OpenGeoportal.Solr = function() {
 			url : url,
 			dataType : 'jsonp',
 			jsonp : 'json.wrf',
-			timeout : 5000,
+			timeout : 10000,
 			crossDomain : true,
 			success : function(data) {
 				successFunction(data);
@@ -796,9 +851,9 @@ OpenGeoportal.Solr = function() {
 	// Solr server
 	
 	
-	this.getArbitraryParams = function(layerId, request) {
+	this.getArbitraryParams = function(layerSlug, request) {
 		var params = {
-			q : this.createFilter("LayerId", layerId),
+			q : this.createFilter("layer_slug_s", layerSlug),
 			fl : this.getReturnedColumns(request),
 			wt : "json"
 		};
@@ -806,8 +861,8 @@ OpenGeoportal.Solr = function() {
 		return params;
 	};
 	
-	this.getMetadataParams = function(layerId) {
-		return this.getArbitraryParams(layerId, this.MetadataRequest);
+	this.getMetadataParams = function(layerSlug) {
+		return this.getArbitraryParams(layerSlug, this.MetadataRequest);
 	};
 	
 
@@ -826,12 +881,12 @@ OpenGeoportal.Solr = function() {
 	};
 
 	// returns the solr query params to obtain a layer info from the Solr server
-	// given a layerId, array of layerId's, or solr collectionId
+	// given a layerSlug, array of layerSlug's, or solr collectionId
 	this.getInfoFromIdParams = function getInfoFromLayerIdQuery(type, value) {
 		if (type === "layers") {
-			var filter = this.createFilter("LayerId", value)
+			var filter = this.createFilter("layer_slug_s", value)
 		} else if (type === "collection") {
-			var filter = this.createFilter("CollectionId", value)
+			var filter = this.createFilter("dct_isPartOf_sm", value)
 		}
 
 		var infoParams = {
@@ -843,8 +898,7 @@ OpenGeoportal.Solr = function() {
 		return infoParams;
 	};
 
-	this.getLayerInfoFromSolr = function(type, value, successFunction,
-			errorFunction) {
+	this.getLayerInfoFromSolr = function(type, value, successFunction, errorFunction) {
 		var url = this.getServerName();
 		var query = jQuery.param(this.getInfoFromIdParams(type, value), true);
 	

@@ -26,7 +26,7 @@ OpenGeoportal.Views.PreviewedLayersRow = OpenGeoportal.Views.LayerRow.extend({
 	
 	toggleSave: function(e){
 		//if not in cart, add it.  if in cart, remove it.
-		var match = this.cart.findWhere({LayerId: this.model.get("LayerId")});
+		var match = this.cart.findWhere({layer_slug_s: this.model.get("layer_slug_s")});
 		if (typeof match === "undefined"){
 			var that = this;
 			jQuery(e.currentTarget).effect("transfer", { to: ".shoppingCartIcon", easing: "swing", className: "ui-effects-transfer-to-cart inCart" }, 400, function(){that.cart.toggleCartState(that.model);});

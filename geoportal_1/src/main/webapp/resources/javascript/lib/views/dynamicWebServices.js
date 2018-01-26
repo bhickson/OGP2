@@ -107,15 +107,15 @@ OpenGeoportal.Views.WebServices = OpenGeoportal.Views.CartActionView
 				};
 				_.each(arrModels, function(model) {
 					_.each(model.get("dynamicWebService"), function(ogctype){
-						var layerId = model.get("LayerId");
+						var layerSlug = model.get("layer_slug_s");
 						if (ogctype === "wms"){
-							uniqueAdd(arrWmsIds, layerId);
+							uniqueAdd(arrWmsIds, layerSlug);
 
 						} else if (ogctype === "wfs"){
-							uniqueAdd(arrWfsIds, layerId);
+							uniqueAdd(arrWfsIds, layerSlug);
 
 						} else if (ogctype === "wcs"){
-							uniqueAdd(arrWmsIds, layerId);
+							uniqueAdd(arrWmsIds, layerSlug);
 
 						}
 					});

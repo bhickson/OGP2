@@ -26,7 +26,7 @@ OpenGeoportal.Models.ImageCollectionUnGeoreferenced = Backbone.Model
 			initialize : function() {
 				var location = this.get("parsedLocation");
 				var workspaceName = this.get("workspaceName");
-				var collectionId = this.get("CollectionId");
+				var collectionId = this.get("dct_isPartOf_sm");
 
 				if (typeof location.imageCollection !== "undefined") {
 					console
@@ -40,7 +40,7 @@ OpenGeoportal.Models.ImageCollectionUnGeoreferenced = Backbone.Model
 					// must be run locally against the image
 					if (typeof location.imageCollection.gssUrl !== "undefined") {
 						gssURL = location.imageCollection.gssUrl;
-					} else if (this.get("Institution").toLowerCase() === "berkeley") {
+					} else if (this.get("dct_provenance_s").toLowerCase() === "berkeley") {
 						// since this url can only apply to Berkeley layers...
 						gssURL = 'http://linuxdev.lib.berkeley.edu:8080/newOGP/gss';
 
