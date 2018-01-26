@@ -64,7 +64,7 @@
 	<beans:bean id="imageDownloaderFactory" class="org.opengeoportal.proxy.ImageDownloaderFactory" />
 
 	<beans:bean id="imageDownloader" class="org.opengeoportal.proxy.ImageDownloaderImpl" scope="prototype" lazy-init="true" />
-
+	<!--
 	<beans:bean id="exportHandlerFactory.geocommons"
 		class="org.opengeoportal.export.geocommons.GeoCommonsExportHandlerFactory" />
 		
@@ -77,7 +77,7 @@
 	<beans:bean id="restClient.geocommons"
 		class="org.opengeoportal.export.geocommons.GeoCommonsJsonClient"
 		scope="prototype" />
-
+	-->
 
 	<beans:bean id="requestStatusManager"
 		class="org.opengeoportal.download.RequestStatusManagerImpl" />
