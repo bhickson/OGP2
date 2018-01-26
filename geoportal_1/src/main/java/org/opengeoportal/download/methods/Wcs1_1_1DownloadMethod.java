@@ -46,7 +46,7 @@ public class Wcs1_1_1DownloadMethod extends AbstractDownloadMethod implements Pe
 		//in order to return the file in original projection to the user 
 
 		SolrRecord layerInfo = this.currentLayer.getLayerInfo();
-		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMinY(), layerInfo.getMaxX(), layerInfo.getMaxY());
+		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMaxX(), layerInfo.getMaxY(), layerInfo.getMinY());
 		BoundingBox bounds = nativeBounds.getIntersection(this.currentLayer.getRequestedBounds());
 		String layerName = this.currentLayer.getLayerNameNS();
 

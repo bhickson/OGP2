@@ -5,89 +5,71 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.beans.Field;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class SolrRecord {
-	@Field("LayerId")
-	String layerId;
-	@Field("Name")
-	String name;
-	@Field("CollectionId")
-	String collectionId;
-	@Field("Institution")
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	@Field("layer_slug_s")
+	String layerSlug; //layerId
+	@Field("layer_id_s")
+	String serviceId; //name
+	@Field("dct_isPartOf_sm")
+	String[] collectionIds; //collectionId
+	@Field("dct_provenance_s")
 	String institution;
-	@Field("Access")
+	@Field("dc_rights_s")
 	String access;
-	@Field("DataType")
+	@Field("layer_geom_type_s")
 	String dataType;
-	@Field("Availability")
-	String availability;
-	@Field("LayerDisplayName")
-	String layerDisplayName;
-	@Field("Publisher")
+	@Field("dc_type_s")
+	String layerType;  //availability
+	@Field("dc_title_s")
+	String layerTitle;  //layerDisplayName
+	@Field("dc_publisher_s")
 	String publisher;
-	@Field("Originator")
-	String originator;
-	@Field("ThemeKeywords")
-	String themeKeywords;
-	@Field("PlaceKeywords")
-	String placeKeywords;
-	@Field("GeoReferenced")
-	Boolean georeferenced;
-	@Field("Abstract")
+	@Field("dc_creator_sm")
+	String[] originator;
+	@Field("dc_subject_sm")
+	String[] subjectKeywords; //themeKeywords;
+	@Field("dct_spatial_sm")
+	String[] placeKeywords;
+	@Field("dc_description_s")
 	String description;
-	@Field("Location")
-	String location;
-	@Field("MaxY")
+	@Field("dct_references_s")
+	String serviceLocations; //location;
+	@Field("solr_geom")
+	String boundingBox;
+	@Field("solr_year_i")
+	int contentYear; //contentDate
+	//@Field("FgdcText")
+	//String fgdcText;
 	Double maxY;
-	@Field("MinY")
 	Double minY;
-	@Field("MaxX")
 	Double maxX;
-	@Field("MinX")
 	Double minX;
-	@Field("CenterX")
-	Double centerX;
-	@Field("CenterY")
-	Double centerY;
-	@Field("HalfWidth")
-	Double halfWidth;
-	@Field("HalfHeight")
-	Double halfHeight;
-	@Field("Area")
-	Double area;
-	@Field("WorkspaceName")
-	String workspaceName;
-	@Field("ContentDate")
-	Date contentDate;
-	@Field("FgdcText")
-	String fgdcText;
-	/*@Field("DataTypeSort")
-	String dataTypeSort;
-	@Field("InstitutionSort")
-	String institutionSort;
-	@Field("LayerDisplayNameSort")
-	String layerDisplayNameSort;
-	@Field("PublisherSort")
-	String publisherSort;
-	@Field("OriginatorSort")
-	String originatorSort;*/
-	public String getLayerId() {
-		return layerId;
+
+	
+
+	public String getLayerSlug() {
+		return layerSlug;
 	}
-	public void setLayerId(String layerId) {
-		this.layerId = layerId;
+	public void setLayerSlug(String layerSlug) {
+		this.layerSlug = layerSlug;
 	}
-	public String getName() {
-		return name;
+	public String getServiceId() {
+		return serviceId;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
 	}
-	public String getCollectionId() {
-		return collectionId;
+	public String[] getCollectionIds() {
+		return collectionIds;
 	}
-	public void setCollectionId(String collectionId) {
-		this.collectionId = collectionId;
+	public void setCollectionIds(String[] collectionIds) {
+		this.collectionIds = collectionIds;
 	}
 	public String getInstitution() {
 		return institution;
@@ -109,17 +91,17 @@ public class SolrRecord {
 		this.dataType = dataType;
 	}
 
-	public String getAvailability() {
-		return availability;
+	public String getLayerType() {
+		return layerType;
 	}
-	public void setAvailability(String availability) {
-		this.availability = availability;
+	public void setLayerType(String layerType) {
+		this.layerType = layerType;
 	}
-	public String getLayerDisplayName() {
-		return layerDisplayName;
+	public String getLayerTitle() {
+		return layerTitle;
 	}
-	public void setLayerDisplayName(String layerDisplayName) {
-		this.layerDisplayName = layerDisplayName;
+	public void setLayerTitle(String layerTitle) {
+		this.layerTitle = layerTitle;
 	}
 
 	public String getPublisher() {
@@ -129,30 +111,25 @@ public class SolrRecord {
 		this.publisher = publisher;
 	}
 
-	public String getOriginator() {
+	public String[] getOriginator() {
+		logger.info("ORIGINATOR: " + originator);
 		return originator;
 	}
-	public void setOriginator(String originator) {
+	public void setOriginator(String[] originator) {
 		this.originator = originator;
 	}
 
-	public String getThemeKeywords() {
-		return themeKeywords;
+	public String[] getSubjectKeywords() {
+		return subjectKeywords;
 	}
-	public void setThemeKeywords(String themeKeywords) {
-		this.themeKeywords = themeKeywords;
+	public void setSubjectKeywords(String[] subjectKeywords) {
+		this.subjectKeywords = subjectKeywords;
 	}
-	public String getPlaceKeywords() {
+	public String[] getPlaceKeywords() {
 		return placeKeywords;
 	}
-	public void setPlaceKeywords(String placeKeywords) {
+	public void setPlaceKeywords(String[] placeKeywords) {
 		this.placeKeywords = placeKeywords;
-	}
-	public Boolean getGeoreferenced() {
-		return georeferenced;
-	}
-	public void setGeoreferenced(Boolean georeferenced) {
-		this.georeferenced = georeferenced;
 	}
 	public String getDescription() {
 		return description;
@@ -160,96 +137,59 @@ public class SolrRecord {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getLocation() {
-		return location;
+	public String getServiceLocations() {
+		return serviceLocations;
 	}
-	public void setLocation(String location) {
-		this.location = location;
+	public void setServiceLocations(String serviceLocations) {
+		this.serviceLocations = serviceLocations;
 	}
 	public Double getMaxY() {
-		return maxY;
+		// boundingBox string is in the form of ENVELOPE(MINX MAXX MAXY MINY)
+		return Double.parseDouble(this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[2]);
 	}
 	public void setMaxY(Double maxY) {
-		this.maxY = maxY;
+		this.maxY = maxX;
 	}
 	public Double getMinY() {
-		return minY;
+		// boundingBox string is in the form of ENVELOPE(MINX MAXX MAXY MINY)
+		return Double.parseDouble(this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[3]);
 	}
 	public void setMinY(Double minY) {
 		this.minY = minY;
 	}
 	public Double getMaxX() {
-		return maxX;
+		// boundingBox string is in the form of ENVELOPE(MINX MAXX MAXY MINY)
+		return Double.parseDouble(this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[1]);
 	}
 	public void setMaxX(Double maxX) {
 		this.maxX = maxX;
 	}
 	public Double getMinX() {
-		return minX;
+		// boundingBox string is in the form of ENVELOPE(MINX MAXX MAXY MINY)
+		return Double.parseDouble(this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[0]);
 	}
 	public void setMinX(Double minX) {
 		this.minX = minX;
 	}
-	public Double getCenterX() {
-		return centerX;
+	public int getContentYear() {
+		return contentYear;
 	}
-	public void setCenterX(Double centerX) {
-		this.centerX = centerX;
-	}
-	public Double getCenterY() {
-		return centerY;
-	}
-	public void setCenterY(Double centerY) {
-		this.centerY = centerY;
-	}
-	public Double getHalfWidth() {
-		return halfWidth;
-	}
-	public void setHalfWidth(Double halfWidth) {
-		this.halfWidth = halfWidth;
-	}
-	public Double getHalfHeight() {
-		return halfHeight;
-	}
-	public void setHalfHeight(Double halfHeight) {
-		this.halfHeight = halfHeight;
-	}
-	public Double getArea() {
-		return area;
-	}
-	public void setArea(Double area) {
-		this.area = area;
-	}
-	public String getWorkspaceName() {
-		return workspaceName;
-	}
-	public void setWorkspaceName(String workspaceName) {
-		this.workspaceName = workspaceName;
-	}
-	public Date getContentDate() {
-		return contentDate;
-	}
-	public void setContentDate(Date contentDate) {
-		this.contentDate = contentDate;
-	}
-	public String getFgdcText() {
-		return fgdcText;
-	}
-	public void setFgdcText(String fgdcText) {
-		this.fgdcText = fgdcText;
+	public void setContentYear(int contentYear) {
+		this.contentYear = contentYear;
 	}
 	
 	public Map<String,String> toMap(){
 		Map<String,String> map = new HashMap<String,String>();
-		map.put("LayerId", this.layerId);
-		map.put("LayerName", this.name);
-		map.put("Title", this.layerDisplayName);
+		map.put("LayerSlug", this.layerSlug);
+		map.put("ServicesLayerName", this.serviceId);
+		map.put("Title", this.layerTitle);
 		map.put("DataType", this.dataType);
 		map.put("Access", this.access);
-		//map.put("ContentDate", this.contentDate);
-		map.put("Bounds", this.minX + "," + this.minY + "," + this.maxX + "," + this.maxY);
-		map.put("Originator", this.originator);
+		map.put("Bounds", this.minX + "," + this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[1] + "," + this.maxY + "," + this.minY);
+		String originators = String.join(",",this.originator);
+		map.put("Originator", originators);
 		map.put("Publisher", this.publisher);
+		logger.info("SET BOUNDS:" + map);
 		return map;
 	}
 	public String toString(){

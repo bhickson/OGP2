@@ -26,7 +26,7 @@ import org.w3c.dom.*;
 public class MetadataFromSolr implements MetadataRetriever {
 	@Autowired
 	private LayerInfoRetriever layerInfoRetriever;
-	private String layerId;
+	private String layerSlug;
 	private Document xmlDocument;
 	private DocumentBuilder builder;
 	private Resource fgdcStyleSheet;
@@ -64,12 +64,12 @@ public class MetadataFromSolr implements MetadataRetriever {
 	 * @return the processed XML String
 	 * @throws TransformerException
 	 */
-	String filterXMLString(String layerId, String rawXMLString)
+	String filterXMLString(String layerSlug, String rawXMLString)
 	 throws TransformerException
 	 {
 		Document document = null;
 		try {
-			document = buildXMLDocFromString(layerId, rawXMLString);
+			document = buildXMLDocFromString(layerSlug, rawXMLString);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,8 +104,8 @@ public class MetadataFromSolr implements MetadataRetriever {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	Document buildXMLDocFromString(String layerId, String rawXMLString) throws ParserConfigurationException, SAXException, IOException{
-		if ((layerId.equalsIgnoreCase(this.layerId))&&(this.xmlDocument != null)){
+	Document buildXMLDocFromString(String layerSlug, String rawXMLString) throws ParserConfigurationException, SAXException, IOException{
+		if ((layerSlug.equalsIgnoreCase(this.layerSlug))&&(this.xmlDocument != null)){
 			return this.xmlDocument;
 		} else {
 			InputStream xmlInputStream = null;
@@ -136,27 +136,25 @@ public class MetadataFromSolr implements MetadataRetriever {
 		if (descriptor.equalsIgnoreCase("name")){
 			int i = identifier.indexOf(":");
 			if (i > 0){
-				//String workSpace = layerName.substring(0, i);
-				//conditionsMap.put("WorkspaceName", workSpace);
 				identifier = identifier.substring(i + 1);
 			}
-			conditionsMap.put("Name", identifier);
-			this.layerId = null;
-		} else if(descriptor.equalsIgnoreCase("layerid")){
-			conditionsMap.put("LayerId", identifier);
-			this.layerId = identifier;
+			conditionsMap.put("layer_slug_s", identifier);
+			this.layerSlug = null;
+		} else if(descriptor.equalsIgnoreCase("layer_slug_s")){
+			conditionsMap.put("layer_slug_s", identifier);
+			this.layerSlug = identifier;
 		} else {
-			this.layerId = null;
+			this.layerSlug = null;
 			return null;
 		}
 
 		SolrQuery query = new SolrQuery();
 		query.setQuery( descriptor + ":" + identifier );
-		query.addField("FgdcText");
+		query.addField("layer_slug_s");
 		query.setRows(1);
 		
 		 SolrDocumentList docs = this.layerInfoRetriever.getSolrServer().query(query).getResults();
-		 return (String) docs.get(0).getFieldValue("FgdcText");
+		 return (String) docs.get(0).getFieldValue("layer_slug_s");
 	}
 	
 	/**
@@ -170,7 +168,7 @@ public class MetadataFromSolr implements MetadataRetriever {
 	public File getXMLFile(String metadataLayerName, File xmlFile) throws Exception{
 		OutputStream xmlFileOutputStream = null;
 		try{
-			String xmlString = this.getXMLStringFromSolr(metadataLayerName, "Name");
+			String xmlString = this.getXMLStringFromSolr(metadataLayerName, "layer_slug_s");
 			xmlString = this.filterXMLString("", xmlString);
 			//write this string to a file
 			xmlFileOutputStream = new FileOutputStream (xmlFile);
@@ -184,20 +182,20 @@ public class MetadataFromSolr implements MetadataRetriever {
 	}
 
 	@Override
-	public String getXMLStringFromId(String layerID, String xmlFormat) throws Exception {
-		String xmlString = this.getXMLStringFromSolr(layerID, "LayerId");
-		xmlString = this.filterXMLString(layerID, xmlString);
+	public String getXMLStringFromId(String layerSlug, String xmlFormat) throws Exception {
+		String xmlString = this.getXMLStringFromSolr(layerSlug, "LayerSlug");
+		xmlString = this.filterXMLString(layerSlug, xmlString);
 
 		return xmlString;
 	}
 	
 	@Override
-	public String getMetadataAsHtml(String layerID) throws Exception {
-		String xmlString = this.getXMLStringFromSolr(layerID, "LayerId");
+	public String getMetadataAsHtml(String layerSLUD) throws Exception {
+		String xmlString = this.getXMLStringFromSolr(layerSlug, "LayerSlug");
 		
 		Document document = null;
 		try {
-			document = buildXMLDocFromString(layerId, xmlString);
+			document = buildXMLDocFromString(layerSlug, xmlString);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -297,9 +295,9 @@ public class MetadataFromSolr implements MetadataRetriever {
 </ptcontac>
  * 
  */
-	public NodeList getContactNodeList(String layerID) throws Exception{
-		String xmlString = this.getXMLStringFromSolr(layerID, "LayerId");
-		Document document = buildXMLDocFromString(layerID, xmlString);
+	public NodeList getContactNodeList(String layerSlug) throws Exception{
+		String xmlString = this.getXMLStringFromSolr(layerSlug, "LayerSlug");
+		Document document = buildXMLDocFromString(layerSlug, xmlString);
 		NodeList contactInfo = document.getElementsByTagName("ptcontac");
 		for (int i = 0; i < contactInfo.getLength(); i++){
 			Node currentNode = contactInfo.item(i);
@@ -310,10 +308,10 @@ public class MetadataFromSolr implements MetadataRetriever {
 		return null;
 	}
 	
-	public Node getContactInfo(String layerID, String nodeName){
+	public Node getContactInfo(String layerSlug, String nodeName){
 		NodeList contactInfo = null;
 		try {
-			contactInfo = this.getContactNodeList(layerID);
+			contactInfo = this.getContactNodeList(layerSlug);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -336,17 +334,17 @@ public class MetadataFromSolr implements MetadataRetriever {
 		return null;
 	}
 	
-	public String getContactPhoneNumber(String layerID){
-		return this.getContactInfo(layerID, "cntvoice").getNodeValue().trim();
+	public String getContactPhoneNumber(String layerSlug){
+		return this.getContactInfo(layerSlug, "cntvoice").getNodeValue().trim();
 	}
 	
-	public String getContactName(String layerID){
-		String contactName =  this.getContactInfo(layerID, "cntpos").getNodeValue().trim();
+	public String getContactName(String layerSlug){
+		String contactName =  this.getContactInfo(layerSlug, "cntpos").getNodeValue().trim();
 		return contactName;
 	}
 	
-	public String getContactAddress(String layerID){
-		Node addressNode = this.getContactInfo(layerID, "cntaddr");
+	public String getContactAddress(String layerSlug){
+		Node addressNode = this.getContactInfo(layerSlug, "cntaddr");
 		NodeList addressNodeList = addressNode.getChildNodes();
 		
 		String address = "";

@@ -66,17 +66,17 @@ public class SolrLayerInfoRetriever implements LayerInfoRetriever{
 	//user is authorized to download.
 	@Override
 	@PostFilter("hasPermission(filterObject, 'download')")
-	public List<SolrRecord> fetchAllowedRecords(Set<String> layerIdSet) throws Exception{
-		List<SolrRecord> allRecords = fetchAllLayerInfo(layerIdSet);
+	public List<SolrRecord> fetchAllowedRecords(Set<String> layerSlugSet) throws Exception{
+		List<SolrRecord> allRecords = fetchAllLayerInfo(layerSlugSet);
 		return allRecords;
 	}
 	
-	public List<SolrRecord> fetchAllLayerInfo(Set<String> layerIds) throws SolrServerException {
+	public List<SolrRecord> fetchAllLayerInfo(Set<String> layerSlugs) throws SolrServerException {
 		SolrServer server = getSolrServer();
 		String query = "";
-		for (String layerId : layerIds){
-			logger.debug(layerId);
-			query += "LayerId:" + ClientUtils.escapeQueryChars(layerId.trim());
+		for (String layerSlug : layerSlugs){
+			logger.debug(layerSlug);
+			query += "layer_slug_s:" + ClientUtils.escapeQueryChars(layerSlug.trim());
 			query += " OR ";
 		}
 		if (query.length() > 0){
@@ -102,13 +102,13 @@ public class SolrLayerInfoRetriever implements LayerInfoRetriever{
 	}
 
 	@Override
-	public SolrRecord getAllLayerInfo(String layerId) throws SolrServerException {
-		String query = "LayerId:" + ClientUtils.escapeQueryChars(layerId.trim());
+	public SolrRecord getAllLayerInfo(String layerSlug) throws SolrServerException {
+		String query = "LayerSlug:" + ClientUtils.escapeQueryChars(layerSlug.trim());
 	    SolrQuery queryObj = new SolrQuery();
 	    queryObj.setQuery( query );
 		List<SolrRecord> results = getSolrServer().query(queryObj).getBeans(SolrRecord.class);
 		if(results.isEmpty()){
-			throw new SolrServerException("Layer with id ['" + layerId.trim() + "'] not found in the Solr index.");
+			throw new SolrServerException("Layer with id ['" + layerSlug.trim() + "'] not found in the Solr index.");
 		} else {
 			return results.get(0);
 		}

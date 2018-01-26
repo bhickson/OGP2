@@ -7,10 +7,9 @@ public class Metadata {
 	String title;
 	String description;
 	String owsName;
-	String workspaceName;
-	String location;
-	String originator;
-	String[] themeKeywords;
+	String serviceLocations;
+	String[] originator;
+	String[] subjectKeywords;
 	String[] placeKeywords;
 	String institution;
 	String fullText;
@@ -18,10 +17,10 @@ public class Metadata {
 	GeometryType geometryType;
 	private String publisher;
 	private Boolean georeferenced;
-	private String contentDate;
+	private String contentYear;
 		
-	public Metadata(String layerId){
-		setId(layerId);
+	public Metadata(String layerSlug){
+		setId(layerSlug);
 	}
 	public Metadata(){
 	}
@@ -56,8 +55,8 @@ public class Metadata {
 		this.bounds = bounds;
 	}
 	
-	public void setBounds(String minX, String minY, String maxX, String maxY) {
-		this.bounds = new BoundingBox(minX, minY, maxX, maxY);
+	public void setBounds(String minX, String maxX, String maxY, String minY) {
+		this.bounds = new BoundingBox(minX, maxX, maxY, minY);
 	}
 	
 	public String getId() {
@@ -84,29 +83,23 @@ public class Metadata {
 	public void setOwsName(String owsName) {
 		this.owsName = owsName;
 	}
-	public String getWorkspaceName() {
-		return workspaceName;
+	public String getServiceLocations() {
+		return serviceLocations;
 	}
-	public void setWorkspaceName(String workspaceName) {
-		this.workspaceName = workspaceName;
+	public void setServiceLocations(String serviceLocations) {
+		this.serviceLocations = serviceLocations;
 	}
-	public String getLocation() {
-		return location;
-	}
-	public void setLocation(String location) {
-		this.location = location;
-	}
-	public String getOriginator() {
+	public String[] getOriginator() {
 		return originator;
 	}
-	public void setOriginator(String originator) {
+	public void setOriginator(String[] originator) {
 		this.originator = originator;
 	}
-	public String[] getThemeKeywords() {
-		return themeKeywords;
+	public String[] getSubjectKeywords() {
+		return subjectKeywords;
 	}
-	public void setThemeKeywords(String[] themeKeywords) {
-		this.themeKeywords = themeKeywords;
+	public void setSubjectKeywords(String[] subjectKeywords) {
+		this.subjectKeywords = subjectKeywords;
 	}
 	public String[] getPlaceKeywords() {
 		return placeKeywords;
@@ -149,11 +142,11 @@ public class Metadata {
 		this.georeferenced = georeferenced;
 	}
 
-	public String getContentDate() {
-		return contentDate;
+	public String getContentYear() {
+		return contentYear;
 	}
 	
-	public void setContentDate(String contentDate){
-		this.contentDate = contentDate;
+	public void setContentDate(String contentYear){
+		this.contentYear = contentYear;
 	}
 }

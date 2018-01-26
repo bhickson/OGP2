@@ -147,21 +147,21 @@ public class DynamicOgcController {
   }
   
   @RequestMapping(value="/wfs", method=RequestMethod.GET, params="request=GetCapabilities")
-	public ModelAndView doWfsGetCapabilitiesCase(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
-	  return handleGetCapabilities(layerIds, servletRequest, servletResponse);
+	public ModelAndView doWfsGetCapabilitiesCase(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+	  return handleGetCapabilities(layerSlugs, servletRequest, servletResponse);
   }
 
   @RequestMapping(value="/wfs", method=RequestMethod.GET, params="REQUEST=GetCapabilities")
-  public ModelAndView doWfsGetCapabilities(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+  public ModelAndView doWfsGetCapabilities(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
 	  
-	  return handleGetCapabilities(layerIds, servletRequest, servletResponse);
+	  return handleGetCapabilities(layerSlugs, servletRequest, servletResponse);
 
   }
 
-  private ModelAndView handleGetCapabilities(Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception{
+  private ModelAndView handleGetCapabilities(Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception{
 	  logger.info("wfs get capabilities requested");
 
-	  Map<String,UrlToNameContainer> recordMap  = getRecordMapFromLayerIds(layerIds);
+	  Map<String,UrlToNameContainer> recordMap  = getRecordMapFromLayerSlugs(layerSlugs);
 
 	  //parse the returned XML
 
@@ -263,7 +263,7 @@ public class DynamicOgcController {
  }
  
 @RequestMapping(value="/wfs", method=RequestMethod.GET)
-	public void doWfsRequest(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+	public void doWfsRequest(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
 	Enumeration paramNames = servletRequest.getParameterNames();
 	String ogcRequest = "";
 	String typeName = "";
@@ -299,14 +299,14 @@ public class DynamicOgcController {
   }
 
 @RequestMapping(value="/wms", method=RequestMethod.GET, params="request=GetCapabilities")
-	public ModelAndView doWmsGetCapabilitiesCase(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
-	  return doWmsGetCapabilities(layerIds, servletRequest, servletResponse);
+	public ModelAndView doWmsGetCapabilitiesCase(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+	  return doWmsGetCapabilities(layerSlugs, servletRequest, servletResponse);
 }
 
-private Map<String,UrlToNameContainer> getRecordMapFromLayerIds(Set<String> layerIds) throws Exception{
+private Map<String,UrlToNameContainer> getRecordMapFromLayerSlugs(Set<String> layerSlugs) throws Exception{
 	  List<SolrRecord> solrRecords = null;
 		try {
-			solrRecords = this.layerInfoRetriever.fetchAllLayerInfo(layerIds);
+			solrRecords = this.layerInfoRetriever.fetchAllLayerInfo(layerSlugs);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException("Unable to retrieve layer info.");
@@ -315,13 +315,12 @@ private Map<String,UrlToNameContainer> getRecordMapFromLayerIds(Set<String> laye
 		
 		Map<String,UrlToNameContainer> recordMap  = new HashMap<String,UrlToNameContainer>();
 		for (SolrRecord solrRecord: solrRecords){
-			//we have to get all of the wfs service points for the passed layerids.  match layerids to service points, so we only have to process each caps document once
+			//we have to get all of the wfs service points for the passed layerslugs.  match layerslugs to service points, so we only have to process each caps document once
 			//in the future, we should cache these caps documents
-			String workspaceName = solrRecord.getWorkspaceName();
-			String layerName = solrRecord.getName();
+			String layerServiceId = solrRecord.getServiceId();
 			
-			String qualifiedName = OgpUtils.getLayerNameNS(workspaceName, layerName);
-			String wmsUrl = LocationFieldUtils.getWmsUrl(solrRecord.getLocation());
+			String qualifiedName = OgpUtils.getLayerNameNS(layerServiceId);
+			String wmsUrl = LocationFieldUtils.getWmsUrl(solrRecord.getServiceLocations());
 			
 			URI currentURI = new URI(wmsUrl);
 			//is it ok to call these equivalent?
@@ -346,12 +345,12 @@ private Map<String,UrlToNameContainer> getRecordMapFromLayerIds(Set<String> laye
 }
 
 @RequestMapping(value="/wms", method=RequestMethod.GET, params="REQUEST=GetCapabilities")
-public ModelAndView doWmsGetCapabilities(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+public ModelAndView doWmsGetCapabilities(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
 	logger.info("wms get capabilities requested");
 
 	//need to pass a model to the caps document
 
-	Map<String,UrlToNameContainer> recordMap  = getRecordMapFromLayerIds(layerIds);
+	Map<String,UrlToNameContainer> recordMap  = getRecordMapFromLayerSlugs(layerSlugs);
 
 
 	//parse the returned XML
@@ -403,7 +402,7 @@ public ModelAndView doWmsGetCapabilities(@RequestParam("ogpids") Set<String> lay
 
 
 @RequestMapping(value="/wms", method=RequestMethod.GET)
-public void doWmsRequest(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+public void doWmsRequest(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
 	Enumeration paramNames = servletRequest.getParameterNames();
 	String ogcRequest = "";
 	String layers = "";
@@ -478,7 +477,7 @@ private String getOgcUrlFromLayerName(String layerName, String ogcProtocol) thro
 	if (records.isEmpty()){
 		throw new Exception("No matching record found in Solr Index for ['" + layerName + "']");
 	}
-	String location = records.get(0).getLocation();
+	String location = records.get(0).getServiceLocations();
 	
 	if (ogcProtocol.equalsIgnoreCase("wfs")){
 		return LocationFieldUtils.getWfsUrl(location);

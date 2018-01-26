@@ -150,16 +150,16 @@ protected HttpClient createHttpClient(HttpParams hcParams) {
   }
   
   @RequestMapping(value="/wfs", method=RequestMethod.GET, params="request=GetCapabilities")
-	public ModelAndView doWfsGetCapabilitiesCase(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
-	  return doWfsGetCapabilities(layerIds, servletRequest, servletResponse);
+	public ModelAndView doWfsGetCapabilitiesCase(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+	  return doWfsGetCapabilities(layerSlugs, servletRequest, servletResponse);
   }
   
   @RequestMapping(value="/wfs", method=RequestMethod.GET, params="REQUEST=GetCapabilities")
-	public ModelAndView doWfsGetCapabilities(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+	public ModelAndView doWfsGetCapabilities(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
 	  logger.info("wfs get capabilities requested");
 	  List<SolrRecord> solrRecords = null;
 		try {
-			solrRecords = this.layerInfoRetriever.fetchAllLayerInfo(layerIds);
+			solrRecords = this.layerInfoRetriever.fetchAllLayerInfo(layerSlugs);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ServletException("Unable to retrieve layer info.");
@@ -173,13 +173,14 @@ protected HttpClient createHttpClient(HttpParams hcParams) {
 		
 		Map<String,UrlToNameContainer> recordMap  = new HashMap<String,UrlToNameContainer>();
 		for (SolrRecord solrRecord: solrRecords){
-			//we have to get all of the wfs service points for the passed layerids.  match layerids to service points, so we only have to process each caps document once
+			//we have to get all of the wfs service points for the passed layerslugs.  match layerslugs to service points, so we only have to process each caps document once
 			//in the future, we should cache these caps documents
-			String workspaceName = solrRecord.getWorkspaceName();
-			String layerName = solrRecord.getName();
+			/*String workspaceName = solrRecord.getWorkspaceName();
+			String layerName = solrRecord.getName();*/
+			String layerServiceId = solrRecord.getServiceId();
 			
-			String qualifiedName = OgpUtils.getLayerNameNS(workspaceName, layerName);
-			String wfsUrl = LocationFieldUtils.getWfsUrl(solrRecord.getLocation());
+			String qualifiedName = OgpUtils.getLayerNameNS(layerServiceId);  //workspaceName, layerName);
+			String wfsUrl = LocationFieldUtils.getWfsUrl(solrRecord.getServiceLocations());
 			
 			URI currentURI = new URI(wfsUrl);
 			//is it ok to call these equivalent?
@@ -267,7 +268,7 @@ protected HttpClient createHttpClient(HttpParams hcParams) {
 
   
 @RequestMapping(value="/wfs", method=RequestMethod.GET)
-	public void doWfsRequest(@RequestParam("ogpids") Set<String> layerIds, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
+	public void doWfsRequest(@RequestParam("ogpids") Set<String> layerSlugs, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws Exception {
 	Enumeration paramNames = servletRequest.getParameterNames();
 	String ogcRequest = "";
 	String typeName = "";
@@ -340,7 +341,7 @@ private String getOgcUrlFromLayerName(String layerName, String ogcProtocol) thro
 	if (records.isEmpty()){
 		throw new Exception("No matching record found in Solr Index for ['" + layerName + "']");
 	}
-	String location = records.get(0).getLocation();
+	String location = records.get(0).getServiceLocations();
 	
 	if (ogcProtocol.equalsIgnoreCase("wfs")){
 		return LocationFieldUtils.getWfsUrl(location);

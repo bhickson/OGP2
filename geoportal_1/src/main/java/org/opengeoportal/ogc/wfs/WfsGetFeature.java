@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 public class WfsGetFeature {
 	final static Logger logger = LoggerFactory.getLogger(WfsGetFeature.class.getName());
 
-	public static String createWfsGetFeatureRequest(String layerName, String workSpace, String nameSpace, String outputFormat, String filter) throws Exception {
-		return createWfsGetFeatureRequest(layerName, workSpace, nameSpace, -1, "", outputFormat, filter);
+	public static String createWfsGetFeatureRequest(String serviceId, String nameSpace, String outputFormat, String filter) throws Exception {
+		return createWfsGetFeatureRequest(serviceId, nameSpace, -1, "", outputFormat, filter);
 		 
 	}
 	
@@ -29,24 +29,24 @@ public class WfsGetFeature {
 		return attrString;
 	}
 	
-	public static String createWfsGetFeatureRequest(String layerName, String workSpace, String nameSpace, int maxFeatures, String epsgCode, String outputFormat, String filter) throws Exception {
+	public static String createWfsGetFeatureRequest(String serviceId, String nameSpace, int maxFeatures, String epsgCode, String outputFormat, String filter) throws Exception {
 
 		//--generate POST message
 		//info needed: geometry column, bbox coords, epsg code, workspace & layername
-		layerName = OgpUtils.getLayerNameNS(workSpace, layerName);
+		//layerName = OgpUtils.getLayerNameNS(serviceId);   //workSpace, layerName);
 
 		String getFeatureRequest = "<wfs:GetFeature service=\"WFS\" version=\"1.0.0\""
 			+ " outputFormat=\"" + outputFormat + "\""
 			+ getAttributeString("maxfeatures", maxFeatures)
 			+ getAttributeString("srsName", epsgCode)	
-			+ getNameSpaceString(workSpace, nameSpace)
+			+ getNameSpaceString(serviceId.split(":")[0], nameSpace)
   			+ " xmlns:wfs=\"http://www.opengis.net/wfs\""
   			+ " xmlns:ogc=\"http://www.opengis.net/ogc\""
   			+ " xmlns:gml=\"http://www.opengis.net/gml\""
   			+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
   			+ " xsi:schemaLocation=\"http://www.opengis.net/wfs"
             + " http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd\">"
-  			+ "<wfs:Query typeName=\"" + layerName + "\">"
+  			+ "<wfs:Query typeName=\"" + serviceId + "\">"
   			+ filter
   			+ "</wfs:Query>"
 			+ "</wfs:GetFeature>";

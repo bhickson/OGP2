@@ -2,7 +2,7 @@ package org.opengeoportal.download;
 
 import java.util.UUID;
 
-import org.opengeoportal.export.geocommons.GeoCommonsExportRequest;
+//import org.opengeoportal.export.geocommons.GeoCommonsExportRequest;
 import org.opengeoportal.proxy.controllers.ImageRequest;
 
 public interface RequestStatusManager {
@@ -18,9 +18,9 @@ public interface RequestStatusManager {
 
 	ImageRequest getImageRequest(UUID fromString);
 
-	void addExportRequest(UUID requestId, String sessionId,
+	/*void addExportRequest(UUID requestId, String sessionId,
 			GeoCommonsExportRequest exportRequest);
 
-	GeoCommonsExportRequest getExportRequest(UUID requestId);
+	GeoCommonsExportRequest getExportRequest(UUID requestId);*/
 
 }

@@ -70,7 +70,7 @@ public class HGLEmailDownloadMethod implements EmailDownloadMethod {
 
 		String layerQuery = "";
 		for (LayerRequest currentLayer: this.layerList){
-			layerQuery += "LayerName=" + currentLayer.getLayerInfo().getName() + "&";
+			layerQuery += "LayerName=" + currentLayer.getLayerInfo().getServiceId() + "&";
 		}
 
 		String getFeatureRequest = layerQuery 

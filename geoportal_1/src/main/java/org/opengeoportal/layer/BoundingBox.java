@@ -15,8 +15,8 @@ public class BoundingBox extends Envelope{
 	 * @param maxX
 	 * @param maxY
 	 */
-	public BoundingBox(Double minX, Double minY, Double maxX, Double maxY){
-		super(minX, minY, maxX, maxY, epsgCode);
+	public BoundingBox(Double minX, Double maxX, Double maxY, Double minY){  // W E N S
+		super(minX, maxX, maxY, minY, epsgCode);
 	}
 	
 	/**
@@ -26,8 +26,8 @@ public class BoundingBox extends Envelope{
 	 * @param maxX
 	 * @param maxY
 	 */
-	public BoundingBox(String minX, String minY, String maxX, String maxY){
-		super(minX, minY, maxX, maxY, epsgCode);
+	public BoundingBox(String minX, String maxX, String maxY, String minY){ // W E N S
+		super(minX, maxX, maxY, minY, epsgCode);
 	}
 	
 	public static BoundingBox getOrderedBox(BoundingBox box){
@@ -35,7 +35,7 @@ public class BoundingBox extends Envelope{
 		Double maxx = Math.max(box.getMinX(), box.getMaxX());
 		Double miny = Math.min(box.getMinY(), box.getMaxY());
 		Double maxy = Math.max(box.getMinY(), box.getMaxY());
-		return new BoundingBox(minx, miny, maxx, maxy);
+		return new BoundingBox(minx, maxx, maxy, miny); // W E N S
 	}
 	
 	public BoundingBox getIntersection(BoundingBox anotherBox) throws Exception{
@@ -46,7 +46,7 @@ public class BoundingBox extends Envelope{
 			Double intersectionMaxX = Math.min(currentBox.getMaxX(), anotherBox.getMaxX());
 			Double intersectionMinY = Math.max(currentBox.getMinY(), anotherBox.getMinY());
 			Double intersectionMaxY = Math.min(currentBox.getMaxY(), anotherBox.getMaxY());
-			BoundingBox intersection = new BoundingBox(intersectionMinX, intersectionMinY, intersectionMaxX, intersectionMaxY);
+			BoundingBox intersection = new BoundingBox(intersectionMinX, intersectionMaxX, intersectionMaxY, intersectionMinY);
 			
 			return intersection;
 	}

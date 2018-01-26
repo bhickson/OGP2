@@ -48,7 +48,7 @@ public final class LocationFieldUtils {
 	 * @throws JsonParseException
 	 */
 	public static String getWmsUrl(String locationField) throws JsonParseException{
-		return parseLocationFromKey(locationField, "wms").get(0);
+		return parseLocationFromKey(locationField, "http://www.opengis.net/def/serviceType/ogc/wms").get(0);
 
 	}
 	
@@ -60,7 +60,7 @@ public final class LocationFieldUtils {
 	 */
 	public static Boolean hasWmsUrl(String locationField){
 		try {
-			return hasKey(locationField, "wms");
+			return hasKey(locationField, "http://www.opengis.net/def/serviceType/ogc/wms");
 		} catch (JsonParseException e) {
 
 		}
@@ -111,15 +111,15 @@ public final class LocationFieldUtils {
 	 * @throws JsonParseException
 	 */
 	public static String getWfsUrl(String locationField) throws JsonParseException{
-		return parseLocationFromKey(locationField, "wfs").get(0);
+		return parseLocationFromKey(locationField, "http://www.opengis.net/def/serviceType/ogc/wfs").get(0);
 
 	}
-	
+
  	/**
 	 * determines if the SolrRecord Location field contains a value for the key "wfs"
 	 * 
 	 * @param locationField		The Solr record Location field as a String
-	 * @return true if the SolrRecord Location field contains a key for "wms"
+	 * @return true if the SolrRecord Location field contains a key for "wfs"
 	 */
 
 	// Added by Allen Lin on Jan, 24, 2014
@@ -127,8 +127,7 @@ public final class LocationFieldUtils {
 	public static Boolean hasWfsUrl(String locationField){
 
 		try {
-
-			return hasKey(locationField, "wfs");
+			return hasKey(locationField, "http://www.opengis.net/def/serviceType/ogc/wfs");
 
 		} catch (JsonParseException e) {
 
@@ -137,6 +136,85 @@ public final class LocationFieldUtils {
 		return false;
 
 	}
+
+	/**
+	 * * Get the value (ISO 19139 location metadata) for the gmd key from the references field.
+	 * *
+	 * * @param locationField         The Solr record references field as a String
+	 * * @return      the url for the iso metadata location for this layer
+	 * * @throws JsonParseException
+	 * */
+	public static String getISO19139Url(String locationField) throws JsonParseException{
+		return parseLocationFromKey(locationField, "http://www.isotc211.org/schemas/2005/gmd/").get(0);
+
+	}
+
+	/**
+	 * * determines if the SolrRecord references field contains a value for the gmd key
+	 * *
+	 * * @param locationField         The Solr record references field as a String
+	 * * @return true if the SolrRecord references field contains a key for gmd
+	 * */
+
+	public static Boolean hasISO19139Url(String locationField){
+		try {
+			return hasKey(locationField, "http://www.isotc211.org/schemas/2005/gmd/");
+		} catch (JsonParseException e) {
+		}
+		return false;
+	}
+
+	/**
+	 * * Get the value (MODs location metadata)for the MODS key from the references field.
+	 * *
+	 * * @param locationField         The Solr record references field as a String
+	 * * @return      the url for the MODs metadata location for this layer
+	 * * @throws JsonParseException
+	 * */
+	public static String getMODsMetadataUrl(String locationField) throws JsonParseException{
+		return parseLocationFromKey(locationField, "http://www.loc.gov/mods/v3").get(0);
+	}
+
+	/**
+	 * * determines if the SolrRecord references field contains a value for the MODS key
+	 * *
+	 * * @param locationField         The Solr record references field as a String
+	 * * @return true if the SolrRecord references field contains a key for MODS
+	 * */
+	public static Boolean hasMODsMetadataUrl(String locationField){
+		try {
+			return hasKey(locationField, "http://www.loc.gov/mods/v3");
+		} catch (JsonParseException e) {
+		}
+		return false;
+	}
+
+
+	/**
+	 * * Get the value (HTML formatted metadata location) for the HTML key from the references field.
+	 * *
+	 * * @param locationField         The Solr record references field as a String
+	 * * @return      the url for the html metadata location for this layer
+	 * * @throws JsonParseException
+	 * */
+	public static String getHTMLMetadataUrl(String locationField) throws JsonParseException{
+		return parseLocationFromKey(locationField, "http://www.w3.org/1999/xhtml").get(0);
+	}
+
+	/**
+	 * * determines if the SolrRecord references field contains a value for the HTML key
+	 * *
+	 * * @param locationField         The Solr record references field as a String
+	 * * @return true if the SolrRecord references field contains a key for HTML
+	 * */
+	public static Boolean hasHTMLMetadataUrl(String locationField){
+		try {
+			return hasKey(locationField, "http://www.w3.org/1999/xhtml");
+		} catch (JsonParseException e) {
+		}
+		return false;
+	}
+
 	
 	/**
 	 * determines if the SolrRecord Location field contains a value for the passed key
@@ -205,7 +283,7 @@ public final class LocationFieldUtils {
 	 */
 	public static String getWcsUrl(String locationField) throws JsonParseException{
 
-		return parseLocationFromKey(locationField, "wcs").get(0);
+		return parseLocationFromKey(locationField, "http://www.opengis.net/def/serviceType/ogc/wcs").get(0);
 	}
 	
 	/**
@@ -221,60 +299,128 @@ public final class LocationFieldUtils {
 	}
 	
 	/**
-	 * Get the values for the "fileDownload" key from the Location field
+	 * Get the values for the direct download key from the Location field
 	 * 
 	 * @param locationField		The Solr record Location field as a String
 	 * @return	a List of urls for download for the layer, if the record has been populated correctly
 	 * @throws JsonParseException
 	 */
 	public static List<String> getDownloadUrl(String locationField) throws JsonParseException{
-			return parseLocationFromKey(locationField, "fileDownload");
+			return parseLocationFromKey(locationField, "http://schema.org/downloadUrl");
 
 	}
 	
-		/**
-		 * determines if the SolrRecord Location field contains a value for the key "wfs"
-		 * 
-		 * @param locationField		The Solr record Location field as a String
-		 * @return true if the SolrRecord Location field contains a key for "wms"
-		 */
-
-		// Added by Allen Lin on Jan, 24, 2014
-
-		public static Boolean hasArcGISRestUrl(String locationField){
-
-			try {
-
-				return hasKey(locationField, "ArcGISRest");
-
-			} catch (JsonParseException e) {
-
-	
-
-			}
-
-			return false;
-
-		}
-		
- 	/**
-	 * Get the value in the "ArcGISRest" field from the Location field
+	/**
+	 * determines if the SolrRecord Location field contains a value for the key "urn:x-esri:serviceType:ArcGIS#FeatureLayer"
 	 * 
 	 * @param locationField		The Solr record Location field as a String
-	 * @return	the url for the wms server for the layer, if the record has been populated correctly
+	 * @return true if the SolrRecord Location field contains a key for ArcGIS FeatureLayers
+	 */
+
+	public static Boolean hasArcGISFeatureLayerUrl(String locationField){ // hasArcGISRestUrl
+		try {
+			return hasKey(locationField, "urn:x-esri:serviceType:ArcGIS#FeatureLayer");
+		} catch (JsonParseException e) {
+		}
+		return false;
+	}
+		
+ 	/**
+	 * Get the value in the urn:x-esri:serviceType:ArcGIS#FeatureLayer field from the Location field
+	 * 
+	 * @param locationField		The Solr record Location field as a String
+	 * @return	the url for the ArcGIS Feature Layer server for the layer, if the record has been populated correctly
 	 * @throws JsonParseException
 	 */
 
-	//Added by Allen Lin on Jan, 24, 2014
-
-	public static String getArcGISRestUrl(String locationField) throws JsonParseException{
-
-		return parseLocationFromKey(locationField, "ArcGISRest").get(0);
-
-
-
+	public static String getArcGISFeatureLayerUrl(String locationField) throws JsonParseException{  //getArcGISRestUrl
+		return parseLocationFromKey(locationField, "urn:x-esri:serviceType:ArcGIS#FeatureLayer").get(0);
 	}
-	
+
+	/**
+	 * determines if the SolrRecord Location field contains a value for the key "urn:x-esri:serviceType:ArcGIS#TiledMapLayer"
+	 * 
+	 * @param locationField         The Solr record Location field as a String
+	 * @return true if the SolrRecord Location field contains a key for ArcGIS Tiled Map Layer
+	 */
+
+	public static Boolean hasArcGISTiledMapLayerUrl(String locationField){
+		try {
+			return hasKey(locationField, "urn:x-esri:serviceType:ArcGIS#TiledMapLayer");
+		} catch (JsonParseException e) {
+		}
+		return false;
+	}
+
+	/**
+	 * Get the value in the urn:x-esri:serviceType:ArcGIS#TiledMapLayer field from the Location field
+	 * 
+	 * @param locationField         The Solr record Location field as a String
+	 * @return      the url for the ArcGIS ArcGIS Tiled Map Layer server for the layer, if the record has been populated correctly
+	 * @throws JsonParseException
+	 */
+
+	public static String getArcGISTiledMapLayerUrl(String locationField) throws JsonParseException{
+		return parseLocationFromKey(locationField, "urn:x-esri:serviceType:ArcGIS#TiledMapLayer").get(0);
+	}
+
+
+	/**
+	 * determines if the SolrRecord Location field contains a value for the key "urn:x-esri:serviceType:ArcGIS#DynamicMapLayer"
+	 * 
+	 * @param locationField         The Solr record Location field as a String
+	 * @return true if the SolrRecord Location field contains a key for ArcGIS Dynamic Map Layer
+	 */
+
+	public static Boolean hasArcGISDynamicMapLayerUrl(String locationField){
+		try {
+			return hasKey(locationField, "urn:x-esri:serviceType:ArcGIS#DynamicMapLayer");
+		} catch (JsonParseException e) {
+		}
+		return false;
+	}
+
+	/**
+	 * Get the value in the urn:x-esri:serviceType:ArcGIS#DynamicMapLayer field from the Location field
+	 * 
+	 * @param locationField         The Solr record Location field as a String
+	 * @return      the url for the ArcGIS ArcGIS Dynamic Map Layer server for the layer, if the record has been populated correctly
+	 * @throws JsonParseException
+	 */
+
+	public static String getArcGISDynamicMapLayerUrl(String locationField) throws JsonParseException{
+		return parseLocationFromKey(locationField, "urn:x-esri:serviceType:ArcGIS#DynamicMapLayer").get(0);
+	}
+
+
+	/**
+	 * determines if the SolrRecord Location field contains a value for the key "urn:x-esri:serviceType:ArcGIS#ImageMapLayer"
+	 * 
+	 * @param locationField         The Solr record Location field as a String
+	 * @return true if the SolrRecord Location field contains a key for ArcGIS Image Map Layer
+	 */
+
+	public static Boolean hasArcGISImageMapLayerUrl(String locationField){
+		try {
+			return hasKey(locationField, "urn:x-esri:serviceType:ArcGIS#ImageMapLayer");
+		} catch (JsonParseException e) {
+		}
+		return false;
+	}
+
+	/**
+	 * Get the value in the urn:x-esri:serviceType:ArcGIS#ImageMapLayer field from the Location field
+	 * 
+	 * @param locationField         The Solr record Location field as a String
+	 * @return      the url for the ArcGIS ArcGIS Image Map Layer server for the layer, if the record has been populated correctly
+	 * @throws JsonParseException
+	 */
+
+	public static String getArcGISImageMapLayerUrl(String locationField) throws JsonParseException{
+		return parseLocationFromKey(locationField, "urn:x-esri:serviceType:ArcGIS#ImageMapLayer").get(0);
+	}
+
+
 	/**
 	 * parses the SolrRecord Location Field into a JsonNode object for further processing.
 	 * 
@@ -284,14 +430,6 @@ public final class LocationFieldUtils {
 	 * @return a JsonNode parsed from the locationField String
 	 */
 	private static JsonNode parseLocationField(String locationField){
-		//normalize key names
-		locationField = locationField.replaceAll("(?i)\"wms\"", "\"wms\"");
-		locationField = locationField.replaceAll("(?i)\"wcs\"", "\"wcs\"");
-		locationField = locationField.replaceAll("(?i)\"wfs\"", "\"wfs\"");
-		locationField = locationField.replaceAll("(?i)\"serviceStart\"", "\"serviceStart\"");
-		locationField = locationField.replaceAll("(?i)\"download\"", "\"fileDownload\"");
-		locationField = locationField.replaceAll("(?i)\"fileDownload\"", "\"fileDownload\"");
-		locationField = locationField.replaceAll("(?i)\"tilecache\"", "\"tilecache\"");
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode rootNode = null;

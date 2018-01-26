@@ -27,13 +27,12 @@ public class GetWmcController {
 	private WmcCreator wmcCreator;
 	
 	@RequestMapping(method=RequestMethod.GET, produces="application/xml")
-	public void getLayerInfo(@RequestParam("ogpids") Set<String> layerIds, @RequestParam("type") String ogcType, @RequestParam("minx") Double minx, @RequestParam("miny") Double miny,
-			@RequestParam("maxx") Double maxx, @RequestParam("maxy") Double maxy, HttpServletResponse response) throws Exception {
+	public void getLayerInfo(@RequestParam("ogpids") Set<String> layerSlugs, @RequestParam("type") String ogcType, @RequestParam("minx") Double minx, @RequestParam("maxx") Double maxx, @RequestParam("maxy") Double maxy, @RequestParam("miny") Double miny, HttpServletResponse response) throws Exception {
 		
 		OwsType requestedType = OwsType.parseOwsType(ogcType);
-		BoundingBox bounds = new BoundingBox(minx,miny,maxx,maxy);
+		BoundingBox bounds = new BoundingBox(minx,maxx,maxy,miny);
 		Map<String,OwsType> layerMap = new LinkedHashMap<String,OwsType>();
-		for (String layer: layerIds){					
+		for (String layer: layerSlugs){					
 				layerMap.put(layer, requestedType);
 		}
 		

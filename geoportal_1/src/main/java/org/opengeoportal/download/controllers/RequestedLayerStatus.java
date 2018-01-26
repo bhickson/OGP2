@@ -7,7 +7,7 @@ public class RequestedLayerStatus {
 	private Status status;
 	private String id;
 	private String bounds;
-	private String name;
+	private String slug;
 	private String responseType;
 	
 	public Status getStatus() {
@@ -31,11 +31,11 @@ public class RequestedLayerStatus {
 	public void setBounds(String bounds) {
 		this.bounds = bounds;
 	}
-	public String getName() {
-		return name;
+	public String getLayerSlug() {
+		return slug;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setLayerSlug(String slug) {
+		this.slug = slug;
 	}
 	public String getResponseType() {
 		return responseType;

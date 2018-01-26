@@ -96,17 +96,16 @@ public class GetCapabilitiesWMSProxy implements HttpRequestHandler {
     		layers = URLDecoder.decode(layers, "UTF-8");
     	}
     	System.out.println(layers);
-    	String[] layerIds = layers.split(",");
-    	//String[] layerIds = request.getParameterValues("layerId");
-   		Set<String> layerIdSet = new HashSet<String>();
+    	String[] layerSlugs = layers.split(",");
+   		Set<String> layerSlugSet = new HashSet<String>();
    		
-		for (int i = 0; i < layerIds.length; i++){
-			layerIdSet.add(layerIds[i]); 
+		for (int i = 0; i < layerSlugs.length; i++){
+			layerSlugSet.add(layerSlugs[i]); 
    		}
 
    		List<SolrRecord> layerRecords = null;
 		try {
-			layerRecords = this.layerInfoRetriever.fetchAllLayerInfo(layerIdSet);
+			layerRecords = this.layerInfoRetriever.fetchAllLayerInfo(layerSlugSet);
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -114,7 +113,7 @@ public class GetCapabilitiesWMSProxy implements HttpRequestHandler {
    		
 		SolrRecord firstRecord = layerRecords.get(0);
    		//String institution = firstRecord.getInstitution();
-		String location = firstRecord.getLocation();
+		String location = firstRecord.getServiceLocations();
 		String servicePoint = LocationFieldUtils.getWmsUrl(location);
    		String serverName = servicePoint.substring(0, servicePoint.indexOf("/wms"));
    		logger.debug(serverName);
@@ -122,7 +121,7 @@ public class GetCapabilitiesWMSProxy implements HttpRequestHandler {
 
    		Set<String> layerNames = new HashSet<String>();
    		for (SolrRecord layer: layerRecords){
-				String currentLayerName = layer.getWorkspaceName() + ":" + layer.getName();
+				String currentLayerName = layer.getServiceId();
 				layerNames.add(currentLayerName);
    		}
 		//Parse the document

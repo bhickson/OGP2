@@ -195,7 +195,7 @@ public class WmcCreatorImpl implements WmcCreator {
 		LayerListType layerList = new LayerListType();
 		for (SolrRecord record: records){
 			try {
-				layerList.getLayer().add(populateLayer(record, idsAndFormats.get(record.getLayerId())));
+				layerList.getLayer().add(populateLayer(record, idsAndFormats.get(record.getLayerSlug())));
 			} catch (Exception e){
 				logger.error(e.getMessage());
 			}
@@ -239,7 +239,7 @@ public class WmcCreatorImpl implements WmcCreator {
 		ServerType server = new ServerType();
 		OnlineResourceType olresource = new OnlineResourceType();
 
-		String location = record.getLocation();
+		String location = record.getServiceLocations();
 
 		ServiceType serviceType;
 		String serviceVersion;
@@ -283,10 +283,10 @@ public class WmcCreatorImpl implements WmcCreator {
 		
 		layer.setServer(server);
 		
-		server.setTitle(record.getLayerDisplayName());
-		String name = OgpUtils.getLayerNameNS(record.getWorkspaceName(), record.getName());
-		layer.setName(name);
-		layer.setTitle(record.getLayerDisplayName());
+		server.setTitle(record.getLayerTitle());
+		String serviceId = OgpUtils.getLayerNameNS(record.getServiceId()); 
+		layer.setName(serviceId);
+		layer.setTitle(record.getLayerTitle());
 		layer.setAbstract(record.getDescription());
 				
 		return layer;

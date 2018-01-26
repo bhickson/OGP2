@@ -22,16 +22,16 @@ public class HomeController {
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@RequestMapping(value={"/index", "/"}, method=RequestMethod.GET)
-	public ModelAndView getHomePage(@RequestParam(value="ogpids", defaultValue = "") Set<String> layerIds,
+	public ModelAndView getHomePage(@RequestParam(value="ogpids", defaultValue = "") Set<String> layerSlugs,
 			@RequestParam(value="collectionId", defaultValue = "") String collectionId,
-			@RequestParam(value="bbox", defaultValue = "-180,-90,180,90") String bbox,
+			@RequestParam(value="bbox", defaultValue = "-180,180,90,-90") String bbox, // Should be defaulted in WKT West East North South (W E N S) format
 			@RequestParam(value="layer[]", defaultValue = "") Set<String> layers,
 			@RequestParam(value="minX", defaultValue = "-180") String minx,
 			@RequestParam(value="maxX", defaultValue = "180") String maxx,
 			@RequestParam(value="minY", defaultValue = "-90") String miny,
 			@RequestParam(value="maxY", defaultValue = "90") String maxy,
 			@RequestParam(value="dev", defaultValue = "false") Boolean isDev) throws Exception {
-		//@RequestParam("ogpids") Set<String> layerIds, ..should be optional.  also a param to set dev vs. prod
+		//@RequestParam("ogpids") Set<String> layerSlugs, ..should be optional.  also a param to set dev vs. prod
 		//create the model to return
 		ModelAndView mav = new ModelAndView("ogp_home"); 
 
@@ -39,20 +39,20 @@ public class HomeController {
 		
 		//if ogpids exists, add them to the Model
 		
-		if (!layerIds.isEmpty()){
-			mav.addObject("shareIds", getQuotedSet(layerIds));
+		if (!layerSlugs.isEmpty()){
+			mav.addObject("shareIds", getQuotedSet(layerSlugs));
 			mav.addObject("shareBbox", bbox);
 		} else if (!layers.isEmpty()){
 			//support old style share just in case
 			mav.addObject("shareIds", getQuotedSet(layers));
 			mav.addObject("shareBbox", minx + "," + miny + "," + maxx + "," + maxy);
 		} else if (!collectionId.isEmpty()){
-			mav.addObject("shareIds", layerIds);
+			mav.addObject("shareIds", layerSlugs);
 			mav.addObject("collectionId", collectionId);
 			mav.addObject("shareBbox", bbox);
 		} else {
 			//default values
-			mav.addObject("shareIds", layerIds);
+			mav.addObject("shareIds", layerSlugs);
 			mav.addObject("shareBbox", bbox);	
 		}
 		

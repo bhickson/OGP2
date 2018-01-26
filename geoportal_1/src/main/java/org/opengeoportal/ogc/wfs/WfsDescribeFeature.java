@@ -54,55 +54,55 @@ public class WfsDescribeFeature implements OgcInfoRequest{
 		 */
 		//Parse the document
 		Document document = OgpXmlUtils.getDocument(inputStream);
-			//initialize return variablec
-			Map<String, String> describeLayerInfo = new HashMap<String, String>();
+		//initialize return variablec
+		Map<String, String> describeLayerInfo = new HashMap<String, String>();
 
-			//get the namespace info
-			Node schemaNode = document.getFirstChild();
-			OgpXmlUtils.handleServiceException(schemaNode);
+		//get the namespace info
+		Node schemaNode = document.getFirstChild();
+		OgpXmlUtils.handleServiceException(schemaNode);
+		
+		try {
+			NamedNodeMap schemaAttributes = schemaNode.getAttributes();
+			describeLayerInfo.put("nameSpace", schemaAttributes.getNamedItem("targetNamespace").getNodeValue());
+
+			//we can get the geometry column name from here
+			NodeList elementNodes;
 			
-			try {
-				NamedNodeMap schemaAttributes = schemaNode.getAttributes();
-				describeLayerInfo.put("nameSpace", schemaAttributes.getNamedItem("targetNamespace").getNodeValue());
-
-				//we can get the geometry column name from here
-				NodeList elementNodes;
-				
-				if(document.getElementsByTagName("xsd:element").getLength()!=0){
-					elementNodes = document.getElementsByTagName("xsd:element");
-				} else {
-					//ArcGIS uses prefix "xs" but xs and xsd are essentially same if they refer to the same schema.
-					//See reference http://stackoverflow.com/questions/1193563/difference-between-xs-and-xsd-in-xml-schema-file
-					elementNodes = document.getElementsByTagName("xs:element");
-				}
-				
-				for (int i = 0; i < elementNodes.getLength(); i++){
-					Node currentNode = elementNodes.item(i);
-					NamedNodeMap currentAttributeMap = currentNode.getAttributes();
-					String attributeValue = null;
-					for (int j = 0; j < currentAttributeMap.getLength(); j++){
-						Node currentAttribute = currentAttributeMap.item(j);
-						String currentAttributeName = currentAttribute.getNodeName();
-						if (currentAttributeName.equals("name")){
-							attributeValue = currentAttribute.getNodeValue();
-						} else if (currentAttributeName.equals("type")){
-							describeLayerInfo.put("attr" + (i+1), attributeValue + "," + currentAttribute.getNodeValue());
-							if (currentAttribute.getNodeValue().startsWith("gml:")){
-								describeLayerInfo.put("geometryColumn", attributeValue);
-							}
+			if(document.getElementsByTagName("xsd:element").getLength()!=0){
+				elementNodes = document.getElementsByTagName("xsd:element");
+			} else {
+				//ArcGIS uses prefix "xs" but xs and xsd are essentially same if they refer to the same schema.
+				//See reference http://stackoverflow.com/questions/1193563/difference-between-xs-and-xsd-in-xml-schema-file
+				elementNodes = document.getElementsByTagName("xs:element");
+			}
+			
+			for (int i = 0; i < elementNodes.getLength(); i++){
+				Node currentNode = elementNodes.item(i);
+				NamedNodeMap currentAttributeMap = currentNode.getAttributes();
+				String attributeValue = null;
+				for (int j = 0; j < currentAttributeMap.getLength(); j++){
+					Node currentAttribute = currentAttributeMap.item(j);
+					String currentAttributeName = currentAttribute.getNodeName();
+					if (currentAttributeName.equals("name")){
+						attributeValue = currentAttribute.getNodeValue();
+					} else if (currentAttributeName.equals("type")){
+						describeLayerInfo.put("attr" + (i+1), attributeValue + "," + currentAttribute.getNodeValue());
+						if (currentAttribute.getNodeValue().startsWith("gml:")){
+							describeLayerInfo.put("geometryColumn", attributeValue);
 						}
 					}
 				}
-				
-			} catch (Exception e){
-				throw new Exception("Error getting layer info from DescribeFeatureType: "+ e.getMessage());
 			}
-			OwsInfo owsResponse = new OwsInfo();
-			owsResponse.setOwsProtocol(OwsProtocol.parseOwsProtocol(this.getOgcProtocol()));
-			owsResponse.setInfoMap(describeLayerInfo);
 			
-			return owsResponse;
-		 }
+		} catch (Exception e){
+			throw new Exception("Error getting layer info from DescribeFeatureType: "+ e.getMessage());
+		}
+		OwsInfo owsResponse = new OwsInfo();
+		owsResponse.setOwsProtocol(OwsProtocol.parseOwsProtocol(this.getOgcProtocol()));
+		owsResponse.setInfoMap(describeLayerInfo);
+		
+		return owsResponse;
+	}
 	
 
 

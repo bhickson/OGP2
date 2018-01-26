@@ -40,18 +40,17 @@ public class WfsDownloadMethod extends AbstractDownloadMethod implements PerLaye
 	
 	public String createDownloadRequest() throws Exception {
 		//--generate POST message
-		//info needed: geometry column, bbox coords, epsg code, workspace & layername
+		//info needed: geometry column, bbox coords, epsg code, & layers serviceId
 	 	//all client bboxes should be passed as lat-lon coords.  we will need to get the appropriate epsg code for the layer 
 	 	//in order to return the file in original projection to the user (will also need to transform the bbox)
 		String layerName = this.currentLayer.getLayerNameNS();
 		SolrRecord layerInfo = this.currentLayer.getLayerInfo();
-		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMinY(), layerInfo.getMaxX(), layerInfo.getMaxY());
+		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMaxX(), layerInfo.getMaxY(), layerInfo.getMinY());
 		BoundingBox bounds = nativeBounds.getIntersection(this.currentLayer.getRequestedBounds());
 
-		String workSpace = layerInfo.getWorkspaceName();
-		
 		Map<String, String> describeLayerInfo = null;
 		try {
+			logger.info("currentLayer infoMap:" + this.currentLayer);
 			describeLayerInfo = OwsInfo.findWfsInfo(this.currentLayer.getOwsInfo()).getInfoMap();
 		} catch (Exception e){
 			this.currentLayer.getOwsInfo().add(getWfsDescribeLayerInfo());
@@ -71,7 +70,7 @@ public class WfsDownloadMethod extends AbstractDownloadMethod implements PerLaye
 		//really, we should check the get caps doc to see if this is a viable option...probably this should be done before/at the download prompt
 		String outputFormat = "shape-zip";
 		
-		String request =  WfsGetFeature.createWfsGetFeatureRequest(layerName, workSpace, nameSpace, outputFormat, bboxFilter);
+		String request =  WfsGetFeature.createWfsGetFeatureRequest(layerName, nameSpace, outputFormat, bboxFilter);
 		return request;
 	}
 	 
@@ -81,7 +80,13 @@ public class WfsDownloadMethod extends AbstractDownloadMethod implements PerLaye
 		//WFS services from ArcGIS Rest endpoints don't return shape-zip, so we have to use a different method
 		//in the future, we should look to merge the 2 WFS download methods.  If the geotools version is fast enough,
 		//it could be used for both types
-		if(LocationFieldUtils.hasArcGISRestUrl(layer.getLayerInfo().getLocation())){
+		if (LocationFieldUtils.hasArcGISFeatureLayerUrl(layer.getLayerInfo().getServiceLocations())){
+			return null;
+		} else if (LocationFieldUtils.hasArcGISTiledMapLayerUrl(layer.getLayerInfo().getServiceLocations())){
+			return null;
+		} else if (LocationFieldUtils.hasArcGISDynamicMapLayerUrl(layer.getLayerInfo().getServiceLocations())){
+			return null;
+		} else if (LocationFieldUtils.hasArcGISImageMapLayerUrl(layer.getLayerInfo().getServiceLocations())){
 			return null;
 		}
 	

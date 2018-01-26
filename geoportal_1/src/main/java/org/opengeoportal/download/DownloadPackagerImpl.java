@@ -115,13 +115,13 @@ public class DownloadPackagerImpl implements DownloadPackager {
 			logger.debug(temp.getName());
 		}
 		if (GeometryType.isVector(GeometryType.parseGeometryType(layer.getLayerInfo().getDataType()))&&(!layer.getRequestedFormat().equals("kmz"))){
-			xmlFile = new File(directory, OgpFileUtils.filterName(layer.getLayerInfo().getName()) + ".shp.xml");
+			xmlFile = new File(directory, OgpFileUtils.filterName(layer.getLayerInfo().getLayerSlug()) + ".shp.xml");
 		} else {
-			xmlFile = new File(directory, OgpFileUtils.filterName(layer.getLayerInfo().getName()) + ".xml");
+			xmlFile = new File(directory, OgpFileUtils.filterName(layer.getLayerInfo().getLayerSlug()) + ".xml");
 		}
 
 		try {
-			layer.downloadedFiles.add(this.metadataRetriever.getXMLFile(layer.getLayerInfo().getName(), xmlFile));
+			layer.downloadedFiles.add(this.metadataRetriever.getXMLFile(layer.getLayerInfo().getLayerSlug(), xmlFile));
 		} catch (Exception e) {
 			//couldn't get the metadata, but don't kill the download
 			logger.error(e.getMessage());

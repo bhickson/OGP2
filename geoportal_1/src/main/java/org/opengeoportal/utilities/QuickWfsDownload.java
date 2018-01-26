@@ -45,16 +45,16 @@ public class QuickWfsDownload implements QuickDownload {
 	/**
 	 * Method retreives a zipped Shapefile via WFS and places it in the "download" directory
 	 * 
-	 * @param layerId	a String containing the OGP layer id for the desired layer
+	 * @param layerSlug	a String containing the OGP layer slug for the desired layer
 	 * @param bounds	a BoundingBox with the desired selection bounds for the layer in EPSG:4326
 	 * @return a zip File containing the shape file
 	 * @throws Exception if the remote server does not response with status code 200 or returns an XML response (assumed to be an error)
 	 * @see org.OpenGeoPortal.Utilities.QuickDownload#downloadZipFile(java.lang.String, org.OpenGeoPortal.Layer.BoundingBox)
 	 */
 	@Override
-	public File downloadZipFile(String layerId, BoundingBox bounds) throws Exception{
+	public File downloadZipFile(String layerSlug, BoundingBox bounds) throws Exception{
 
-		SolrRecord layerInfo = layerInfoRetriever.getAllLayerInfo(layerId);
+		SolrRecord layerInfo = layerInfoRetriever.getAllLayerInfo(layerSlug);
 		
 		//requests too near the poles are problematic
 		BoundingBox requestBounds = null;
@@ -67,16 +67,15 @@ public class QuickWfsDownload implements QuickDownload {
 			 requestMaxY = 85.0;
 		}
 		requestBounds = new BoundingBox(bounds.getMinX(), requestMinY, bounds.getMaxX(), requestMaxY);
-		String workspace = layerInfo.getWorkspaceName();
-		String layerName = layerInfo.getName();
+		String serviceLayerName = layerInfo.getServiceId();
 		String requestString = "request=GetFeature&version=1.1.0&outputFormat=shape-zip";
-		requestString += "&typeName=" + workspace + ":" + layerName;
+		requestString += "&typeName=" + serviceLayerName;
 		requestString += "&srsName=EPSG:4326";
 		requestString += "&BBOX=" + requestBounds.toString() + ",EPSG:4326";
 		HttpClient httpclient = ogpHttpClient.getCloseableHttpClient();
 		File outputFile = null;
     
-    	String wfsLocation = LocationFieldUtils.getWfsUrl(layerInfo.getLocation());
+    	String wfsLocation = LocationFieldUtils.getWfsUrl(layerInfo.getServiceLocations());
         HttpGet httpget = new HttpGet(wfsLocation + "?" + requestString);
 
         logger.info("executing request " + httpget.getURI());
@@ -85,7 +84,7 @@ public class QuickWfsDownload implements QuickDownload {
 			HttpResponse response = httpclient.execute(httpget);
 			logger.info("Response code: " + Integer.toString(response.getStatusLine().getStatusCode()));
 			if (response.getStatusLine().getStatusCode() != 200){
-				throw new Exception("Attempt to download " + layerName + " failed.");
+				throw new Exception("Attempt to download " + serviceLayerName + " failed.");
 			}
 			
 			HttpEntity entity = response.getEntity();
@@ -97,7 +96,7 @@ public class QuickWfsDownload implements QuickDownload {
 				throw new Exception("Remote server reported an error");
 			}
 			File directory = directoryRetriever.getDirectory("download");
-			outputFile = new File(directory, OgpFileUtils.filterName(layerName) + ".zip");
+			outputFile = new File(directory, OgpFileUtils.filterName(layerSlug) + ".zip");
 			
 			InputStream inputStream = null;
 			BufferedInputStream bufferedIn = null;

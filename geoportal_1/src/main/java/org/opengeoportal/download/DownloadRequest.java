@@ -32,10 +32,12 @@ public class DownloadRequest {
 	private List<RequestedLayerFormat> requestedLayerFormat; 
 	
 	public BoundingBox getBounds() {
+		logger.info("Bounds: " + bounds);
 		return bounds;
 	}
 
 	public void setBounds(String bounds) {
+		logger.info("setBounds bounds: " + bounds);
 		String[] arrBounds = bounds.split(",");
 		this.bounds = new BoundingBox(arrBounds[0], arrBounds[1], arrBounds[2], arrBounds[3]);
 	}
@@ -55,8 +57,8 @@ public class DownloadRequest {
 	public static class RequestedLayerFormat {
 		@JsonProperty("format")
 		private String format;
-		@JsonProperty("layerId")
-		private String layerId;
+		@JsonProperty("layerSlug")
+		private String layerSlug;
 		
 		public String getFormat() {
 			return format;
@@ -64,26 +66,26 @@ public class DownloadRequest {
 		public void setFormat(String format) {
 			this.format = format;
 		}
-		public String getLayerId() {
-			return layerId;
+		public String getLayerSlug() {
+			return layerSlug;
 		}
-		public void setLayerId(String layerId) {
-			this.layerId = layerId;
+		public void setLayerSlug(String layerSlug) {
+			this.layerSlug = layerSlug;
 		}
 
 	}
 	
-	public Set<String> getRequestedLayerIds(){
-		Set<String> layerIds = new HashSet<String>();
+	public Set<String> getRequestedLayerSlugs(){
+		Set<String> layerSlugs = new HashSet<String>();
 		for (RequestedLayerFormat layer: requestedLayerFormat){
-			layerIds.add(layer.getLayerId());
+			layerSlugs.add(layer.getLayerSlug());
 		}
-		return layerIds;
+		return layerSlugs;
 	}
 	
-	public String getRequestedFormatForLayerId(String layerId) throws Exception{
+	public String getRequestedFormatForLayerSlug(String layerSlug) throws Exception{
 		for (RequestedLayerFormat layer: requestedLayerFormat){
-			if (layer.getLayerId().equalsIgnoreCase(layerId)){
+			if (layer.getLayerSlug().equalsIgnoreCase(layerSlug)){
 				return layer.getFormat();
 			}
 		}

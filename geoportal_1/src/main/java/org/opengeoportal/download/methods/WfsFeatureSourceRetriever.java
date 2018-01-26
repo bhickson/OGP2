@@ -23,7 +23,18 @@ public class WfsFeatureSourceRetriever implements FeatureSourceRetriever {
 
 	@Override
 	public void createFeatureSourceFromLayerRequest(LayerRequest layerRequest) throws Exception{
-		setFeatureSource(layerRequest.getWfsUrl(), layerRequest.getLayerNameNS(), LocationFieldUtils.hasArcGISRestUrl(layerRequest.getLayerInfo().getLocation()));
+		boolean arcLayer = true;
+		if (LocationFieldUtils.hasArcGISFeatureLayerUrl(layerRequest.getLayerInfo().getServiceLocations())){
+			arcLayer = false;
+		} else if (LocationFieldUtils.hasArcGISTiledMapLayerUrl(layerRequest.getLayerInfo().getServiceLocations())){
+			arcLayer = false;
+		} else if (LocationFieldUtils.hasArcGISDynamicMapLayerUrl(layerRequest.getLayerInfo().getServiceLocations())){
+			arcLayer = false;
+		} else if (LocationFieldUtils.hasArcGISImageMapLayerUrl(layerRequest.getLayerInfo().getServiceLocations())){
+			arcLayer = false;
+		}
+		
+		setFeatureSource(layerRequest.getWfsUrl(), layerRequest.getLayerNameNS(), arcLayer);
 	}
 	
 	void setFeatureSource(String wfsEndPoint, String layerName, Boolean isFromArcGISServer) throws Exception{
