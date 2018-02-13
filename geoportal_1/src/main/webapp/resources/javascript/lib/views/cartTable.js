@@ -105,11 +105,11 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 					bbox : OpenGeoportal.Config.shareBbox
 				});
 
-				if (OpenGeoportal.Config.shareBbox !== "-180,180,90,-90") { // W E N S
+				if (OpenGeoportal.Config.shareBbox !== "-180,-90,180,90") { 
 					bounds = OpenGeoportal.Config.shareBbox;
 					console.log("Bounds: ", bounds);
-					southwest = [bounds.split(',')[3], bounds.split(',')[0]];
-					northeast = [bounds.split(',')[2], bounds.split(',')[1]]
+					southwest = [bounds.split(',')[1], bounds.split(',')[0]];
+					northeast = [bounds.split(',')[3], bounds.split(',')[2]]
 				} else {
 					var minX = Infinity; maxX = -Infinity; minY = Infinity; maxY = -Infinity;
 					this.collection.each( function (model) {

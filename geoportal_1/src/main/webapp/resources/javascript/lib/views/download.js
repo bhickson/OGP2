@@ -412,6 +412,7 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 				if (this.preferences.get("isClipped")) {
 					// set bounds in the downloadRequest model
 					var extent = OpenGeoportal.ogp.map.getBounds();
+					console.log("EXTENT:", extent);
 					this.downloadRequest.set({
 						bbox : extent
 					});

@@ -138,7 +138,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 				
 			} else if (nodeType == "ogp2"){
 //http://localhost:8080/ogp/?ogpids=HARVARD.SDE.GLB_BAILEY&bbox=-180%2C-85.051129%2C180%2C85.051129
-				var bbox = [ model.get("MinX"), model.get("MinY"),model.get("MaxX"), model.get("MaxY")].join();
+				var bbox = [ model.get("MinX"), model.get("MaxX"),model.get("MaxY"), model.get("MinY")].join();
 				var params = {
 						ogpids: model.get("layer_slug_s"),
 						bbox: bbox
