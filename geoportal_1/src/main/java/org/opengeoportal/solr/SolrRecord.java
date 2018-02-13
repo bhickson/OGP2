@@ -185,11 +185,10 @@ public class SolrRecord {
 		map.put("Title", this.layerTitle);
 		map.put("DataType", this.dataType);
 		map.put("Access", this.access);
-		map.put("Bounds", this.minX + "," + this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[1] + "," + this.maxY + "," + this.minY);
+		map.put("Bounds", this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[0] + "," + this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[1] + "," + this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[2] + "," + this.boundingBox.split("\\(")[1].split("\\)")[0].split(", ")[3]);
 		String originators = String.join(",",this.originator);
 		map.put("Originator", originators);
 		map.put("Publisher", this.publisher);
-		logger.info("SET BOUNDS:" + map);
 		return map;
 	}
 	public String toString(){

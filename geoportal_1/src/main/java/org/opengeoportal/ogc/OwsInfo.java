@@ -28,11 +28,11 @@ public class OwsInfo {
 			this.type = type;
 		}
 		public static OwsProtocol parseOwsProtocol(String protocol) throws Exception{
-			if (protocol.trim().equalsIgnoreCase("wms")){
+			if (protocol.trim().equalsIgnoreCase("wms") || protocol.trim().equalsIgnoreCase("http://www.opengis.net/def/serviceType/ogc/wms")){
 				return WMS;
-			} else if (protocol.trim().equalsIgnoreCase("wfs")){
+			} else if (protocol.trim().equalsIgnoreCase("wfs") || protocol.trim().equalsIgnoreCase("http://www.opengis.net/def/serviceType/ogc/wfs")){
 				return WFS;
-			} else if (protocol.trim().equalsIgnoreCase("wcs")){
+			} else if (protocol.trim().equalsIgnoreCase("wcs") || protocol.trim().equalsIgnoreCase("http://www.opengis.net/def/serviceType/ogc/wcs")){
 				return WCS;
 			} else {
 				throw new Exception("Unrecognized Protocol: " + protocol);

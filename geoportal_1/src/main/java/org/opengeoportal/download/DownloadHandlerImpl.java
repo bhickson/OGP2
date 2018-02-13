@@ -154,7 +154,6 @@ public class DownloadHandlerImpl implements DownloadHandler {
 	}
 	
 	private void addOwsInfo(LayerRequest layer){
-		logger.info("addOwsInfo FIRED");
 		
 		try {
 			AugmentedSolrRecord asr = asrRetriever.getOgcAugmentedSolrRecord(layer.getLayerInfo());

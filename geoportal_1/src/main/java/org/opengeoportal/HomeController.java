@@ -24,7 +24,7 @@ public class HomeController {
 	@RequestMapping(value={"/index", "/"}, method=RequestMethod.GET)
 	public ModelAndView getHomePage(@RequestParam(value="ogpids", defaultValue = "") Set<String> layerSlugs,
 			@RequestParam(value="collectionId", defaultValue = "") String collectionId,
-			@RequestParam(value="bbox", defaultValue = "-180,180,90,-90") String bbox, // Should be defaulted in WKT West East North South (W E N S) format
+			@RequestParam(value="bbox", defaultValue = "-180,-90,180,90") String bbox,
 			@RequestParam(value="layer[]", defaultValue = "") Set<String> layers,
 			@RequestParam(value="minX", defaultValue = "-180") String minx,
 			@RequestParam(value="maxX", defaultValue = "180") String maxx,
@@ -45,7 +45,7 @@ public class HomeController {
 		} else if (!layers.isEmpty()){
 			//support old style share just in case
 			mav.addObject("shareIds", getQuotedSet(layers));
-			mav.addObject("shareBbox", minx + "," + miny + "," + maxx + "," + maxy);
+			mav.addObject("shareBbox", minx + "," + maxx + "," + maxy + "," + miny);
 		} else if (!collectionId.isEmpty()){
 			mav.addObject("shareIds", layerSlugs);
 			mav.addObject("collectionId", collectionId);

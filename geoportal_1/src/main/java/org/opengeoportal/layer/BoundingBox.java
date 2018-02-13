@@ -1,4 +1,7 @@
 package org.opengeoportal.layer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * A simple class that represents a bounding box in geodetic coordinates, with some convenience methods
@@ -6,6 +9,9 @@ package org.opengeoportal.layer;
  *
  */
 public class BoundingBox extends Envelope{
+
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
 	private final static String epsgCode = "4326";
 	/**

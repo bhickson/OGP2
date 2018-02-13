@@ -50,7 +50,6 @@ public class WfsDownloadMethod extends AbstractDownloadMethod implements PerLaye
 
 		Map<String, String> describeLayerInfo = null;
 		try {
-			logger.info("currentLayer infoMap:" + this.currentLayer);
 			describeLayerInfo = OwsInfo.findWfsInfo(this.currentLayer.getOwsInfo()).getInfoMap();
 		} catch (Exception e){
 			this.currentLayer.getOwsInfo().add(getWfsDescribeLayerInfo());

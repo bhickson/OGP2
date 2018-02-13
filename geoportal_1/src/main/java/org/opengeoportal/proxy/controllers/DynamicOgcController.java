@@ -281,7 +281,7 @@ public class DynamicOgcController {
 	
 	if (ogcRequest.equalsIgnoreCase("describefeaturetype") || ogcRequest.equalsIgnoreCase("getfeature")){
 		//TODO: strip all the params and rebuild the request with only sanctioned parameters, in case of fussy servers
-		String remoteUrl = getOgcUrlFromLayerName(typeName, "wfs");
+		String remoteUrl = getOgcUrlFromLayerName(typeName, "http://www.opengis.net/def/serviceType/ogc/wfs");
 		String newQuery = removeParamFromQuery(servletRequest.getQueryString(), "ogpids");
 		if (ogcRequest.equalsIgnoreCase("describefeaturetype")){
 			newQuery = removeParamFromQuery(newQuery, "srsname");
@@ -479,13 +479,13 @@ private String getOgcUrlFromLayerName(String layerName, String ogcProtocol) thro
 	}
 	String location = records.get(0).getServiceLocations();
 	
-	if (ogcProtocol.equalsIgnoreCase("wfs")){
+	if (ogcProtocol.equalsIgnoreCase("http://www.opengis.net/def/serviceType/ogc/wfs")){
 		return LocationFieldUtils.getWfsUrl(location);
 	
-	} else if (ogcProtocol.equalsIgnoreCase("wms")){
+	} else if (ogcProtocol.equalsIgnoreCase("http://www.opengis.net/def/serviceType/ogc/wms")){
 		return LocationFieldUtils.getWmsUrl(location);
 
-	} else if (ogcProtocol.equalsIgnoreCase("wcs")){
+	} else if (ogcProtocol.equalsIgnoreCase("http://www.opengis.net/def/serviceType/ogc/wcs")){
 		return LocationFieldUtils.getWcsUrl(location);
 	} else {
 		throw new Exception("Unsupported OGC Protocol ['" + ogcProtocol + "']");

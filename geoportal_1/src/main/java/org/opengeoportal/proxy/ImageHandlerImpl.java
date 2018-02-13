@@ -117,7 +117,7 @@ public class ImageHandlerImpl implements ImageHandler {
 	   	String baseUrl = "";
 
 	   	try{
-	   		baseUrl = this.proxyConfigRetriever.getInternalUrl("wms", solrRecord.getInstitution(), solrRecord.getAccess(), solrRecord.getServiceLocations());
+	   		baseUrl = this.proxyConfigRetriever.getInternalUrl("http://www.opengis.net/def/serviceType/ogc/wms", solrRecord.getInstitution(), solrRecord.getAccess(), solrRecord.getServiceLocations());
 	   		layerImage.setUrl(new URL(baseUrl + "?" + baseQuery + layerQueryString));
 
 	   	} catch (Exception e1) {

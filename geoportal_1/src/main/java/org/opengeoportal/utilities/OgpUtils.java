@@ -165,7 +165,6 @@ public class OgpUtils {
 
 
 		String combined = path + "?" + requestString;
-		logger.info("Combined URL: " + combined);
 		return combined;
 	}
 

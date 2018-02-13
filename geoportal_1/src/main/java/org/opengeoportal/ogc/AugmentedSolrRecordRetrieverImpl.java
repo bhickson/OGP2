@@ -123,9 +123,6 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 	
 	@Override
 	public AugmentedSolrRecord getOgcAugmentedSolrRecord(SolrRecord solrRecord) throws Exception {
-		logger.info("getOgcAugmentedASolrRecords");
-		logger.info("wmsRequester:" + wmsRequester);
-		logger.info("solrRecord:" + solrRecord);
 
 		AugmentedSolrRecord asr = getInfoAttempt(wmsRequester, DATA_ATTEMPTS, solrRecord);
 		OwsInfo wmsInfo =  OwsInfo.findWmsInfo(asr.getOwsInfo());
@@ -151,7 +148,6 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 		for (int i = 0; i < numAttempts; i++ ){
 			logger.info("Attempt " + (i + 1));
 			try{
-				logger.info("SETTING ASR!");
 				asr = requester.getOgcAugment(solrRecord);
 				if (asr == null){
 					continue;

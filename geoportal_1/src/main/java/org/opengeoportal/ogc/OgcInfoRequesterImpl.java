@@ -93,8 +93,9 @@ public class OgcInfoRequesterImpl implements OgcInfoRequester {
 
 			String request = ogcInfoRequest.createRequest(layerName);
 			String method = ogcInfoRequest.getMethod();
-			String protocol = ogcInfoRequest.getOgcProtocol().toLowerCase();
+			String protocol = ogcInfoRequest.getOgcProtocol();
 			String url = proxyConfigRetriever.getInternalUrl(protocol, solrRecord.getInstitution(), solrRecord.getAccess(), solrRecord.getServiceLocations());
+			// NOT HERE
 
 			is = httpRequester.sendRequest(url, request, method);
 
@@ -117,18 +118,15 @@ public class OgcInfoRequesterImpl implements OgcInfoRequester {
 		asr.setSolrRecord(solrRecord);
 		OwsInfo info = getOwsInfo(solrRecord, owsUrl);
 		asr.getOwsInfo().add(info);
-
 		return asr;
 	}
 
 	@Override
 	public AugmentedSolrRecord getOgcAugment(SolrRecord solrRecord)
 			throws Exception {
-		logger.info("OGCAUGMENT THERE" + solrRecord);	
 		AugmentedSolrRecord asr = new AugmentedSolrRecord();
 		asr.setSolrRecord(solrRecord);
 		OwsInfo info = getOwsInfo(solrRecord);
-		logger.info("INFO: " + info);
 		asr.getOwsInfo().add(info);
 		return asr;
 	}

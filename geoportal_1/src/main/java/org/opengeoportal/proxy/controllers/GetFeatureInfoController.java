@@ -54,7 +54,7 @@ public class GetFeatureInfoController {
 	    SolrRecord layerInfo = getSolrRecord(layerSlug);
 	    
 	    
-	    String wmsEndpoint = proxyConfigRetriever.getInternalUrl("wms", layerInfo.getInstitution(), layerInfo.getAccess(), layerInfo.getServiceLocations());
+	    String wmsEndpoint = proxyConfigRetriever.getInternalUrl("http://www.opengis.net/def/serviceType/ogc/wms", layerInfo.getInstitution(), layerInfo.getAccess(), layerInfo.getServiceLocations());
 	    
 	    //filter any query terms
 	    wmsEndpoint = OgpUtils.filterQueryString(wmsEndpoint);

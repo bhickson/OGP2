@@ -32,12 +32,10 @@ public class DownloadRequest {
 	private List<RequestedLayerFormat> requestedLayerFormat; 
 	
 	public BoundingBox getBounds() {
-		logger.info("Bounds: " + bounds);
 		return bounds;
 	}
 
 	public void setBounds(String bounds) {
-		logger.info("setBounds bounds: " + bounds);
 		String[] arrBounds = bounds.split(",");
 		this.bounds = new BoundingBox(arrBounds[0], arrBounds[1], arrBounds[2], arrBounds[3]);
 	}

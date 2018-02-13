@@ -42,7 +42,6 @@ public class LayerRequest {
 	private Future<?> futureValue;
 
 	public LayerRequest(SolrRecord record, String requestedFormat){
-		logger.info("record! : " + record);
 		this.id = record.getLayerSlug();
 		this.layerInfo = record;
 		this.timeStamp = new Date();
