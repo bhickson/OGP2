@@ -130,6 +130,7 @@ OpenGeoportal.Solr = function() {
 
 		var params = this.combineParams(this.baseParams, this.spatialParams,
 				this.textParams);
+
 		return params;
 	};
 
@@ -307,44 +308,44 @@ OpenGeoportal.Solr = function() {
 	// you can specify different solr fields and boosts for basic and advanced.
 	this.LayerDisplayNameTerm = {
 		basic : {
-			term : "LayerDisplayNameSynonyms",
+			term : "dc_title_ti",
 			boost : .2
 		},
 		advanced : {
-			term : "LayerDisplayNameSynonyms",
+			term : "dc_title_ti",
 			boost : .2
 		}
 	};
 
 	this.ThemeKeywordsTerm = {
-		term : "ThemeKeywordsSynonymsLcsh",
+		term : "dc_subject_tmi",
 		boost : .1
 	};
 
 	this.PlaceKeywordsTerm = {
-		term : "PlaceKeywordsSynonyms",
+		term : "dct_spatial_tmi",
 		boost : .1
 	};
 
 	this.PublisherTerm = {
-		term : "Publisher",
+		term : "dc_publisher_ti",
 		boost : .1
 	};
 
 	this.OriginatorTerm = {
-		term : "Originator",
+		term : "dc_creator_tmi",
 		boost : .1
 	};
 
 	this.IsoTopicTerm = {
-		term : "ThemeKeywordsSynonymsIso",
+		term : "dc_subject_tmi",
 		boost : .1
 	};
 
 	// Terms that will be searched in a basic search against the what field
 	// contents
 	// Search Title, theme keywords, place keywords, publisher, and originator
-	this.BasicKeywordTerms = [ this.LayerDisplayNameTerm, this.IsoTopicTerm,
+	this.BasicKeywordTerms = [ this.LayerDisplayNameTerm,
 			this.ThemeKeywordsTerm, this.PlaceKeywordsTerm, this.PublisherTerm,
 			this.OriginatorTerm ];
 
@@ -469,8 +470,6 @@ OpenGeoportal.Solr = function() {
 	// e.g., getDateFilter(1940, null); // get layers since 1940
 	this.createDateRangeFilter = function createDateRangeFilter(dateField,
 			fromDate, toDate) {
-		var dateSuffix = "-01-01T01:01:01Z"; // per an ISO standard solr
-		// expects
 		fromDate = this.filterDateValue(fromDate);
 		toDate = this.filterDateValue(toDate);
 
@@ -479,11 +478,10 @@ OpenGeoportal.Solr = function() {
 			return ""; // no date search data specified so no search filter
 		}
 
-		fromDate = fromDate || "0001";
-		toDate = toDate || "2100";
+		currentYear = (new Date()).getFullYear();
 
-		fromDate += dateSuffix;
-		toDate += dateSuffix;
+		fromDate = fromDate || "*";
+		toDate = toDate || currentYear.toString();
 
 		return this.createRangeFilter(dateField, fromDate, toDate);
 
@@ -868,16 +866,14 @@ OpenGeoportal.Solr = function() {
 
 	// returns the solr query to obtain terms directly from the index for a
 	// field
-	this.getTermParams = function(termField, requestTerm) {
-		var termParams = {
-			"terms.fl" : termField,
-			"terms.regex" : ".*" + requestTerm + ".*",
-			"terms.regex.flag" : "case_insensitive",
-			"terms.limit" : -1,
+	this.getSuggestionParams = function(suggestField, requestTerm) {
+		var suggestionParams = {
+			"suggest.fl" : suggestField,
+			"suggest.q" : requestTerm,
 			omitHeader : true,
 			wt : "json"
 		};
-		return termParams;
+		return suggestionParams;
 	};
 
 	// returns the solr query params to obtain a layer info from the Solr server
@@ -909,9 +905,11 @@ OpenGeoportal.Solr = function() {
 			errorFunction) {
 		var url = this.getServerName().substring(0,
 				this.getServerName().indexOf("select"))
-				+ "terms";
+				+ "suggest";
 
-		var query = jQuery.param(this.getTermParams(field, term), true);
+		var query = jQuery.param(this.getSuggestionParams(field, term), true);
+		console.log("QUERY: ", url + "?" + query);
+		console.log("SUCCESS FUNCTION: ", successFunction);
 
 		this.sendToSolr(url + "?" + query, successFunction, errorFunction);
 	};
@@ -926,8 +924,6 @@ OpenGeoportal.Solr = function() {
 	this.getNewOgpSpatialQueryParams = function(bounds) {
 		var centerLon = this.getCenter(bounds.minX, bounds.maxX);
 		var centerLat = this.getCenter(bounds.minY, bounds.maxY);
-		console.log(centerLon);
-		console.log(centerLat);
 		// bf clauses are additive
 		var area = this.getBoundsArea(bounds);
 		var bf_array = [

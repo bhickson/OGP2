@@ -118,7 +118,6 @@ OpenGeoportal.Models.QueryTerms = Backbone.Model.extend({
 		}
 
 		this.addToHistory(solr);
-		// console.log(solr.getURL());
 		return solr.getURL();
 	},
 	getSortInfo : function() {
@@ -155,6 +154,7 @@ OpenGeoportal.Models.QueryTerms = Backbone.Model.extend({
 		 * for (var institution in institutionConfig){
 		 * solr.addInstitution(institution); }
 		 */
+		console.log("BASIC SEARCH QUERY: ", solr);
 		return solr;
 	},
 
@@ -184,19 +184,28 @@ OpenGeoportal.Models.QueryTerms = Backbone.Model.extend({
 				dateFrom, dateTo));
 
 		var dataTypes = this.get("dataType");// columnName,
-		// values, joiner,
-		// prefix
 
-        var altVals = ["\"Paper Map\"", "\"Scanned Map\"", "ScannedMap"];
-        // shim to support proliferation of Scanned Map values.
-        if (_.contains(dataTypes, "Paper Map")) {
-            _.each(altVals, function (val) {
-                if (!_.contains(dataTypes, val)) {
-                    dataTypes.push(val);
-                }
-            });
-            dataTypes = _.without(dataTypes, "Paper Map");
-        }
+		// shim supporting proliferation of alternate values
+        	var altMapVals = ["\"Paper Map\"", "\"Scanned Map\"", "ScannedMap", "Image"];
+		var altPointVals = ["\"MultiPoint\""]
+		var altLineVals = ["\"MultiLineString\""]
+		var altPolygonVals = ["\"MultiPolygon\""]
+
+		alternates = {"Point" : altPointVals,
+			      "Line" : altLineVals,
+			      "Polygon" : altLineVals,
+			      "Map" : altMapVals}
+
+		for (var data_type in alternates) {
+			if (_.contains(dataTypes, data_type)) {
+				_.each(alternates[data_type], function(val) {
+					if (!_.contains(dataTypes, val)) {
+						dataTypes.push(val);
+					}
+				});
+			}
+		}
+		dataType = _.without(dataTypes, "Map");
 
 		solr.addFilter(solr.createFilter("layer_geom_type_s", dataTypes,
 				"{!tag=dt}"));
@@ -210,11 +219,11 @@ OpenGeoportal.Models.QueryTerms = Backbone.Model.extend({
 
 		var originator = this.get("originator");
 		// TODO: should this be a filter?
-		solr.addFilter(solr.createFilter("dc_creator_sm", originator,
+		solr.addFilter(solr.createFilter("dc_creator_tmi", originator,
 				null, "AND"));
 
 		var isoTopic = this.get("isoTopic");
-		solr.addFilter(solr.createFilter("ThemeKeywordsSynonymsIso",
+		solr.addFilter(solr.createFilter("dc_subject_tmi",
 				isoTopic));
 
 		return solr;
