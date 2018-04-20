@@ -143,7 +143,6 @@ OpenGeoportal.Views.RequestQueueLoadIndicatorView = OpenGeoportal.Views.LoadIndi
 	},
 	
 	getDefaultText: function(){
-		console.log("getDefaultText FIRED");
 		var tickerText = "Sending Request...";
 		var processing = this.collection.getLayerCount();
 		if (processing > 0){

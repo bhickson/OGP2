@@ -27,11 +27,13 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 	 */
 
 	this.viewMetadata = function(model) {
-		var location = model.get("Location");
+		var location = model.get("dct_references_s");
 		var layerSlug = model.get("layer_slug_s");
-		// should store this somewhere else; some sort of
-		// config
-		var values = [ "metadataLink", "purl", "libRecord" ];
+		
+		// should store this somewhere else; some sort of config
+		//var values = [ "metadataLink", "purl", "libRecord" ];
+		var values = [ "http://www.w3.org/1999/xhtml",
+				"http://www.loc.gov/mods/v3"]
 		if (OpenGeoportal.Utility.hasLocationValue(location, values)) {
 			// display external metadata in an iframe
 			var url = OpenGeoportal.Utility.getLocationValue(location, values);
@@ -78,6 +80,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 
 
 	this.renderMetadataDialog = function(layerSlug, document) {
+		//console.log("Document: ", document);
 		var dialogId = "metadataDialog";
 		if (typeof jQuery('#' + dialogId)[0] == 'undefined') {
 			jQuery('#dialogs').append(this.template.genericDialogShell({

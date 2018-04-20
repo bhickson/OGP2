@@ -311,11 +311,9 @@ OpenGeoportal.Utility.hasLocationValueIgnoreCase = function(location, keyArr) {
 
 	for ( var i in lowerArr) {
 		if (_.has(lowerArr, i)) {
-
 			if (_.indexOf(keyArrLower, lowerArr[i]) >= 0) {
 				hasKey = true;
 			}
-
 		}
 	}
 

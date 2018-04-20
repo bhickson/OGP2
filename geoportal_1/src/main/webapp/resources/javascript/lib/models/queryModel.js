@@ -154,7 +154,6 @@ OpenGeoportal.Models.QueryTerms = Backbone.Model.extend({
 		 * for (var institution in institutionConfig){
 		 * solr.addInstitution(institution); }
 		 */
-		console.log("BASIC SEARCH QUERY: ", solr);
 		return solr;
 	},
 
