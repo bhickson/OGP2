@@ -164,6 +164,33 @@ public final class LocationFieldUtils {
 		return false;
 	}
 
+	 /**
+         * * Get the value (FGDC location metadata) for the gmd key from the references field.
+         * *
+         * * @param locationField         The Solr record references field as a String
+         * * @return      the url for the iso metadata location for this layer
+         * * @throws JsonParseException
+         * */
+        public static String getFGDCUrl(String locationField) throws JsonParseException{
+                return parseLocationFromKey(locationField, "http://www.opengis.net/cat/csw/csdgm/").get(0);
+
+        }
+
+        /**
+         * * determines if the SolrRecord references field contains a value for the gmd key
+         * *
+         * * @param locationField         The Solr record references field as a String
+         * * @return true if the SolrRecord references field contains a key for gmd
+         * */
+
+        public static Boolean hasFGDCUrl(String locationField){
+                try {
+                        return hasKey(locationField, "http://www.opengis.net/cat/csw/csdgm/");
+                } catch (JsonParseException e) {
+                }
+                return false;
+        }
+
 	/**
 	 * * Get the value (MODs location metadata)for the MODS key from the references field.
 	 * *
@@ -171,7 +198,7 @@ public final class LocationFieldUtils {
 	 * * @return      the url for the MODs metadata location for this layer
 	 * * @throws JsonParseException
 	 * */
-	public static String getMODsMetadataUrl(String locationField) throws JsonParseException{
+	public static String getMODSUrl(String locationField) throws JsonParseException{
 		return parseLocationFromKey(locationField, "http://www.loc.gov/mods/v3").get(0);
 	}
 
@@ -181,7 +208,7 @@ public final class LocationFieldUtils {
 	 * * @param locationField         The Solr record references field as a String
 	 * * @return true if the SolrRecord references field contains a key for MODS
 	 * */
-	public static Boolean hasMODsMetadataUrl(String locationField){
+	public static Boolean hasMODSUrl(String locationField){
 		try {
 			return hasKey(locationField, "http://www.loc.gov/mods/v3");
 		} catch (JsonParseException e) {

@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.opengeoportal.download.MetadataRetriever;
 import org.opengeoportal.metadata.LayerInfoRetriever;
 import org.opengeoportal.utilities.OgpFileUtils;
+import org.opengeoportal.utilities.LocationFieldUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +61,9 @@ public class MetadataDownloadController {
 	private String getMetadataString(String layerSlug, String format) throws Exception{
 		String metadataString = "";
 		if (format.equalsIgnoreCase("xml")){
-			metadataString = this.metadataRetriever.getXMLStringFromId(layerSlug, "fgdc");
+			metadataString = this.metadataRetriever.getXMLStringFromLayerSlug(layerSlug);
 
-		} else if (format.equalsIgnoreCase("html")){
+		} else if (format.equalsIgnoreCase("html")) {
 			metadataString = this.metadataRetriever.getMetadataAsHtml(layerSlug);
 		} else {
 			throw new Exception("Unrecognized format: " + format);

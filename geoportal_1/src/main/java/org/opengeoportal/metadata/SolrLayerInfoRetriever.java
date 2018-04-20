@@ -103,7 +103,7 @@ public class SolrLayerInfoRetriever implements LayerInfoRetriever{
 
 	@Override
 	public SolrRecord getAllLayerInfo(String layerSlug) throws SolrServerException {
-		String query = "LayerSlug:" + ClientUtils.escapeQueryChars(layerSlug.trim());
+		String query = "layer_slug_s:" + ClientUtils.escapeQueryChars(layerSlug.trim());
 	    SolrQuery queryObj = new SolrQuery();
 	    queryObj.setQuery( query );
 		List<SolrRecord> results = getSolrServer().query(queryObj).getBeans(SolrRecord.class);
