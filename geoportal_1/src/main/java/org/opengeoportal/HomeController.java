@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.owasp.encoder.Encode;
+
 
 @Controller
 public class HomeController {
@@ -22,7 +24,8 @@ public class HomeController {
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@RequestMapping(value={"/index", "/"}, method=RequestMethod.GET)
-	public ModelAndView getHomePage(@RequestParam(value="ogpids", defaultValue = "") Set<String> layerIds,
+	public ModelAndView getHomePage(
+			@RequestParam(value="ogpids", defaultValue = "") Set<String> layerIds,
 			@RequestParam(value="collectionId", defaultValue = "") String collectionId,
 			@RequestParam(value="bbox", defaultValue = "-180,-90,180,90") String bbox,
 			@RequestParam(value="layer[]", defaultValue = "") Set<String> layers,
@@ -37,6 +40,29 @@ public class HomeController {
 
 		mav.addObject("dev", isDev);
 		
+		// Encode all nputs to prevent XSS attacks
+		collectionId = Encode.forHtml(collectionId);
+		bbox = Encode.forHtml(bbox);
+		minx = Encode.forHtml(minx);
+		maxx = Encode.forHtml(maxx);
+		miny = Encode.forHtml(miny);
+		maxy = Encode.forHtml(maxy);
+
+		// Iterate Sets layerIds and layers to encode content
+		Set<String> encoded_layerIds = new HashSet<String>();
+		for(String s : layerIds) {
+			encoded_layerIds.add(Encode.forHtml(s));
+		}
+		layerIds.clear();
+		layerIds.addAll(encoded_layerIds);
+
+		Set<String> encoded_layers = new HashSet<String>();
+		for(String s : layers) {
+			encoded_layers.add(Encode.forHtml(s));
+		}
+		layers.clear();
+		layers.addAll(encoded_layers);
+
 		//if ogpids exists, add them to the Model
 		
 		if (!layerIds.isEmpty()){
@@ -67,6 +93,7 @@ public class HomeController {
 			logger.info(stuff.getKey());
 			logger.info((String) stuff.getValue());
 		}*/
+
 		return mav;
 
 	}
