@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.owasp.encoder.Encode;
+
 
 @Controller
 public class HomeController {
@@ -22,7 +24,8 @@ public class HomeController {
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@RequestMapping(value={"/index", "/"}, method=RequestMethod.GET)
-	public ModelAndView getHomePage(@RequestParam(value="ogpids", defaultValue = "") Set<String> layerSlugs,
+	public ModelAndView getHomePage(
+			@RequestParam(value="ogpids", defaultValue = "") Set<String> layerSlugs,
 			@RequestParam(value="collectionId", defaultValue = "") String collectionId,
 			@RequestParam(value="bbox", defaultValue = "-180,-90,180,90") String bbox,
 			@RequestParam(value="layer[]", defaultValue = "") Set<String> layers,
@@ -30,15 +33,38 @@ public class HomeController {
 			@RequestParam(value="maxX", defaultValue = "180") String maxx,
 			@RequestParam(value="minY", defaultValue = "-90") String miny,
 			@RequestParam(value="maxY", defaultValue = "90") String maxy,
-			@RequestParam(value="dev", defaultValue = "false") Boolean isDev) throws Exception {
+			@RequestParam(value="dev", defaultValue = "false") Boolean isDev
+			) throws Exception {
 		//@RequestParam("ogpids") Set<String> layerSlugs, ..should be optional.  also a param to set dev vs. prod
 		//create the model to return
 		ModelAndView mav = new ModelAndView("ogp_home"); 
 
 		mav.addObject("dev", isDev);
 		
+		// Encode all nputs to prevent XSS attacks
+		collectionId = Encode.forHtml(collectionId);
+		bbox = Encode.forHtml(bbox);
+		minx = Encode.forHtml(minx);
+		maxx = Encode.forHtml(maxx);
+		miny = Encode.forHtml(miny);
+		maxy = Encode.forHtml(maxy);
+
+		// Iterate Sets layerSlugs and layers to encode content
+		Set<String> encoded_layerSlugs = new HashSet<String>();
+		for(String s : layerSlugs) {
+			encoded_layerSlugs.add(Encode.forHtml(s));
+		}
+		layerSlugs.clear();
+		layerSlugs.addAll(encoded_layerSlugs);
+
+		Set<String> encoded_layers = new HashSet<String>();
+		for(String s : layers) {
+			encoded_layers.add(Encode.forHtml(s));
+		}
+		layers.clear();
+		layers.addAll(encoded_layers);
+
 		//if ogpids exists, add them to the Model
-		
 		if (!layerSlugs.isEmpty()){
 			mav.addObject("shareIds", getQuotedSet(layerSlugs));
 			mav.addObject("shareBbox", bbox);
@@ -67,6 +93,7 @@ public class HomeController {
 			logger.info(stuff.getKey());
 			logger.info((String) stuff.getValue());
 		}*/
+
 		return mav;
 
 	}
