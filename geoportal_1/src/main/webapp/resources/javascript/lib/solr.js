@@ -205,7 +205,7 @@ OpenGeoportal.Solr = function() {
 	 * Returned Columns
 	 */
 	this.SearchRequest = "Search";
-	this.MetadataRequest = "FgdcText";
+	this.MetadataRequest = "Descriptive Metadata";
 	this.CountRequest = "CountOnly";
 
 	this.SearchRequestColumns = [ "layer_id_s", "dct_provenance_s", "dc_rights_s",
@@ -213,6 +213,9 @@ OpenGeoportal.Solr = function() {
 				      "dc_creator_sm", "dct_references_s", "solr_geom",
 				      "dct_issued_s", "layer_slug_s", "uuid", "score",
 				      "dct_isPartOf_sm", "dc_type_s", "dc_format_s"]
+	this.MetadataRequestColumns = [ "layer_id_s", "dct_provenance_s", "dc_rights_s",
+	                               "layer_geom_type_s", "dc_title_s", "dc_publisher_s",
+				       "dc_creator_sm", "dct_issued_s", "layer_slug_s"]
 
 	// this function returns a Solr fl clause specifying the columns to return
 	// for the passed request
@@ -221,7 +224,7 @@ OpenGeoportal.Solr = function() {
 	this.getReturnedColumns = function getReturnedColumns(requestType) {
 		var returnedColumns = "";
 		if (requestType == this.MetadataRequest) {
-			returnedColumns = "layer_slug_s,FgdcText";
+			returnedColumns = this.MetadataRequestColumns;
 		} else if (requestType == this.CountRequest) {
 			returnedColumns = "";
 		} else if (requestType == this.SearchRequest) {
@@ -908,8 +911,6 @@ OpenGeoportal.Solr = function() {
 				+ "suggest";
 
 		var query = jQuery.param(this.getSuggestionParams(field, term), true);
-		console.log("QUERY: ", url + "?" + query);
-		console.log("SUCCESS FUNCTION: ", successFunction);
 
 		this.sendToSolr(url + "?" + query, successFunction, errorFunction);
 	};

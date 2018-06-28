@@ -252,7 +252,6 @@ OpenGeoportal.Structure = function() {
 		var dropTime = 200;
 		var thisId = jQuery(thisObj).attr('id');
 		var hght = parseInt(jQuery(".searchFormRow").css('line-height').replace('px',''));
-		console.log("searchFormRow height:", hght);
 		jQuery("#mapToolBar, #neCorner, #nwCorner").addClass("slideVertical");
 		
 		if (thisId === 'moreSearchOptions') {
