@@ -36,7 +36,6 @@ public class SolrLayerInfoRetriever implements LayerInfoRetriever{
 		HttpClient httpClient = ogpHttpClient.getCloseableHttpClient();
 		URL url = searchConfigRetriever.getInternalSearchUrl();
 		String url$ = url.toString();
-		
 		if (url$.contains("select")){
 			url$ = url$.substring(0, url$.indexOf("/select"));
 		}
@@ -87,16 +86,16 @@ public class SolrLayerInfoRetriever implements LayerInfoRetriever{
 
             QueryResponse response = server.query(params);*/
 		logger.debug("Solr query terms: " + query);
-	    SolrQuery queryObj = new SolrQuery();
-	    queryObj.setQuery(query);
-	    QueryResponse response = null;
-	    try {
-	    	response = server.query(queryObj);
-	    } catch (Exception e){
-	    	logger.error(e.getMessage());
-	    }
+		SolrQuery queryObj = new SolrQuery();
+		queryObj.setQuery(query);
+		QueryResponse response = null;
+		try {
+	    		response = server.query(queryObj);
+	    	} catch (Exception e){
+	    		logger.error(e.getMessage());
+		}
 	    //logger.info(response.getResults().get(0).getFieldValue("Name").toString());
-	    List<SolrRecord> results = response.getBeans(SolrRecord.class);
+		List<SolrRecord> results = response.getBeans(SolrRecord.class);
 
 		return results;
 	}
@@ -104,8 +103,8 @@ public class SolrLayerInfoRetriever implements LayerInfoRetriever{
 	@Override
 	public SolrRecord getAllLayerInfo(String layerSlug) throws SolrServerException {
 		String query = "layer_slug_s:" + ClientUtils.escapeQueryChars(layerSlug.trim());
-	    SolrQuery queryObj = new SolrQuery();
-	    queryObj.setQuery( query );
+		SolrQuery queryObj = new SolrQuery();
+		queryObj.setQuery( query );
 		List<SolrRecord> results = getSolrServer().query(queryObj).getBeans(SolrRecord.class);
 		if(results.isEmpty()){
 			throw new SolrServerException("Layer with id ['" + layerSlug.trim() + "'] not found in the Solr index.");

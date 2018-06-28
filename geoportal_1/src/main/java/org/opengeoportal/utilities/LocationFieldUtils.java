@@ -138,19 +138,19 @@ public final class LocationFieldUtils {
 	}
 
 	/**
-	 * * Get the value (ISO 19139 location metadata) for the gmd key from the references field.
+	 * * Get the value (ISO 19139 location metadata) for the ISO 19139 key from the references field.
 	 * *
 	 * * @param locationField         The Solr record references field as a String
 	 * * @return      the url for the iso metadata location for this layer
 	 * * @throws JsonParseException
 	 * */
 	public static String getISO19139Url(String locationField) throws JsonParseException{
-		return parseLocationFromKey(locationField, "http://www.isotc211.org/schemas/2005/gmd/").get(0);
+		return parseLocationFromKey(locationField, "http://www.isotc211.org/schemas/2005/gmd").get(0);
 
 	}
 
 	/**
-	 * * determines if the SolrRecord references field contains a value for the gmd key
+	 * * determines if the SolrRecord references field contains a value for the ISO 19139 key
 	 * *
 	 * * @param locationField         The Solr record references field as a String
 	 * * @return true if the SolrRecord references field contains a key for gmd
@@ -158,34 +158,35 @@ public final class LocationFieldUtils {
 
 	public static Boolean hasISO19139Url(String locationField){
 		try {
-			return hasKey(locationField, "http://www.isotc211.org/schemas/2005/gmd/");
+			return hasKey(locationField, "http://www.isotc211.org/schemas/2005/gmd");
 		} catch (JsonParseException e) {
 		}
 		return false;
 	}
 
 	 /**
-         * * Get the value (FGDC location metadata) for the gmd key from the references field.
+         * * Get the value (FGDC location metadata) for the FGDC key from the references field.
          * *
          * * @param locationField         The Solr record references field as a String
          * * @return      the url for the iso metadata location for this layer
          * * @throws JsonParseException
          * */
         public static String getFGDCUrl(String locationField) throws JsonParseException{
-                return parseLocationFromKey(locationField, "http://www.opengis.net/cat/csw/csdgm/").get(0);
+                return parseLocationFromKey(locationField, "http://www.opengis.net/cat/csw/csdgm").get(0);
 
         }
 
         /**
-         * * determines if the SolrRecord references field contains a value for the gmd key
+         * * determines if the SolrRecord references field contains a value for the FGDC key
          * *
          * * @param locationField         The Solr record references field as a String
-         * * @return true if the SolrRecord references field contains a key for gmd
+         * * @return true if the SolrRecord references field contains a key for FGDC records
          * */
 
         public static Boolean hasFGDCUrl(String locationField){
+		logger.info("CHECKING FOR FGDC URL");
                 try {
-                        return hasKey(locationField, "http://www.opengis.net/cat/csw/csdgm/");
+                        return hasKey(locationField, "http://www.opengis.net/cat/csw/csdgm");
                 } catch (JsonParseException e) {
                 }
                 return false;
@@ -252,11 +253,22 @@ public final class LocationFieldUtils {
 	 * @throws JsonParseException
 	 */
 	private static Boolean hasKey(String locationField, String key) throws JsonParseException{
+		logger.info("CHECKING HASKEY");
 		JsonNode rootNode = parseLocationField(locationField);
 		JsonNode pathNode = rootNode.path(key);
 		if (pathNode.isMissingNode()){
-			return false;
-			
+			logger.info("MISSING NODE");
+			// Will only match exact keys. Account for url keys which don't end in /
+			key += "/";
+			logger.info("NEW KEY", key);
+			pathNode = rootNode.path(key);
+			if (pathNode.isMissingNode()){
+				logger.info("MISSING NODE2");
+				return false;
+			} else {
+				logger.info("GOT IT!");
+				return true;
+			}
 		} else {
 			return true;
 		}
@@ -271,13 +283,19 @@ public final class LocationFieldUtils {
 	private static List<String> parseLocationFromKey(String locationField, String key) throws JsonParseException{
 		JsonNode rootNode = parseLocationField(locationField);
 		JsonNode pathNode = rootNode.path(key);
+		logger.info("PATH NODE");
+		logger.info(pathNode.toString());
 		Set<String> url = new HashSet<String>();
 		if (pathNode.isMissingNode()){
-			
-			throw new JsonParseException("The Object '" + key + "' could not be found.", null);
-			
-		} else if (pathNode.isArray()){
-			
+			key += "/";
+			pathNode = rootNode.path(key);	
+			if (pathNode.isMissingNode()) {
+				throw new JsonParseException("The Object '" + key + "' could not be found.", null);
+			}	
+		}
+		
+		if (pathNode.isArray()){
+			// TODO REMOVE THIS SECTION?	
 			ArrayNode urls = (ArrayNode) rootNode.path(key);
 			for(JsonNode currentUrl: urls){
 				if (currentUrl.isTextual()){

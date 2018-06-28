@@ -112,7 +112,6 @@ public class SolrRecord {
 	}
 
 	public String[] getOriginator() {
-		logger.info("ORIGINATOR: " + originator);
 		return originator;
 	}
 	public void setOriginator(String[] originator) {

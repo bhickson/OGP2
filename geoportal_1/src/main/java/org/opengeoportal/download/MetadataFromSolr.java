@@ -98,8 +98,8 @@ public class MetadataFromSolr implements MetadataRetriever {
 	 * @throws TransformerException
 	 */
 	String filterXMLString(String layerSlug, String rawXMLString)
-	 throws TransformerException
-	 {
+	throws TransformerException
+	{
 		Document document = null;
 		try {
 			document = buildXMLDocFromString(layerSlug, rawXMLString);
@@ -119,14 +119,14 @@ public class MetadataFromSolr implements MetadataRetriever {
 		StreamResult streamResult = new StreamResult(stringWriter);
 		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        Transformer transformer = transformerFactory.newTransformer();
+        	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		transformer.transform(xmlSource, streamResult);
 		String outputString = stringWriter.toString();
 
 		return outputString;
-	 }
+	}
 	
 	/**
 	 * takes the XML metadata string from the Solr instance, does some filtering, returns an xml document
@@ -176,7 +176,6 @@ public class MetadataFromSolr implements MetadataRetriever {
 			conditionsMap.put("layer_slug_s", identifier);
 			this.layerSlug = null;
 		} else if(descriptor.equalsIgnoreCase("layer_slug_s")){
-			logger.info("Matched layer_slug_s");
 			conditionsMap.put("layer_slug_s", identifier);
 			this.layerSlug = identifier;
 		} else {
@@ -191,6 +190,7 @@ public class MetadataFromSolr implements MetadataRetriever {
 		String metadataLocation = null;
 		SolrRecord layerInfo = layerInfoRetriever.getAllLayerInfo(identifier);
 
+		// TODO - Add ability to get mods metadata (including stylesheet)
 		if (LocationFieldUtils.hasISO19139Url(layerInfo.getServiceLocations())){
 			metadataLocation = LocationFieldUtils.getISO19139Url(layerInfo.getServiceLocations());
 		} else if (LocationFieldUtils.hasFGDCUrl(layerInfo.getServiceLocations())){
@@ -200,12 +200,13 @@ public class MetadataFromSolr implements MetadataRetriever {
 		}
 
         	HttpGet httpget = new HttpGet(metadataLocation);
+		
 
         	try {
-	                HttpResponse response = httpclient.execute(httpget);
+	              	HttpResponse response = httpclient.execute(httpget);
 
 			if (response.getStatusLine().getStatusCode() != 200){
-	                        throw new Exception("Attempt to download " + layerSlug + "metadata failed.");
+	                        throw new Exception("Attempt to download " + layerSlug + " metadata failed.");
                 	}
 
         	        HttpEntity entity = response.getEntity();
@@ -219,9 +220,13 @@ public class MetadataFromSolr implements MetadataRetriever {
 					logger.debug("CONTENT CONTAINS XML");
 					String responseContent = EntityUtils.toString(entity);
 					metadataString = responseContent;
+				} else if (contentType.toLowerCase().contains("text/plain")) {
+					String responseContent = EntityUtils.toString(entity);
+                                        metadataString = responseContent;
+					 
 				} else {
 					// TODO need some other checker here for non xml metadata (MODS and HTML)
-					throw new Exception("Metadata retrieved is not XML formatted.")
+					throw new Exception("Metadata retrieved is not XML formatted.");
 				}
 				logger.debug("METADATA STRING: ", metadataString);
 

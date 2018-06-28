@@ -1,6 +1,6 @@
 package org.opengeoportal.layer;
 
-
+// TODO - Update this for GBL schema field types
 public class Metadata {
 	BoundingBox bounds;
 	String id;
