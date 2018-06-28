@@ -44,7 +44,7 @@ OpenGeoportal.Views.Query = Backbone.View
 						}).addClass("searchButton");
 				
 				this.solrAutocomplete(
-						jQuery("#advancedOriginatorText"), "OriginatorSort");
+						jQuery("#advancedOriginatorText"), "dc_creator_tmi");
 				
 				this.createInstitutionsMenu();
 				this.createDataTypesMenu();
@@ -455,15 +455,13 @@ OpenGeoportal.Views.Query = Backbone.View
 					source : function(request, response) {
 						var solr = new OpenGeoportal.Solr();
 						var facetSuccess = function(data) {
+							console.log("DATA: ", data);
 							var labelArr = [];
-							var dataArr = data.terms[solrField];
+							var dataArr = data.suggest.mySuggester[request.term].suggestions;
 							for ( var i in dataArr) {
-								if (i % 2 != 0) {
-									continue;
-								}
 								var temp = {
-									"label" : dataArr[i],
-									"value" : '"' + dataArr[i] + '"'
+									"label" : dataArr[i].term,
+									"value" : '"' + dataArr[i].term + '"'
 								};
 								labelArr.push(temp);
 								i++;

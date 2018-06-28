@@ -25,7 +25,7 @@ public class HomeController {
 
 	@RequestMapping(value={"/index", "/"}, method=RequestMethod.GET)
 	public ModelAndView getHomePage(
-			@RequestParam(value="ogpids", defaultValue = "") Set<String> layerIds,
+			@RequestParam(value="ogpids", defaultValue = "") Set<String> layerSlugs,
 			@RequestParam(value="collectionId", defaultValue = "") String collectionId,
 			@RequestParam(value="bbox", defaultValue = "-180,-90,180,90") String bbox,
 			@RequestParam(value="layer[]", defaultValue = "") Set<String> layers,
@@ -33,8 +33,9 @@ public class HomeController {
 			@RequestParam(value="maxX", defaultValue = "180") String maxx,
 			@RequestParam(value="minY", defaultValue = "-90") String miny,
 			@RequestParam(value="maxY", defaultValue = "90") String maxy,
-			@RequestParam(value="dev", defaultValue = "false") Boolean isDev) throws Exception {
-		//@RequestParam("ogpids") Set<String> layerIds, ..should be optional.  also a param to set dev vs. prod
+			@RequestParam(value="dev", defaultValue = "false") Boolean isDev
+			) throws Exception {
+		//@RequestParam("ogpids") Set<String> layerSlugs, ..should be optional.  also a param to set dev vs. prod
 		//create the model to return
 		ModelAndView mav = new ModelAndView("ogp_home"); 
 
@@ -48,13 +49,13 @@ public class HomeController {
 		miny = Encode.forHtml(miny);
 		maxy = Encode.forHtml(maxy);
 
-		// Iterate Sets layerIds and layers to encode content
-		Set<String> encoded_layerIds = new HashSet<String>();
-		for(String s : layerIds) {
-			encoded_layerIds.add(Encode.forHtml(s));
+		// Iterate Sets layerSlugs and layers to encode content
+		Set<String> encoded_layerSlugs = new HashSet<String>();
+		for(String s : layerSlugs) {
+			encoded_layerSlugs.add(Encode.forHtml(s));
 		}
-		layerIds.clear();
-		layerIds.addAll(encoded_layerIds);
+		layerSlugs.clear();
+		layerSlugs.addAll(encoded_layerSlugs);
 
 		Set<String> encoded_layers = new HashSet<String>();
 		for(String s : layers) {
@@ -64,21 +65,20 @@ public class HomeController {
 		layers.addAll(encoded_layers);
 
 		//if ogpids exists, add them to the Model
-		
-		if (!layerIds.isEmpty()){
-			mav.addObject("shareIds", getQuotedSet(layerIds));
+		if (!layerSlugs.isEmpty()){
+			mav.addObject("shareIds", getQuotedSet(layerSlugs));
 			mav.addObject("shareBbox", bbox);
 		} else if (!layers.isEmpty()){
 			//support old style share just in case
 			mav.addObject("shareIds", getQuotedSet(layers));
-			mav.addObject("shareBbox", minx + "," + miny + "," + maxx + "," + maxy);
+			mav.addObject("shareBbox", minx + "," + maxx + "," + maxy + "," + miny);
 		} else if (!collectionId.isEmpty()){
-			mav.addObject("shareIds", layerIds);
+			mav.addObject("shareIds", layerSlugs);
 			mav.addObject("collectionId", collectionId);
 			mav.addObject("shareBbox", bbox);
 		} else {
 			//default values
-			mav.addObject("shareIds", layerIds);
+			mav.addObject("shareIds", layerSlugs);
 			mav.addObject("shareBbox", bbox);	
 		}
 		

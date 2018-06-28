@@ -49,7 +49,10 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 		.extend({
 
 
-			downloadKeys : [ "wfs", "wcs", "wms", "filedownload", "download" ],
+			downloadKeys : ["http://www.opengis.net/def/serviceType/ogc/wfs",
+					"http://www.opengis.net/def/serviceType/ogc/wcs",
+					"http://www.opengis.net/def/serviceType/ogc/wms",
+					"http://schema.org/downloadUrl"],
 
 			isDownloadAvailable : function(model) {
 				var isAvailable = model.isPublic();
@@ -62,10 +65,9 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 
 				// short-circuit for no permission
 				if (isAvailable) {
-
 					// check that an appropriate url is available
 					isAvailable = OpenGeoportal.Utility.hasLocationValueIgnoreCase(model
-							.get("Location"), this.downloadKeys);
+							.get("dct_references_s"), this.downloadKeys);
 				}
 				return isAvailable;
 
@@ -78,7 +80,6 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 			cartAction : function() {
 				
 				var sortedLayers = this.sortLayersByDownloadType();
-
 				var hasServerLayers = _.has(sortedLayers, "ogpServer") && sortedLayers.ogpServer.length > 0;
 
 				if (hasServerLayers) {
@@ -134,7 +135,7 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 				// if the download can be handled by the backend, a request should be
 				// made to the backend.
 
-				var locationObj = model.get("Location");
+				var locationObj = model.get("dct_references_s");
 				var locationKey = "";
 				var availableFormats = [];
 				var downloadType = "ogpServer";
@@ -143,18 +144,24 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 				 * if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(locationObj, [
 				 * "externalUrl" ])) { downloadType = "ogpClient"; } else {
 				 */
+				/* dct_references_s will return a dictionary string that looks like
+				 * "{\"http://www.opengis.net/def/serviceType/ogc/wms\": \"https://geo.library.arizona.edu/geoserver/wms\",
+				 * \"http://www.opengis.net/def/serviceType/ogc/wfs\": \"https://geo.library.arizona.edu/geoserver/wfs\",
+				 * \"http://www.isotc211.org/schemas/2005/gmd/\": \"https://geo.library.arizona.edu/metadata/Arizona_AMAs_INAs_2002.shp.xml\"}",
+				 */
+				        
 				if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(locationObj,
-						[ "wfs" ])) {
+						[ "http://www.opengis.net/def/serviceType/ogc/wfs" ])) {
 					availableFormats.push("shapefile");
 				}
 
 				if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(locationObj,
-						[ "wms" ])) {
+						[ "http://www.opengis.net/def/serviceType/ogc/wms" ])) {
 					availableFormats.push("kmz");
 				}
 
 				if (OpenGeoportal.Utility.hasLocationValueIgnoreCase(locationObj,
-						[ "wcs" ])) {
+						[ "http://www.opengis.net/def/serviceType/ogc/wcs" ])) {
 					availableFormats.push("geotiff");
 				}
 				/* } */
@@ -405,6 +412,7 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 				if (this.preferences.get("isClipped")) {
 					// set bounds in the downloadRequest model
 					var extent = OpenGeoportal.ogp.map.getBounds();
+					console.log("EXTENT:", extent);
 					this.downloadRequest.set({
 						bbox : extent
 					});
@@ -439,7 +447,7 @@ OpenGeoportal.Views.Download = OpenGeoportal.Views.CartActionView
 			},
 
 			shouldUseHGLOpenDelivery : function(model, format) {
-				var bool1 = model.get("Institution").toLowerCase() === "harvard";
+				var bool1 = model.get("dct_provenance_s").toLowerCase() === "harvard";
 				var bool2 = model.isRaster();
 				var bool3 = OpenGeoportal.Utility.arrayContainsIgnoreCase(["geotiff"], model.get("requestedFormat"));
 				return bool1 && bool2 && bool3;

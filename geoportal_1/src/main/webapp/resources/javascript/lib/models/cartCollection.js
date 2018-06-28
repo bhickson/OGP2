@@ -69,7 +69,7 @@ OpenGeoportal.CartCollection = Backbone.Collection
 
 			notifyExternal: function(model){
 				jQuery(document).trigger("cartUpdated", {
-					LayerId : model.get("LayerId")
+					layer_slug_s : model.get("layer_slug_s")
 				});
 			},
 			
@@ -93,9 +93,9 @@ OpenGeoportal.CartCollection = Backbone.Collection
 
 			toggleCartState : function(itemModel) {
 				// console.log("toggleCartState");
-				var layerId = itemModel.get("LayerId");
+				var layerSlug = itemModel.get("layer_slug_s");
 				var layerModel = this.findWhere({
-					LayerId : layerId
+					layer_slug_s : layerSlug
 				});
 
 				if (typeof layerModel === "undefined") {
@@ -181,7 +181,7 @@ OpenGeoportal.CartCollection = Backbone.Collection
 					jQuery(this).dialog('close');
 				};
 
-				var institution = layerModel.get("Institution");
+				var institution = layerModel.get("dct_provenance_s");
 				var localeWarning = "";
 				var buttons = {};
 				var lsProperty = "";

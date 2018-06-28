@@ -34,7 +34,7 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 			},
 			
 			addedToCart : function(model) {
-				var layerId = model.get("LayerId");
+				var layerSlug = model.get("layer_slug_s");
 				model.set({
 					isChecked : true
 				});
@@ -43,7 +43,7 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 			},
 			
 			removedFromCart : function(model) {
-				var layerId = model.get("LayerId");
+				var layerSlug = model.get("layer_slug_s");
 
 				this.updateSavedLayersNumber();
 			},
@@ -81,8 +81,8 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 
 				if (groupType != undefined) {
 					solr.getLayerInfoFromSolr(groupType, value,
-							function(){that.getLayerInfoSuccess.apply(that, arguments);}, 
-							function(){that.getLayerInfoError.apply(that, arguments);});
+							function(){ that.getLayerInfoSuccess.apply(that, arguments); }, 
+							function(){ that.getLayerInfoJsonpError.apply(that, arguments); });
 					return true;
 				} else {
 					return false;
@@ -93,6 +93,13 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 				var southwest, northeast
 				var arr = this.solrToCollection(data);
 				this.collection.add(arr);
+
+				if (data.response.numFound < 6) {
+					this.previewed.add(arr);
+					this.previewed.each(function(model){
+						model.set({preview: "on"});
+					});
+				};
 
 				if (data.response.numFound < 6) {
 					this.previewed.add(arr);
@@ -117,6 +124,29 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 					northeast = [maxY,maxX];
 				};
 
+				if (OpenGeoportal.Config.shareBbox !== "-180,-90,180,90") { 
+					bounds = OpenGeoportal.Config.shareBbox;
+					console.log("Bounds: ", bounds);
+					southwest = [bounds.split(',')[1], bounds.split(',')[0]];
+					northeast = [bounds.split(',')[3], bounds.split(',')[2]]
+				} else {
+					var minX = Infinity; maxX = -Infinity; minY = Infinity; maxY = -Infinity;
+					this.collection.each( function (model) {
+	                                	layerBbox = model.get("solr_geom").split("(")[1].split(")")[0].split(" ");
+						lminY = parseFloat(layerBbox[3]);
+						lmaxY = parseFloat(layerBbox[2]);
+						lminX = parseFloat(layerBbox[0]);
+						lmaxX = parseFloat(layerBbox[1]);
+
+						minX = Math.min(lminX, minX);
+						maxX = Math.max(lmaxX, maxX);
+						minY = Math.min(lminY, minY);
+						maxY = Math.max(lmaxY, maxY);
+					});
+					southwest = [minY,minX];
+					northeast = [maxY,maxX];
+				};
+
 				var bbox = new L.latLngBounds(southwest,northeast);
 				setTimeout( function() {
 			                OpenGeoportal.ogp.map.fitBounds(bbox)
@@ -125,7 +155,7 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 
 			getLayerInfoJsonpError:function() {
 				throw new Error(
-						"The attempt to retrieve layer information from layerIds failed.");
+						"The attempt to retrieve layer information from layerSlugs failed.");
 			},
 
 			addColumns: function(tableConfigCollection) {
@@ -167,7 +197,7 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 									},
 									{
 										order : 2,
-										columnName : "DataType",
+										columnName : "layer_geom_type_s",
 										resizable : false,
 										organize : "group",
 										visible : true,
@@ -195,7 +225,7 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 										columnClass : "colScore"
 									}, {
 										order : 4,
-										columnName : "LayerDisplayName",
+										columnName : "dc_title_s",
 										resizable : true,
 										minWidth : 35,
 										width : 200,
@@ -207,20 +237,20 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 										columnClass : "colTitle"
 									}, {
 										order : 5,
-										columnName : "Originator",
+										columnName : "dc_creator_sm",
 										resizable : true,
 										minWidth : 62,
 										width : 86,
 										organize : "group",
 										visible : true,
 										hidable : true,
-										displayName : "Originator",
-										header : "Originator",
-										columnClass : "colOriginator"
+										displayName : "Creator",
+										header : "Creator",
+										columnClass : "colCreator"
 
 									}, {
 										order : 6,
-										columnName : "Publisher",
+										columnName : "dc_publisher_s",
 										resizable : true,
 										minWidth : 58,
 										width : 80,
@@ -233,24 +263,24 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 
 									}, {
 										order : 7,
-										columnName : "ContentDate",
+										columnName : "solr_year_i",
 										organize : "numeric",
 										visible : false,
-										displayName : "Date",
+										displayName : "Year",
 										resizable : true,
 										minWidth : 30,
 										width : 30,
 										hidable : true,
-										header : "Date",
-										columnClass : "colDate",
+										header : "Year",
+										columnClass : "colYear",
 										modelRender : function(model) {
-											var date = model.get("ContentDate");
+											var date = model.get("solr_year_i");
 											return that.tableControls.renderDate(date);
 										}
 
 									}, {
 										order : 8,
-										columnName : "Institution",
+										columnName : "dct_provenance_s",
 										organize : "alpha",
 										visible : true,
 										hidable : true,
@@ -260,14 +290,14 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 										columnClass : "colSource",
 										width : 24,
 										modelRender : function(model) {
-											var repository = model.get("Institution");
+											var repository = model.get("dct_provenance_s");
 											return that.tableControls.renderRepositoryIcon(repository);
 
 										}
 
 									}, {
 										order : 9,
-										columnName : "Access",
+										columnName : "dc_rights_s",
 										resizable : false,
 										organize : false,
 										visible : false,
@@ -299,14 +329,14 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 									columnClass : "colPreview",
 									width : 39,
 									modelRender : function(model) {
-										var layerId = model.get("LayerId");
-										var location = model.get("Location");
-										var access = model.get("Access").toLowerCase();
-										var institution = model.get("Institution").toLowerCase();
+										var layerSlug = model.get("layer_slug_s");
+										var location = model.get("dct_references_s");
+										var access = model.get("dc_rights_s").toLowerCase();
+										var institution = model.get("dct_provenance_s").toLowerCase();
 
 										var stateVal = false;
 										var selModel =	that.previewed.findWhere({
-											LayerId : layerId
+											layer_slug_s : layerSlug
 										});
 										if (typeof selModel !== 'undefined') {
 											if (selModel.get("preview") === "on"){
@@ -316,7 +346,12 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 										
 										var canPreview = function(location){
 											//where is a good place to centralize this?
-											return OpenGeoportal.Utility.hasLocationValueIgnoreCase(location, ["wms", "arcgisrest", "imagecollection"]);
+											return OpenGeoportal.Utility.hasLocationValueIgnoreCase(
+													location, ["http://www.opengis.net/def/serviceType/ogc/wms",
+														   "urn:x-esri:serviceType:ArcGIS#FeatureLayer",
+														   "urn:x-esri:serviceType:ArcGIS#TiledMapLayer",
+														   "urn:x-esri:serviceType:ArcGIS#ImageMapLayer",
+														   "imagecollection"]);
 										};
 										
 										var hasAccess = true;

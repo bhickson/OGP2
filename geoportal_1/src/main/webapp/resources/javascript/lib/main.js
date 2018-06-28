@@ -21,6 +21,16 @@ if (typeof OpenGeoportal == 'undefined') {
 $(window)
 	.load(
 			function() {
+
+ /* For reasons unknown, if there is a localized CSS file specified with new heights
+  *  for #header and #footer, with a document ready event Chrome won't recognize 
+  *  the localized Css in time for the container height calculations in 
+  *  resizeWindowHandler (userInterface.js).  Need to wait until the whole DOM is ready.
+ */
+
+$(window)
+	.load(
+			function() {
 					// ogp will hold instances
 					
 					OpenGeoportal.ogp = {};

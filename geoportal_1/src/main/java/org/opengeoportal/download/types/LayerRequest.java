@@ -17,7 +17,12 @@ import org.opengeoportal.utilities.OgpUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class LayerRequest {
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
 	final String id;
 	final SolrRecord layerInfo;
 	List<OwsInfo> owsInfo;
@@ -37,7 +42,7 @@ public class LayerRequest {
 	private Future<?> futureValue;
 
 	public LayerRequest(SolrRecord record, String requestedFormat){
-		this.id = record.getLayerId();
+		this.id = record.getLayerSlug();
 		this.layerInfo = record;
 		this.timeStamp = new Date();
 
@@ -161,18 +166,18 @@ public class LayerRequest {
 	}
 	
 	public String getLayerNameNS() throws Exception{
-		return OgpUtils.getLayerNameNS(this.layerInfo.getWorkspaceName(), this.layerInfo.getName());
+		return OgpUtils.getLayerNameNS(this.layerInfo.getServiceId());
 	}
 
 	public String getWmsUrl() throws JsonParseException{
-		return LocationFieldUtils.getWmsUrl(this.layerInfo.getLocation());
+		return LocationFieldUtils.getWmsUrl(this.layerInfo.getServiceLocations());
 	}
 	
 	public String getWfsUrl() throws Exception{
 		String url = "";
 
 		try {
-			url = LocationFieldUtils.getWfsUrl(this.layerInfo.getLocation());
+			url = LocationFieldUtils.getWfsUrl(this.layerInfo.getServiceLocations());
 		} catch (JsonParseException e){
 			Map<String,String> infoMap = OwsInfo.findWmsInfo(this.getOwsInfo()).getInfoMap();
 			if (infoMap.get("owsType").equalsIgnoreCase("wfs")){
@@ -189,7 +194,7 @@ public class LayerRequest {
 		String url = "";
 
 		try {
-			url = LocationFieldUtils.getWcsUrl(this.layerInfo.getLocation());
+			url = LocationFieldUtils.getWcsUrl(this.layerInfo.getServiceLocations());
 		} catch (JsonParseException e){
 			Map<String,String> infoMap = OwsInfo.findWmsInfo(this.getOwsInfo()).getInfoMap();
 			if (infoMap.get("owsType").equalsIgnoreCase("wcs")){
@@ -203,7 +208,7 @@ public class LayerRequest {
 	}
 	
 	public List<String> getDownloadUrl() throws JsonParseException{
-		return LocationFieldUtils.getDownloadUrl(this.layerInfo.getLocation());
+		return LocationFieldUtils.getDownloadUrl(this.layerInfo.getServiceLocations());
 	}
 
 	public boolean hasMetadata() {

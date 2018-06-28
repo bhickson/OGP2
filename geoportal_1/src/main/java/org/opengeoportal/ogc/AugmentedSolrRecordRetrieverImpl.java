@@ -38,20 +38,20 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 	private LayerInfoRetriever layerInfoRetriever;
 	 
 	@Override
-	public OwsInfo getWmsInfo(String layerId) throws Exception{
-		List<OwsInfo> info = this.getWmsPlusSolrInfo(layerId).getOwsInfo();
+	public OwsInfo getWmsInfo(String layerSlug) throws Exception{
+		List<OwsInfo> info = this.getWmsPlusSolrInfo(layerSlug).getOwsInfo();
 		return OwsInfo.findWmsInfo(info);
 	}
 	
 	@Override
-	public AugmentedSolrRecord getWmsPlusSolrInfo(String layerId) throws Exception{
-		AugmentedSolrRecord asr = getInfoAttempt(wmsRequester, WMS_ATTEMPTS, layerId);
+	public AugmentedSolrRecord getWmsPlusSolrInfo(String layerSlug) throws Exception{
+		AugmentedSolrRecord asr = getInfoAttempt(wmsRequester, WMS_ATTEMPTS, layerSlug);
 		return asr;
 	}
 	
 	@Override
-	public OwsInfo getOgcDataInfo(String layerId) throws Exception {
-		List<OwsInfo> info = this.getOgcAugmentedSolrRecord(layerId).getOwsInfo();
+	public OwsInfo getOgcDataInfo(String layerSlug) throws Exception {
+		List<OwsInfo> info = this.getOgcAugmentedSolrRecord(layerSlug).getOwsInfo();
 		for (OwsInfo infoBit: info){
 			if (infoBit.getOwsProtocol().type.equals(OwsType.DATA)){
 				//returns only the first match...for now at least, there should only be one
@@ -63,9 +63,9 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 	}
 	
 	@Override
-	public AugmentedSolrRecord getOgcAugmentedSolrRecord(String layerId) throws Exception {
+	public AugmentedSolrRecord getOgcAugmentedSolrRecord(String layerSlug) throws Exception {
 
-		AugmentedSolrRecord asr = getWmsPlusSolrInfo(layerId);
+		AugmentedSolrRecord asr = getWmsPlusSolrInfo(layerSlug);
 		OwsInfo wmsInfo =  OwsInfo.findWmsInfo(asr.getOwsInfo());
 		String type = wmsInfo.getInfoMap().get("owsType");
 		//String qualName = wmsInfo.getWmsResponseMap().get("qualifiedName");
@@ -80,7 +80,7 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 		URL owsUrlObj = new URL(owsUrl);
 
 		if (type.equalsIgnoreCase("wfs")){
-			String storedUrl = LocationFieldUtils.getWfsUrl(asr.getSolrRecord().getLocation());
+			String storedUrl = LocationFieldUtils.getWfsUrl(asr.getSolrRecord().getServiceLocations());
 			URL storedUrlObj = new URL(storedUrl);
 			try{
 				dataInfo = getInfoAttempt(wfsRequester, DATA_ATTEMPTS, asr.getSolrRecord());
@@ -99,7 +99,7 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 				}
 			}
 		} else if (type.equalsIgnoreCase("wcs")){
-			String storedUrl = LocationFieldUtils.getWcsUrl(asr.getSolrRecord().getLocation());
+			String storedUrl = LocationFieldUtils.getWcsUrl(asr.getSolrRecord().getServiceLocations());
 			URL storedUrlObj = new URL(storedUrl);
 			try{
 				dataInfo = getInfoAttempt(wcsRequester, DATA_ATTEMPTS, asr.getSolrRecord());
@@ -136,8 +136,8 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 	}
 	
 	
-	private AugmentedSolrRecord getInfoAttempt(OgcInfoRequester requester, int numAttempts, String layerId) throws Exception{
-		SolrRecord solrRecord = layerInfoRetriever.getAllLayerInfo(layerId);
+	private AugmentedSolrRecord getInfoAttempt(OgcInfoRequester requester, int numAttempts, String layerSlug) throws Exception{
+		SolrRecord solrRecord = layerInfoRetriever.getAllLayerInfo(layerSlug);
 		return getInfoAttempt(requester, numAttempts, solrRecord);
 
 	}
@@ -157,6 +157,7 @@ public class AugmentedSolrRecordRetrieverImpl implements AugmentedSolrRecordRetr
 			} catch (Exception e){
 				logger.warn("Error requesting ogc info: " + e.getMessage());
 			}
+
 			Thread.sleep(PAUSE * (i + 1));
 
 		}

@@ -27,37 +27,39 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 	 */
 
 	this.viewMetadata = function(model) {
-		var location = model.get("Location");
-		var layerId = model.get("LayerId");
-		// should store this somewhere else; some sort of
-		// config
-		var values = [ "metadataLink", "purl", "libRecord" ];
+		var location = model.get("dct_references_s");
+		var layerSlug = model.get("layer_slug_s");
+		
+		// should store this somewhere else; some sort of config
+		//var values = [ "metadataLink", "purl", "libRecord" ];
+		var values = [ "http://www.w3.org/1999/xhtml",
+			       "http://www.w3.org/1999/xhtml/"]
 		if (OpenGeoportal.Utility.hasLocationValue(location, values)) {
 			// display external metadata in an iframe
 			var url = OpenGeoportal.Utility.getLocationValue(location, values);
-			this.viewExternalMetadata(layerId, url);
+			this.viewExternalMetadata(layerSlug, url);
 		} else {
-			this.viewMetadataFromOgp(layerId);
+			this.viewMetadataFromOgp(layerSlug);
 		}
 	};
 	
 
-	this.viewExternalMetadata = function(layerId, url) {
+	this.viewExternalMetadata = function(layerSlug, url) {
 		var document = this.template.genericIframe({
 			iframeSrc : url,
 			iframeClass : "metadataIframe"
 		});
-		var dialog$ = this.renderMetadataDialog(layerId, document);
+		var dialog$ = this.renderMetadataDialog(layerSlug, document);
 		dialog$.dialog("open");
 	};
 	
-	this.viewMetadataFromOgp = function(layerId){
+	this.viewMetadataFromOgp = function(layerSlug){
 		try {
 			
 			var document = null;
 			var params = {
 					url: "getMetadata",
-					data: {id: layerId},
+					data: {id: layerSlug},
 					async: false,
 					success: function(data){
 						document = data;
@@ -65,8 +67,18 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 			}
 			jQuery.ajax(params);
 
-			var dialog$ = this.renderMetadataDialog(layerId, document);
-			this.addMetadataDownloadButton(dialog$, layerId);
+			if (document == null) {
+				var xml = false;
+				document = "<br/><b>No metadata available for this layer<b>";
+				//document = this.viewMetadataFromSolr(layerSlug);
+			} else {
+				var xml =  true;
+			}
+
+			var dialog$ = this.renderMetadataDialog(layerSlug, document);
+			if (xml) {
+				this.addMetadataDownloadButton(dialog$, layerSlug);
+			};
 			this.addScrollMetadataToTop();
 
 			dialog$.dialog("open");
@@ -77,7 +89,8 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 	};
 
 
-	this.renderMetadataDialog = function(layerId, document) {
+	this.renderMetadataDialog = function(layerSlug, document) {
+		//console.log("Document: ", document);
 		var dialogId = "metadataDialog";
 		if (typeof jQuery('#' + dialogId)[0] == 'undefined') {
 			jQuery('#dialogs').append(this.template.genericDialogShell({
@@ -90,7 +103,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		// can't pass the document directly into the template; it just evaluates
 		// as a string
 		metadataDialog$.html(this.template.metadataContent({
-			layerId : layerId
+			layerSlug : layerSlug 
 		})).find("#metadataContent").append(document);
 		try {
 			metadataDialog$.dialog("destroy");
@@ -131,7 +144,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		});
 	};
 
-	this.addMetadataDownloadButton = function(metadataDialog$, layerId) {
+	this.addMetadataDownloadButton = function(metadataDialog$, layerSlug) {
 		var buttonId = "metadataDownloadButton";
 		if (jQuery("#" + buttonId).length == 0) {
 			var params = {};
@@ -146,17 +159,17 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		jQuery("#" + buttonId).off();
 		var that = this;
 		jQuery("#" + buttonId).on("click", function() {
-			that.downloadMetadata(layerId);
+			that.downloadMetadata(layerSlug)
 		});
 	};
 
 
 
-	this.downloadMetadata = function downloadMetadata(layerId) {
-		var iframeSource = "getMetadata/xml?download=true&id=" + layerId;
+	this.downloadMetadata = function downloadMetadata(layerSlug) {
+		var iframeSource = "getMetadata/xml?download=true&id=" + layerSlug;
 		this.iframeDownload("metadataDownloadIframe", iframeSource);
 
-		// this.analytics.track("Metadata", "Download Metadata", layerId);
+		// this.analytics.track("Metadata", "Download Metadata", layerSlug);
 	};
 
 	this.iframeDownload = function(iframeClass, iframeSrc) {
@@ -187,7 +200,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 	};
 	
 	/* client side metadata transform*/
-	/*
+	/*	
 	this.viewMetadata = function(model) {
 		var location = model.get("Location");
 		var layerId = model.get("LayerId");
@@ -201,19 +214,20 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		} else {
 			this.viewMetadataFromSolr(layerId);
 		}
-	};
+	};*/
 	// obtain layer's metadata via jsonp call
 	this.viewMetadataFromSolr = function(layerId) {
 		// make an ajax call to retrieve metadata
 		var solr = new OpenGeoportal.Solr();
 		var url = solr.getServerName() + "?"
 				+ jQuery.param(solr.getMetadataParams(layerId));
-		var query = solr.sendToSolr(url, this.viewMetadataJsonpSuccess,
+		query = solr.sendToSolr(url, this.viewMetadataJsonpSuccess,
 				this.viewMetadataJsonpError, this);
+		return query;
 
 		// this.analytics.track("Metadata", "Display Metadata", layerId);
 	};
-
+	/*
 	this.viewExternalMetadata = function(layerId, url) {
 		var document = this.template.genericIframe({
 			iframeSrc : url,
@@ -222,7 +236,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		var dialog$ = this.renderMetadataDialog(layerId, document);
 		dialog$.dialog("open");
 	};
-
+	*/
 	this.processMetadataSolrResponse = function(data) {
 		var solrResponse = data.response;
 		var totalResults = solrResponse.numFound;
@@ -238,9 +252,24 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 	this.viewMetadataJsonpSuccess = function(data) {
 		try {
 			var doc = this.processMetadataSolrResponse(data);
-			var metadataRawText = doc.FgdcText;
-			var layerId = doc.LayerId;
+			console.log("DOC:", doc);
+			//return doc;
+			
+			//var metadataRawText = doc.FgdcText;
+			//var layerId = doc.LayerId;
+			document = "<br/>"
+			var title = doc.dc_title_s;
+			var desc = doc.dc_description_s;
+			var date = doc.dct_issued_s;
+			var rights = doc.dct_rights_s;
 
+			document += "Title: " + title + "<br/>";
+			document += "Description: " + desc + "<br/>";
+			document += "Date of Content: " + date + "<br/>";
+			document += "Access Rights: " + rights + "<br/";
+
+				
+			/*
 			var xmlDocument = null;
 			try {
 				xmlDocument = jQuery.parseXML(metadataRawText);
@@ -254,9 +283,9 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 			} catch (e) {
 				throw new Error(
 						"Error transforming XML document: the document may be of the wrong type.");
-			}
+			}*/
 			var dialog$ = this.renderMetadataDialog(layerId, document);
-			this.addMetadataDownloadButton(dialog$, layerId);
+			//this.addMetadataDownloadButton(dialog$, layerId);
 			this.addScrollMetadataToTop();
 
 			dialog$.dialog("open");
@@ -266,7 +295,7 @@ OpenGeoportal.MetadataViewer = function MetadataViewer() {
 		}
 
 	};
-
+	/*
 	this.renderMetadataDialog = function(layerId, document) {
 		var dialogId = "metadataDialog";
 		if (typeof jQuery('#' + dialogId)[0] == 'undefined') {

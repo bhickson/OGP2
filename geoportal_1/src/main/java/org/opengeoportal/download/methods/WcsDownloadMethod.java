@@ -59,7 +59,7 @@ public class WcsDownloadMethod extends AbstractDownloadMethod implements PerLaye
 		SolrRecord layerInfo = this.currentLayer.getLayerInfo();
 		
 		Envelope env = describeLayerInfo.getLonLatEnvelope();
-		BoundingBox nativeLatLon = new BoundingBox(env.getMinX(), env.getMinY(), env.getMaxX(), env.getMaxY());
+		BoundingBox nativeBounds = new BoundingBox(env.getMinX(), env.getMaxX(), env.getMaxY(), env.getMinY());
 		logger.info("reqLatLon" + this.currentLayer.getRequestedBounds().toStringLatLon());
 		logger.info("natLatLon" + nativeLatLon.toStringLatLon());
 

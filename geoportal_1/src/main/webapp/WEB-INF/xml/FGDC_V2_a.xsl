@@ -100,10 +100,10 @@
 			<HR />
 		</A>
 		<DL>
-			<DT>
+			<DT class="metadataMajor">
 				<I>Identification_Information:</I>
 			</DT>
-			<DD>
+			<DD class="metadataMajor-Content">
 				<DL>
 					<xsl:for-each select="citation">
 						<DT>
@@ -476,6 +476,8 @@
 			</DD>
 		</DL>
 		<A HREF="#Top">Back to Top</A>
+		
+		
 	</xsl:template>
 	<!-- Data Quality -->
 	<xsl:template match="dataqual">
@@ -483,10 +485,10 @@
 			<HR />
 		</A>
 		<DL>
-			<DT>
+			<DT class="metadataMajor">
 				<I>Data_Quality_Information:</I>
 			</DT>
-			<DD>
+			<DD class="metadataMajor-Content">
 				<DL>
 					<xsl:for-each select="attracc">
 						<DT>
@@ -779,16 +781,17 @@
 		</DL>
 		<A HREF="#Top">Back to Top</A>
 	</xsl:template>
+	
 	<!-- Spatial Data Organization -->
 	<xsl:template match="spdoinfo">
 		<A name="Spatial_Data_Organization_Information">
 			<HR />
 		</A>
 		<DL>
-			<DT>
+			<DT class="metadataMajor">
 				<I>Spatial_Data_Organization_Information:</I>
 			</DT>
-			<DD>
+			<DD class="metadataMajor-Content">
 				<DL>
 					<xsl:for-each select="indspref">
 						<DT>
@@ -912,16 +915,19 @@
 		</DL>
 		<A HREF="#Top">Back to Top</A>
 	</xsl:template>
+	
 	<!-- Spatial Reference -->
 	<xsl:template match="spref">
 		<A name="Spatial_Reference_Information">
 			<HR />
 		</A>
 		<DL>
-			<DT>
+			<DT class="metadataMajor">
 				<I>Spatial_Reference_Information:</I>
 			</DT>
-			<DD>
+			
+			
+			<DD class="metadataMajor-Content">
 				<DL>
 					<xsl:for-each select="horizsys">
 						<DT>
@@ -1498,16 +1504,17 @@
 		</DL>
 		<A HREF="#Top">Back to Top</A>
 	</xsl:template>
+	
 	<!-- Entity and Attribute -->
 	<xsl:template match="eainfo">
 		<A name="Entity_and_Attribute_Information">
 			<HR />
 		</A>
-		<DL>
+		<DL class="metadataMajor">
 			<DT>
 				<I>Entity_and_Attribute_Information:</I>
 			</DT>
-			<DD>
+			<DD class="metadataMajor-Content">
 				<DL>
 					<xsl:for-each select="detailed">
 						<DT>
@@ -1775,6 +1782,7 @@
 		</DL>
 		<A HREF="#Top">Back to Top</A>
 	</xsl:template>
+	
 	<!-- Distribution -->
 	<xsl:template match="distinfo">
 		<HR />
@@ -1782,10 +1790,10 @@
 			<!--"msxsleval uniqueID(this) msxsleval" -->
 		</A>
 		<DL>
-			<DT>
+			<DT class="metadataMajor">
 				<I>Distribution_Information:</I>
 			</DT>
-			<DD>
+			<DD class="metadataMajor-Content">
 				<DL>
 					<xsl:for-each select="distrib">
 						<DT>
@@ -2119,16 +2127,17 @@
 		</DL>
 		<A HREF="#Top">Back to Top</A>
 	</xsl:template>
+	
 	<!-- Metadata -->
 	<xsl:template match="metainfo">
 		<A name="Metadata_Reference_Information">
 			<HR />
 		</A>
 		<DL>
-			<DT>
+			<DT class="metadataMajor">
 				<I>Metadata_Reference_Information:</I>
 			</DT>
-			<DD>
+			<DD class="metadataMajor-Content">
 				<DL>
 					<xsl:for-each select="metd">
 						<DT>
@@ -2252,12 +2261,13 @@
 		</DL>
 		<A HREF="#Top">Back to Top</A>
 	</xsl:template>
+	
 	<!-- Citation -->
 	<xsl:template match="citeinfo">
 		<DT>
 			<I>Citation_Information:</I>
 		</DT>
-		<DD>
+		<DD class="metadataMajor-Content">
 			<DL>
 				<xsl:for-each select="origin">
 					<DT>
@@ -2378,12 +2388,13 @@
 			</DL>
 		</DD>
 	</xsl:template>
+	
 	<!-- Contact -->
 	<xsl:template match="cntinfo">
 		<DT>
 			<I>Contact_Information:</I>
 		</DT>
-		<DD>
+		<DD class="metadataMajor-Content">
 			<DL>
 				<xsl:for-each select="cntperp">
 					<DT>
@@ -2522,12 +2533,13 @@
 			</DL>
 		</DD>
 	</xsl:template>
+	
 	<!-- Time Period Info -->
 	<xsl:template match="timeinfo">
 		<DT>
 			<I>Time_Period_Information:</I>
 		</DT>
-		<DD>
+		<DD class="metadataMajor-Content">
 			<DL>
 				<xsl:apply-templates select="sngdate" />
 				<xsl:apply-templates select="mdattim" />
@@ -2535,12 +2547,13 @@
 			</DL>
 		</DD>
 	</xsl:template>
+	
 	<!-- Single Date/Time -->
 	<xsl:template match="sngdate">
 		<DT>
 			<I>Single_Date/Time:</I>
 		</DT>
-		<DD>
+		<DD class="metadataMajor-Content">
 			<DL>
 				<xsl:for-each select="caldate">
 					<DT>
@@ -2557,6 +2570,7 @@
 			</DL>
 		</DD>
 	</xsl:template>
+	
 	<!-- Multiple Date/Time -->
 	<xsl:template match="mdattim">
 		<DT>
@@ -2568,6 +2582,7 @@
 			</DL>
 		</DD>
 	</xsl:template>
+	
 	<!-- Range of Dates/Times -->
 	<xsl:template match="rngdates">
 		<DT>
@@ -2602,6 +2617,7 @@
 			</DL>
 		</DD>
 	</xsl:template>
+	
 	<!-- G-Ring -->
 	<xsl:template match="grngpoin">
 		<DT>
@@ -2632,6 +2648,7 @@
 			<xsl:value-of select="." />
 		</DD>
 	</xsl:template>
+	
 	<!-- Map Projections -->
 	<xsl:template match="albers | equicon | lambertc">
 		<DD>
@@ -2714,6 +2731,7 @@
 			</DL>
 		</DD>
 	</xsl:template>
+	
 	<!-- Map Projection Parameters -->
 	<xsl:template match="stdparll">
 		<DT>
@@ -2870,7 +2888,7 @@
 		<DT>
 			<I>Other_Projection's_Definition:</I>
 		</DT>
-		<DD>
+		<DD class="metadataMajor-Content">
 			<xsl:value-of select="." />
 		</DD>
 	</xsl:template>

@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.opengeoportal.download.MetadataRetriever;
 import org.opengeoportal.metadata.LayerInfoRetriever;
 import org.opengeoportal.utilities.OgpFileUtils;
+import org.opengeoportal.utilities.LocationFieldUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class MetadataDownloadController {
 	private LayerInfoRetriever layerInfoRetriever;
 
 	 /**
-	 * This controller should receive a GET request with the layerId and a boolean "inline" that tells whether the data should 
+	 * This controller should receive a GET request with the layerSlug and a boolean "inline" that tells whether the data should 
 	 * appear inline or as an attachment
 	 *
 	 * @author Chris Barnett
@@ -43,26 +45,26 @@ public class MetadataDownloadController {
 		handleMetadataRequest(id, false, "html", response);
 	}
 	
-	private void handleMetadataRequest(String id, Boolean download, String format, HttpServletResponse response) throws Exception{
+	private void handleMetadataRequest(String slug, Boolean download, String format, HttpServletResponse response) throws Exception{
 
-		String metadataString = getMetadataString(id, format);
+		String metadataString = getMetadataString(slug, format);
 
 		response.setContentLength(metadataString.getBytes("UTF-8").length);
 
 		response.setHeader("Content-Disposition", getContentDisposition(download) + "; filename=\""
-				+ getFileName(id) + "." + format.toLowerCase().trim() + "\"");
+				+ getFileName(slug) + "." + format.toLowerCase().trim() + "\"");
 		response.setContentType(getContentType(format));
 		// return a link to the zip file, or info to create link
 		response.getWriter().write(metadataString);
 	}
 	
-	private String getMetadataString(String layerId, String format) throws Exception{
+	private String getMetadataString(String layerSlug, String format) throws Exception{
 		String metadataString = "";
 		if (format.equalsIgnoreCase("xml")){
-			metadataString = this.metadataRetriever.getXMLStringFromId(layerId, "fgdc");
+			metadataString = this.metadataRetriever.getXMLStringFromLayerSlug(layerSlug);
 
-		} else if (format.equalsIgnoreCase("html")){
-			metadataString = this.metadataRetriever.getMetadataAsHtml(layerId);
+		} else if (format.equalsIgnoreCase("html")) {
+			metadataString = this.metadataRetriever.getMetadataAsHtml(layerSlug);
 		} else {
 			throw new Exception("Unrecognized format: " + format);
 		}
@@ -82,13 +84,13 @@ public class MetadataDownloadController {
 		return disposition;
 	}
 	
-	private String getFileName(String id){
+	private String getFileName(String slug){
 		String fileName = null;
 		try {
-			fileName = layerInfoRetriever.getAllLayerInfo(id).getName();
+			fileName = layerInfoRetriever.getAllLayerInfo(slug).getLayerSlug();
 		} catch (Exception e) {
 			e.printStackTrace();
-			fileName = id;
+			fileName = slug;
 		}
 		
 		return OgpFileUtils.filterName(fileName);

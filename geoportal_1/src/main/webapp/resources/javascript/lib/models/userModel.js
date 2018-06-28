@@ -152,7 +152,7 @@ OpenGeoportal.Models.User = Backbone.Model.extend({
 		});
 	},
 	canLogin : function(layerModel) {
-		var repository = layerModel.get("Institution");
+		var repository = layerModel.get("dct_provenance_s");
 		return this.canLoginLogic(repository);
 	},
 	canLoginLogic : function(repository) {
@@ -166,8 +166,8 @@ OpenGeoportal.Models.User = Backbone.Model.extend({
 
 	hasAccess : function(layerModel) {
 
-		var layerRep = layerModel.get("Institution");
-		var layerAccess = layerModel.get("Access");
+		var layerRep = layerModel.get("dct_provenance_s");
+		var layerAccess = layerModel.get("dc_rights_s");
 		return this.hasAccessLogic(layerAccess, layerRep);
 
 	},
@@ -178,7 +178,7 @@ OpenGeoportal.Models.User = Backbone.Model.extend({
 		var authenticated = this.get("authenticated");
 		var authRep = this.get("repository").toLowerCase();
 
-		if (layerAccess === "public") {
+		if (layerAccess.toLowerCase() === "public") {
 			return true;
 		} else if (authenticated && (authRep === layerRep)) {
 			return true;

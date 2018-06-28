@@ -28,31 +28,33 @@ public class GetOgcInfoController {
 	LayerInfoRetriever layerInfoRetriever;
 	
 	@RequestMapping(method=RequestMethod.GET, produces="application/json")
-	public @ResponseBody AugmentedSolrRecord getLayerInfo(@RequestParam("ogpid") String layerId) throws Exception {
-		return augmentedSolrRecordRetriever.getOgcAugmentedSolrRecord(layerId);
+	public @ResponseBody AugmentedSolrRecord getLayerInfo(@RequestParam("ogpid") String layerSlug) throws Exception {
+		return augmentedSolrRecordRetriever.getOgcAugmentedSolrRecord(layerSlug);
 
 	}
 	
 	@RequestMapping(value="wmsInfo", method=RequestMethod.GET, produces="application/json")
-	public @ResponseBody OwsInfo wmsInfo(@RequestParam("ogpid") String layerId) throws Exception {
-		return augmentedSolrRecordRetriever.getWmsInfo(layerId);
+	public @ResponseBody OwsInfo wmsInfo(@RequestParam("ogpid") String layerSlug) throws Exception {
+		return augmentedSolrRecordRetriever.getWmsInfo(layerSlug);
 	}
 	
 	@RequestMapping(value="ogcData", method=RequestMethod.GET, produces="application/json")
-	public @ResponseBody OwsInfo ogcDataInfo(@RequestParam("ogpid") String layerId) throws Exception {
-		return augmentedSolrRecordRetriever.getOgcDataInfo(layerId);
+	public @ResponseBody OwsInfo ogcDataInfo(@RequestParam("ogpid") String layerSlug) throws Exception {
+		return augmentedSolrRecordRetriever.getOgcDataInfo(layerSlug);
 	}
 	
 	@RequestMapping(value="ogp", method=RequestMethod.GET, produces="application/json")
-	public @ResponseBody SolrRecord ogcSolrInfo(@RequestParam("ogpid") String layerId, @RequestParam(value="full", defaultValue="false") Boolean includeMetadata) throws Exception {
-		SolrRecord record = layerInfoRetriever.getAllLayerInfo(layerId);
+	public @ResponseBody SolrRecord ogcSolrInfo(@RequestParam("ogpid") String layerSlug, @RequestParam(value="full", defaultValue="false") Boolean includeMetadata) throws Exception {
+		SolrRecord record = layerInfoRetriever.getAllLayerInfo(layerSlug);
 		if (includeMetadata){
 			return record;
-		} else {
-			record.setFgdcText(null);
+		}
+	       	else {
+			//record.setFgdcText(null);
 			
 			return record;
 		}
+
 	}
 
 }

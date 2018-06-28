@@ -41,7 +41,7 @@ public class MITDownloadMethod extends AbstractDownloadMethod implements PerLaye
 	}
 	
 	private String getLayerName() {
-		String layerName = this.currentLayer.getLayerInfo().getName();
+		String layerName = this.currentLayer.getLayerInfo().getServiceId();
 		layerName = layerName.substring(layerName.indexOf(":") + 1);
 		//temporary?  name is wrong in solr index
 		layerName = layerName.toUpperCase();

@@ -43,7 +43,7 @@ public class DownloadRequestController {
 		ObjectMapper mapper = new ObjectMapper();
 
 		DownloadRequest	submittedRequest = mapper.readValue(URLDecoder.decode(downloadRequest, "UTF-8"), DownloadRequest.class);
-		
+		logger.info("submittedRequest: ", submittedRequest);
 		String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
 		submittedRequest.setSessionId(sessionId);
 		

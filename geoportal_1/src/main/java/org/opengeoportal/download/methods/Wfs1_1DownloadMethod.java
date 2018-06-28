@@ -41,7 +41,7 @@ public class Wfs1_1DownloadMethod extends AbstractDownloadMethod implements PerL
 	 	//in order to return the file in original projection to the user (will also need to transform the bbox)
 		String layerName = this.currentLayer.getLayerNameNS();
 		SolrRecord layerInfo = this.currentLayer.getLayerInfo();
-		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMinY(), layerInfo.getMaxX(), layerInfo.getMaxY());
+		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMaxX(), layerInfo.getMaxY(), layerInfo.getMinY());
 		BoundingBox bounds = nativeBounds.getIntersection(this.currentLayer.getRequestedBounds());
 
 		/*String workSpace = layerInfo.getWorkspaceName();

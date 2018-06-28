@@ -28,8 +28,6 @@ OpenGeoportal.Structure = function() {
 		
 		this.infoBubbleAttrs = [this.WelcomeBubbleAttr, this.DirectionsBubble1Attr];
 		
-		//this.resizeWindowHandler();
-
 		this.searchToggleHandler();
 
 		var model = new OpenGeoportal.Models.LeftPanel();
@@ -208,10 +206,12 @@ OpenGeoportal.Structure = function() {
 						top : -10,
 						left : -30
 					});
+					jQuery('.WordSection1').scrollTo(document.getElementById('ugOverview'),0);
 					jQuery('#userGuide').dialog("open");
 					$('.WordSection1').scrollTo(0, document.getElementById('ugOverview'));
 				});
 			} else {
+				jQuery('.WordSection1').scrollTo(document.getElementById('ugOverview'),0);
 				jQuery('#userGuide').dialog("open");
 				$('.WordSection1').scrollTo(0, document.getElementById('ugOverview'));
 			}
@@ -224,24 +224,23 @@ OpenGeoportal.Structure = function() {
 		var minWidth = parseInt(jQuery("#container").css("min-width"));
 	
 		var resizeElements = function() {
-			var headerHeight = $("#header").outerHeight(true);
+			var headerHeight = jQuery("#header").outerHeight(true);
 			var footerHeight = jQuery("#footer").outerHeight(true);
 			var fixedHeights = headerHeight + footerHeight;
 			var container$ = jQuery("#container");
 
 			var oldContainerWidth = container$.width();
-			var newContainerWidth = Math.max(jQuery(window).width(), minWidth); 
+			var newContainerWidth = Math.max(jQuery(window).width()-1, minWidth);
 
 			var oldContainerHeight = container$.height();
 			var newContainerHeight = Math.max(jQuery(window).outerHeight(true) - fixedHeights, minHeight);
-         
-                     	//resize the container if there is a change.
+			
+			//resize the container if there is a change.
 			if ((newContainerWidth !== oldContainerWidth)||(newContainerHeight !== oldContainerHeight)){
 				container$.height(newContainerHeight).width(newContainerWidth);	
 				jQuery(document).trigger("container.resize", {ht: newContainerHeight, wd: newContainerWidth, minHt: minHeight, minWd: minWidth});
-                                var rollRightMarginTop = $("#roll_right").height() * 0.45 + "px";
-                                $("#showSearchResults").css({'margin-top': rollRightMarginTop});
-
+				var rollRightMarginTop = $("#roll_right").height() * 0.45 + "px";
+				$("#showSearchResults").css({'margin-top': rollRightMarginTop});
 			}
 
 		};
@@ -263,15 +262,14 @@ OpenGeoportal.Structure = function() {
 		var fadeTime = 200;
 		var dropTime = 200;
 		var thisId = jQuery(thisObj).attr('id');
-		var hght = jQuery(".searchFormRow").height();
+		var hght = parseInt(jQuery(".searchFormRow").css('line-height').replace('px',''));
 		jQuery("#mapToolBar, #neCorner, #nwCorner").addClass("slideVertical");
 		
 		if (thisId === 'moreSearchOptions') {
-
 			$(".advancedSearch").css({opaticy:0});
 			$("#moreSearchOptions").animate({opacity:0},{duration:50, complete: function() {$(this).hide()}});
 			jQuery("#searchCol1").animate(
-				{ width:343 },
+				{ width:344 },
 				{	queue:false,
 					duration: moveTime,
 					easing:"linear",
@@ -279,7 +277,7 @@ OpenGeoportal.Structure = function() {
 						$("#searchCol1 .basicSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete: function() {
 							$(this).hide({duration:0, complete: function () {
 								$("#searchCol1 .advancedSearch.searchRow1").show({duration:0, complete: function () {
-									$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear",complete: function() {$("#searchCol1").css({overflow:"unset"})}})
+									$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear", complete: function() {$("#searchCol1").css({overflow:"unset"})}})
 								} });
 							} });
 						} });
@@ -354,13 +352,13 @@ OpenGeoportal.Structure = function() {
 		                        }
 		                );
 			}, fadeTime + moveTime);
-		
+
 		} else if (thisId === 'lessSearchOptions') {
 
 			$(".basicSearch").css({opaticy:0});
 			$("#lessSearchOptions").animate({opacity:0},{duration:50, complete: function() {$(this).hide()}});
 			jQuery(".slideVertical").animate(
-				{ "margin-top" : "-=" + hght * 3 },
+				{"margin-top" : "-=" + hght * 3 },
 				{	queue : false,
 					duration : dropTime,
 					easing : "linear",
@@ -382,6 +380,14 @@ OpenGeoportal.Structure = function() {
 						$("#geosearchDiv").removeClass("advancedSearch").addClass("basicSearch");
 						$(".checkOption").removeClass("advancedSearch").addClass("basicSearch");
 
+						$("#searchCol1 .advancesdSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+							$(this).hide();
+							$("#searchCol1 .basicSearch").show({duration:0,complete: function() {
+								$(this).animate({opacity:1},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
+									$("#searchCol1").animate({width:310}, {queue:false,duration:moveTime,easing:"linear"});
+								} });
+							} });
+						} });
 						$("#searchCol1 .advancedSearch.searchRow1").animate({opacity:0},{duration:fadeTime,queue:false,easing:"linear",complete:function () {
 							$(this).hide();
 							$("#searchCol1 .basicSearch").show({duration:0,complete: function() {
@@ -420,6 +426,7 @@ OpenGeoportal.Structure = function() {
 					}
 				}
 			)
+
 		}
 	};
 

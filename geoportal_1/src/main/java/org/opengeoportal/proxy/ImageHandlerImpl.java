@@ -81,16 +81,16 @@ public class ImageHandlerImpl implements ImageHandler {
 	
 	private void populateImageRequest(ImageRequest imageRequest) throws Exception {	
 		//only retrieve records the user has permission to access data for
-		List<SolrRecord> layerInfo = this.layerInfoRetriever.fetchAllowedRecords(imageRequest.getLayerIds());
+		List<SolrRecord> layerInfo = this.layerInfoRetriever.fetchAllowedRecords(imageRequest.getLayerSlug());
 	    logger.info("Number of layers in image: " + Integer.toString(layerInfo.size()));
 		
 		for (LayerImage layerImage: imageRequest.getLayers()){
 			
-			String currentId = layerImage.getLayerId();
+			String currentId = layerImage.getLayerSlug();
 			
 			for (SolrRecord solrRecord : layerInfo){
 				
-				if (solrRecord.getLayerId().equalsIgnoreCase(currentId)){
+				if (solrRecord.getLayerSlug().equalsIgnoreCase(currentId)){
 					layerImage.setSolrRecord(solrRecord);
 					populateLayerUrl(layerImage);				
 				}
@@ -103,7 +103,7 @@ public class ImageHandlerImpl implements ImageHandler {
 		
 		SolrRecord solrRecord = layerImage.getSolrRecord();
 		
-		String layerQueryString = "&layers=" + solrRecord.getWorkspaceName() + ":" + solrRecord.getName();
+		String layerQueryString = "&layers=" + solrRecord.getServiceId();
 		String currentSLD = layerImage.getSld();
 	   	if ((currentSLD != null)&&(!currentSLD.equals("null")&&(!currentSLD.isEmpty()))){
 	   		try {
@@ -117,7 +117,7 @@ public class ImageHandlerImpl implements ImageHandler {
 	   	String baseUrl = "";
 
 	   	try{
-	   		baseUrl = this.proxyConfigRetriever.getInternalUrl("wms", solrRecord.getInstitution(), solrRecord.getAccess(),solrRecord.getLocation());
+	   		baseUrl = this.proxyConfigRetriever.getInternalUrl("http://www.opengis.net/def/serviceType/ogc/wms", solrRecord.getInstitution(), solrRecord.getAccess(), solrRecord.getServiceLocations());
 	   		layerImage.setUrl(new URL(baseUrl + "?" + baseQuery + layerQueryString));
 
 	   	} catch (Exception e1) {

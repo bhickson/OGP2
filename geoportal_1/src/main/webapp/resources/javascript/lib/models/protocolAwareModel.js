@@ -80,7 +80,7 @@ OpenGeoportal.Models.ProtocolAware = OpenGeoportal.Models.ResultItem
 						+ attributeName + "'");
 			},
 			isPublic : function() {
-				var access = this.get("Access").toLowerCase();
+				var access = this.get("dc_rights_s").toLowerCase();
 				if (access !== "public") {
 
 					return false;
@@ -97,18 +97,18 @@ OpenGeoportal.Models.ProtocolAware = OpenGeoportal.Models.ResultItem
 				this.missingAttribute(att);
 			},
 			isVector : function() {
-				var attr = "DataType";
+				var attr = "layer_geom_type_s";
 				// we'll assume that unknown is a vector
 				var attrVals = [ "point", "line", "polygon", "undefined" ];
 				return this.attributeIsOneOf(attr, attrVals);
 			},
 			isRaster : function() {
-				var attr = "DataType";
+				var attr = "layer_geom_type_s";
 				var attrVals = [ "raster", "paper map", "scanned map" ];
 				return this.attributeIsOneOf(attr, attrVals);
 			},
 			hasOGCEndpoint : function(ogcProtocol) {
-				var attr = "Location";
+				var attr = "dct_references_s";
 				if (this.has(attr)) {
 					
 					var location = this.get(attr);

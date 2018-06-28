@@ -38,7 +38,6 @@ public class GetFeatureInfoController {
 	private static final String EXCEPTION_FORMAT = "application/vnd.ogc.se_xml";
 	
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
 	@Autowired @Qualifier("httpRequester.generic")
 	private HttpRequester httpRequester;
 	@Autowired
@@ -47,16 +46,15 @@ public class GetFeatureInfoController {
 	private ProxyConfigRetriever proxyConfigRetriever;
 	
 	@RequestMapping(method=RequestMethod.GET)
-	public void getFeatureInfo(@RequestParam("ogpid") String layerId, @RequestParam("bbox") String bbox, 
+	public void getFeatureInfo(@RequestParam("ogpid") String layerSlug, @RequestParam("bbox") String bbox, 
 			@RequestParam("x") String xCoord,@RequestParam("y") String yCoord,
 			@RequestParam("width") String width,@RequestParam("height") String height,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 	    
-	    SolrRecord layerInfo = getSolrRecord(layerId);
+	    SolrRecord layerInfo = getSolrRecord(layerSlug);
 	    
 	    
-	    
-	    String wmsEndpoint = proxyConfigRetriever.getInternalUrl("wms", layerInfo.getInstitution(), layerInfo.getAccess(), layerInfo.getLocation());
+	    String wmsEndpoint = proxyConfigRetriever.getInternalUrl("http://www.opengis.net/def/serviceType/ogc/wms", layerInfo.getInstitution(), layerInfo.getAccess(), layerInfo.getServiceLocations());
 	    
 	    //filter any query terms
 	    wmsEndpoint = OgpUtils.filterQueryString(wmsEndpoint);
@@ -71,7 +69,7 @@ public class GetFeatureInfoController {
 	//Not necessary...only allowed layers are fetched from solr
 	//@PostAuthorize("hasPermission(#layerInfo, 'download')")
 	String createRequestFromSolrRecord(SolrRecord layerInfo, String xCoord, String yCoord, String bbox, String height, String width) throws Exception{
-	    String layerName = 	OgpUtils.getLayerNameNS(layerInfo.getWorkspaceName(), layerInfo.getName());
+	    String layerName = 	OgpUtils.getLayerNameNS(layerInfo.getServiceId());
 		return this.createWmsGetFeatureInfoQuery(layerName, xCoord, yCoord, bbox, height, width);
 	}
 	
@@ -105,14 +103,14 @@ public class GetFeatureInfoController {
 	}
 	
 	
-	SolrRecord getSolrRecord(String layerId) throws Exception{
-	    Set<String> layerIds = new HashSet<String>();
-	    layerIds.add(layerId);
+	SolrRecord getSolrRecord(String layerSlug) throws Exception{
+	    Set<String> layerSlugs = new HashSet<String>();
+	    layerSlugs.add(layerSlug);
 	    
-	    List<SolrRecord> allLayerInfo = this.layerInfoRetriever.fetchAllowedRecords(layerIds);
+	    List<SolrRecord> allLayerInfo = this.layerInfoRetriever.fetchAllowedRecords(layerSlugs);
 	    
 	    if (allLayerInfo.isEmpty()){
-	    	throw new Exception("No allowed records returned for Layer Id: ['" + layerId + "'");
+	    	throw new Exception("No allowed records returned for Layer Id: ['" + layerSlug + "'");
 	    }
 	    
 	    SolrRecord layerInfo = allLayerInfo.get(0);

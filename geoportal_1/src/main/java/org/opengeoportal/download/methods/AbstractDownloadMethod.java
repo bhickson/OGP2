@@ -108,7 +108,7 @@ public abstract class AbstractDownloadMethod {
 					contentDisp = contentDisp.substring(contentDisp.toLowerCase().indexOf("=") + 1);
 					fileName = contentDisp.replaceAll("\"", "");
 				} else {
-					fileName = currentLayer.getLayerInfo().getName();
+					fileName = currentLayer.getLayerInfo().getServiceId();
 				}
 
 
@@ -172,7 +172,7 @@ public abstract class AbstractDownloadMethod {
 	
 	public BoundingBox getClipBounds() throws Exception{
 		SolrRecord layerInfo = this.currentLayer.getLayerInfo(); 
-		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMinY(), layerInfo.getMaxX(), layerInfo.getMaxY());
+		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMaxX(), layerInfo.getMaxY(), layerInfo.getMinY());
 		BoundingBox bounds = nativeBounds.getIntersection(this.currentLayer.getRequestedBounds());
 		return bounds;
 	}

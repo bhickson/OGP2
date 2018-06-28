@@ -49,7 +49,7 @@ OpenGeoportal.Views.PreviewTools = Backbone.View.extend({
 	
 	setGetFeatureTitle : function(model) {
 		if (model.get("getFeature")) {
-			this.getFeatureTitle = model.get("LayerDisplayName");
+			this.getFeatureTitle = model.get("dc_title_s");
 		}
 	},
 
@@ -86,7 +86,7 @@ OpenGeoportal.Views.PreviewTools = Backbone.View.extend({
 		}
 		if (this.model.has("graphicWidth")) {
 			var label = "";
-			var type = this.model.get("DataType").toLowerCase();
+			var type = this.model.get("layer_geom_type_s").toLowerCase();
                         var labelValue = this.model.get("graphicWidth");
 			if (type === "point") {
 				// render sizeControl; different for point, line, and polygon
@@ -266,8 +266,14 @@ OpenGeoportal.Views.PreviewTools = Backbone.View.extend({
 	},
 
 	zoomToLayerExtent : function() {
-		var southwest = [this.model.get("MinY"),this.model.get("MinX")];
-		var northeast = [this.model.get("MaxY"),this.model.get("MaxX")]
+		bb_list = this.model.get("solr_geom").split("(")[1].split(")")[0].split(" ");
+		minY = parseFloat(bb_list[3]);
+		maxY = parseFloat(bb_list[2]);
+		minX =  parseFloat(bb_list[0]);
+		maxX =  parseFloat(bb_list[1]);
+
+		var southwest = [minY,minX];
+		var northeast = [maxY,maxX];
 		var bounds = new L.latLngBounds(southwest,northeast);
 		OpenGeoportal.ogp.map.fitBounds(bounds)
 	},

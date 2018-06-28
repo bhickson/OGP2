@@ -41,7 +41,7 @@ public class MultiLayerDownloader implements LayerDownloader {
 				downloadFutures.add(currentFile);
 			} catch (Exception e){
 				//e.printStackTrace();
-				logger.error("an error downloading this layer: " + currentLayer.getLayerInfo().getName());
+				logger.error("an error downloading this layer: " + currentLayer.getLayerInfo().getLayerSlug());
 				currentLayer.setStatus(Status.FAILED);
 				continue;
 			}

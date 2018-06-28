@@ -23,7 +23,7 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 		this.cart = OpenGeoportal.ogp.appState.get("cart");
 		
 		this.expandState = OpenGeoportal.ogp.appState.get("layerState");
-		var layerState = this.expandState.findWhere({LayerId: this.model.get("LayerId")});
+		var layerState = this.expandState.findWhere({slug_layer_s: this.model.get("layer_slug_s")});
 		if (typeof layerState !== "undefined"){
 			this.model.set({showControls: layerState.get("expanded")});
 		}
@@ -39,9 +39,9 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 	},
 	
 	togglePreview : function(e) {
-		var layerId = this.model.get("LayerId");
+		var layerSlug = this.model.get("layer_slug_s");
 		var model = this.previewed.findWhere({
-			LayerId : layerId
+			slug_layer_s : layerSlug
 		});
 		if (typeof model === "undefined") {
 			var layerAttr = null;
@@ -111,7 +111,7 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 			showControls : !controls
 		});
 		
-		this.expandState.setExpandState(this.model.get("LayerId"), !controls);
+		this.expandState.setExpandState(this.model.get("layer_slug_s"), !controls);
 	},
 	
 	/*
@@ -142,7 +142,7 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 		// make an ajax call to retrieve data from solr
 		var solr = new OpenGeoportal.Solr();
 		var url = solr.getServerName() + "?"
-				+ jQuery.param(solr.getArbitraryParams(this.model.get("LayerId"), this.infoColumn));
+				+ jQuery.param(solr.getArbitraryParams(this.model.get("layer_slug_s"), this.infoColumn));
 		var query = solr.sendToSolr(url, this.getInfoSuccess,
 				this.getInfoError, this);
 
@@ -172,10 +172,10 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 	
 	toggleSave: function(e){
 		//if not in cart, add it.  if in cart, remove it.
-		var match = this.cart.findWhere({LayerId: this.model.get("LayerId")});
+		var match = this.cart.findWhere({layer_slug_s: this.model.get("layer_slug_s")});
 		if (typeof match === "undefined"){
 			var that = this;
-	                var pmodel = this.previewed.findWhere({ LayerId : this.model.get("LayerId") });  //Looks for model in previewed layers
+	                var pmodel = this.previewed.findWhere({ layer_slug_s : this.model.get("layer_slug_s") });  //Looks for model in previewed layers
                 	jQuery(e.currentTarget).effect("transfer", {
 					to: ".shoppingCartIcon",
 					easing: "swing",

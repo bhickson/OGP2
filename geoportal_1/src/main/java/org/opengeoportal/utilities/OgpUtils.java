@@ -100,40 +100,20 @@ public class OgpUtils {
 	 * In some cases, the workspace name may be embedded in the layer name (an ingest error) or there may be no workspace name.
 	 * This allows code that requires a qualified layer name to be more fault tolerant.
 	 * 
-	 * @param workspaceName	the workspace name for a layer
-	 * @param layerName		the layer name 
-	 * @return the layer name with workspace name (fully qualified)
+	 * @param  serviceIdName the layer name 
+	 * @return the service layer name
 	 * @throws Exception
 	 */
-	public static String getLayerNameNS(String workspaceName, String layerName) throws Exception{
-		workspaceName = workspaceName.trim();
-		layerName = layerName.trim();
+	public static String getLayerNameNS(String serviceIdName) throws Exception{
+		String layerName = serviceIdName.trim(); 
 		
-		String embeddedWSName = "";
-		if (layerName.contains(":")){
-			String[] layerNameArr = layerName.split(":");
-			if (layerNameArr.length > 2){
-				throw new Exception("Invalid layer name ['" + layerName + "']");
-			}
-			embeddedWSName = layerNameArr[0];
-			layerName = layerNameArr[1];
-		}
-		if (!workspaceName.isEmpty()){
-			//prefer the explicit workspaceName?
-			return workspaceName + ":" + layerName;
-		} else {
-			if (embeddedWSName.isEmpty()){
-				return layerName;
-			} else {
-				return embeddedWSName + ":" + layerName;
-			}
-		}
+		return layerName;
 	}
 	
 	/**
 	 * puts together a url with query string.
 	 * 
-	 * sometimes the provided url in the location field may contain query parameters.  This method removes
+	 * sometimes the provided url in the location/references field may contain query parameters.  This method removes
 	 * duplicate parameters and determines whether a "?" is needed.  It may be better to replace this implementation
 	 * using utility methods from Apache HttpComponents
 	 * 
@@ -185,7 +165,6 @@ public class OgpUtils {
 
 
 		String combined = path + "?" + requestString;
-		logger.info("Combined URL: " + combined);
 		return combined;
 	}
 
@@ -218,9 +197,9 @@ public class OgpUtils {
 		return envString;
 	}
 	
-	public static SolrRecord findRecordById(String layerId, List<SolrRecord> recordList) throws Exception{
+	public static SolrRecord findRecordById(String layerSlug, List<SolrRecord> recordList) throws Exception{
 		for (SolrRecord sr: recordList){
-			if (sr.getLayerId().equals(layerId)){
+			if (sr.getLayerSlug().equals(layerSlug)){
 				
 				return sr;
 			}

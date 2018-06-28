@@ -27,7 +27,7 @@ OpenGeoportal.Views.ShareCart = OpenGeoportal.Views.CartActionView
 
 				var arrIds = [];
 				_.each(arrModels, function(model) {
-					arrIds.push(model.get("LayerId"));
+					arrIds.push(model.get("layer_slug_s"));
 				});
 
 				var dialogContent = "";

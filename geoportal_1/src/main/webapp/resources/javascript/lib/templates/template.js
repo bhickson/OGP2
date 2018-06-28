@@ -141,7 +141,7 @@ OpenGeoportal.Template = function() {
 	var toMetadataTopHtml = '<div id="toMetadataTop"></div>';
 	this.toMetadataTop = _.template(toMetadataTopHtml);
 
-	var metadataContentHtml = '<div id="metadataContent"></div><div id="metadataFooter"><%= layerId %></div>';
+	var metadataContentHtml = '<div id="metadataContent"></div><div id="metadataFooter"><%= layerSlug %></div>';
 	this.metadataContent = _.template(metadataContentHtml);
 
 	var iframeDownloadHtml = '<iframe class="<%= iframeClass%>" src="<%= iframeSrc %>" onload="jQuery(document).trigger(\'iframeload\')"/>';
@@ -155,7 +155,7 @@ OpenGeoportal.Template = function() {
 	// var list = "<% _.each(people, function(name) { %> <li><%= name %></li> <%
 	// }); %>";
 	var attributeTableHtml = '<table class="attributeInfo">'
-			+ '<caption class="getFeatureTitle offsetColor" title="<%= layerId %>"><%= title %></caption>'
+			+ '<caption class="getFeatureTitle offsetColor" title="<%= layerSlug %>"><%= title %></caption>'
 			+ "<% _.each(tableContent, "
 			+ "function(rowObj) { %><tr><td class=\"attributeName\" ><%= rowObj.header %></td><%  _.each(rowObj.values, "
 			+ "function(value) { %><td><%= value %></td> <% }); %></tr><% }); %>"

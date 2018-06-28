@@ -91,7 +91,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 				this.setFrameHeight();
 				var scrollTarget$ = this.$el.children(".tableWrapper").children(".rowContainer");
 				scrollTarget$.off("scroll").on("scroll", function(){that.watchScroll.apply(that, arguments);});
-				this.setSortableLayers(); //BEN ADDED LINE
+				this.setSortableLayers();
 				   
 			},
 			prevScrollY: 0,
@@ -135,16 +135,15 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 					previewedHeight = this.$("previewedLayers").outerHeight(true);
 				};
 
-				var ht = Math.floor($("#map").height() - (scrollOffset - $("#container").offset().top));
+				var ht = Math.floor($("#map").height() - ($scrollTarget.offset().top - $("#container").offset().top));
 
 				cartContainer.height(ht);
 				$scrollTarget.height(ht - previewedHeight);
 			},
-
-			// BEN ADDED FUNCTION
+			
 			setSortableLayers: function(){
 				if (this.$(".previewedLayers .rowContainer").children().size() > 0) {
-					this.$(".previewedLayers").css("border", "1px solid #828282"); // BEN ADDED
+					this.$(".previewedLayers").css("border", "1px solid #828282"); 
 				} else {
 					this.$(".previewedLayers").css("border", "none");
 				};
@@ -155,13 +154,13 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 						function(event, ui) {
 							var numPreviewedLayers = OpenGeoportal.ogp.map.previewLayerGroup.getLayers().length;
 							$(".previewedLayers .rowContainer").children(".tableRow").each( function(){
-								var layerId = $(this).attr("id")
+								var layerSlug = $(this).attr("id")
 								var index = $(this).index();
 								var zindex = (numPreviewedLayers - index) + 200;
 
 								jQuery(document).trigger("map.zIndexChange", {
 									zIndex : zindex,
-									LayerId: layerId
+									layer_slug_s: layerSlug
 								});
 							 });
 						}
@@ -354,11 +353,11 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 									columnClass : "colSave",
 									width : 19,
 									modelRender : function(model) {
-										var layerId = model.get("LayerId");
+										var layerSlug = model.get("layer_slug_s");
 								
 										var stateVal = false;
 										var selModel =	that.cart.findWhere({
-											LayerId : layerId
+											layer_slug_s : layerSlug
 										});
 										if (typeof selModel !== 'undefined') {
 											stateVal = true;
@@ -370,7 +369,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 									},
 									{
 										order : 2,
-										columnName : "DataType",
+										columnName : "layer_geom_type_s",
 										resizable : false,
 										organize : "group",
 										visible : true,
@@ -380,7 +379,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 										columnClass : "colType",
 										width : 30,
 										modelRender : function(model) {
-											var dataType = model.get("DataType");
+											var dataType = model.get("layer_geom_type_s");
 											return that.tableControls.renderTypeIcon(dataType);
 										}
 
@@ -398,32 +397,32 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 										columnClass : "colScore"
 									}, {
 										order : 4,
-										columnName : "LayerDisplayName",
+										columnName : "dc_title_s",
 										resizable : true,
 										minWidth : 35,
 										width : 200,
 										organize : "alpha",
 										visible : true,
 										hidable : false,
-										displayName : "Name",
+										displayName : "layer_id_s",
 										header : "Name",
 										columnClass : "colTitle"
 									}, {
 										order : 5,
-										columnName : "Originator",
+										columnName : "dc_creator_sm",
 										resizable : true,
 										minWidth : 62,
 										width : 86,
 										organize : "group",
 										visible : true,
 										hidable : true,
-										displayName : "Originator",
-										header : "Originator",
-										columnClass : "colOriginator"
+										displayName : "Creator",
+										header : "Creator",
+										columnClass : "colCreator"
 
 									}, {
 										order : 6,
-										columnName : "Publisher",
+										columnName : "dc_publisher_s",
 										resizable : true,
 										minWidth : 58,
 										width : 80,
@@ -436,24 +435,24 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 
 									}, {
 										order : 7,
-										columnName : "ContentDate",
+										columnName : "solr_year_i",
 										organize : "numeric",
 										visible : false,
-										displayName : "Date",
+										displayName : "Year",
 										resizable : true,
 										minWidth : 30,
 										width : 30,
 										hidable : true,
-										header : "Date",
-										columnClass : "colDate",
+										header : "Year",
+										columnClass : "colYear",
 										modelRender : function(model) {
-											var date = model.get("ContentDate");
+											var date = model.get("solr_year_i");
 											return that.tableControls.renderDate(date);
 										}
 
 									}, {
 										order : 8,
-										columnName : "Institution",
+										columnName : "dct_provenance_s",
 										organize : "alpha",
 										visible : true,
 										hidable : true,
@@ -463,79 +462,83 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 										columnClass : "colSource",
 										width : 24,
 										modelRender : function(model) {
-											var repository = model.get("Institution");
+											var repository = model.get("dct_provenance_s");
 											return that.tableControls.renderRepositoryIcon(repository);
 
 										}
 
 									}, {
 										order : 9,
-										columnName : "Access",
+										columnName : "dc_rights_s",
 										resizable : false,
 										organize : false,
 										visible : false,
 										hidable : false,
 										header : "Access"
-									}, 
-								{
-									order : 10,
-									columnName : "Metadata",
-									resizable : false,
-									organize : false,
-									visible : true,
-									hidable : false,
-									header : "Meta",
-									columnClass : "colMetadata",
-									width : 30,
-									modelRender : function(model) {
+									}, {
+										order : 10,
+										columnName : "Metadata",
+										resizable : false,
+										organize : false,
+										visible : true,
+										hidable : false,
+										header : "Meta",
+										columnClass : "colMetadata",
+										width : 30,
+										modelRender : function(model) {
 										return that.tableControls.renderMetadataControl();
-									}
-								},
-								{
-									order : 11,
-									columnName : "View",
-									resizable : false,
-									organize : false,
-									visible : true,
-									hidable : false,
-									header : "View",
-									columnClass : "colPreview",
-									width : 39,
-									modelRender : function(model) {
-										var layerId = model.get("LayerId");
-										var location = model.get("Location");
-										var access = model.get("Access").toLowerCase();
-										var institution = model.get("Institution").toLowerCase();
-
-										var stateVal = false;
-										var selModel =	that.previewed.findWhere({
-											LayerId : layerId
-										});
-										if (typeof selModel !== 'undefined') {
-											if (selModel.get("preview") === "on"){
-												stateVal = true;
-											}
 										}
+									}, {
+										order : 11,
+										columnName : "View",
+										resizable : false,
+										organize : false,
+										visible : true,
+										hidable : false,
+										header : "View",
+										columnClass : "colPreview",
+										width : 39,
+										modelRender : function(model) {
+											var layerSlug = model.get("layer_slug_s");
+											var location = model.get("dct_references_s");
+											var access = model.get("dc_rights_s").toLowerCase();
+											var institution = model.get("dct_provenance_s").toLowerCase();
+	
+											var stateVal = false;
+											var selModel =	that.previewed.findWhere({
+												layer_slug_s : layerSlug
+											});
+											if (typeof selModel !== 'undefined') {
+												if (selModel.get("preview") === "on"){
+													stateVal = true;
+												}
+											}
 										
-										var canPreview = function(location){
-											//where is a good place to centralize this?
-											return OpenGeoportal.Utility.hasLocationValueIgnoreCase(location, ["wms", "arcgisrest", "imagecollection"]);
-										};
+											var canPreview = function(location){
+												//where is a good place to centralize this?
+												return OpenGeoportal.Utility.hasLocationValueIgnoreCase(
+														location, ["http://www.opengis.net/def/serviceType/ogc/wms",
+															   "http://www.opengis.net/def/serviceType/ogc/wms",
+															   "urn:x-esri:serviceType:ArcGIS#FeatureLayer",
+															   "urn:x-esri:serviceType:ArcGIS#TiledMapLayer",
+															   "urn:x-esri:serviceType:ArcGIS#ImageMapLayer",
+															   "imagecollection"]);
+											};
+									
+											var hasAccess = true;
+											var canLogin = true;
 										
-										var hasAccess = true;
-										var canLogin = true;
-										
-										var previewable = canPreview(location);
-										if (previewable){
-											var loginModel = OpenGeoportal.ogp.appState.get("login").model;
-											hasAccess = loginModel.hasAccessLogic(access, institution);
-											canLogin = loginModel.canLoginLogic(institution);
-										} 
+											var previewable = canPreview(location);
+											if (previewable){
+												var loginModel = OpenGeoportal.ogp.appState.get("login").model;
+												hasAccess = loginModel.hasAccessLogic(access, institution);
+												canLogin = loginModel.canLoginLogic(institution);
+											} 
 
-										return that.tableControls.renderPreviewControl(previewable, hasAccess, canLogin, stateVal);
+											return that.tableControls.renderPreviewControl(previewable, hasAccess, canLogin, stateVal);
 									}
-								} ]);
-			}
+									} ]);
+				}
 
 
-		});
+			});

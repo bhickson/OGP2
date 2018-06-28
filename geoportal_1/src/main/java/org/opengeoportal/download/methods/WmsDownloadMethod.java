@@ -55,7 +55,7 @@ public class WmsDownloadMethod extends AbstractDownloadMethod implements PerLaye
 	 	//all client bboxes should be passed as lat-lon coords.  we will need to get the appropriate epsg code for the layer
 	 	//in order to return the file in original projection to the user (will also need to transform the bbox)
 		SolrRecord layerInfo = this.currentLayer.getLayerInfo();
-		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMinY(), layerInfo.getMaxX(), layerInfo.getMaxY());
+		BoundingBox nativeBounds = new BoundingBox(layerInfo.getMinX(), layerInfo.getMaxX(), layerInfo.getMaxY(), layerInfo.getMinY());
 		BoundingBox bounds = nativeBounds.getIntersection(this.currentLayer.getRequestedBounds());
 		String layerName = this.currentLayer.getLayerNameNS();
 		//for now we'll force wgs84.  we'll revisit if we need something different

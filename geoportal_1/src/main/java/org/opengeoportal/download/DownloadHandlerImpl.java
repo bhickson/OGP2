@@ -102,24 +102,24 @@ public class DownloadHandlerImpl implements DownloadHandler {
 	
 	
 	private void populateDownloadRequest (DownloadRequest dlRequest) throws Exception {
-		Set<String> layerIdSet = dlRequest.getRequestedLayerIds();
-		List<SolrRecord> layerInfo = layerInfoRetriever.fetchAllowedRecords(layerIdSet);
+		Set<String> layerSlugSet = dlRequest.getRequestedLayerSlugs();
+		List<SolrRecord> layerInfo = layerInfoRetriever.fetchAllowedRecords(layerSlugSet);
 		
-		for (String layerId: layerIdSet){
+		for (String layerSlug: layerSlugSet){
 			
 			SolrRecord record = null;
 			try{
-				//layerIdSet can contain layerIds for layers the user is not allowed to access
-				record = OgpUtils.findRecordById(layerId, layerInfo);
+				//layerSlugSet can contain layerSlugs for layers the user is not allowed to access
+				record = OgpUtils.findRecordById(layerSlug, layerInfo);
 			} catch (Exception e){
 				//if the user is not allowed to download the layer, here's our opportunity to record that in a way that we can relay back to the user
 				//create a dummy LayerRequest so we can set status failed?
 				//layerRequest.setStatus(Status.FAILED);
 				//subclass LayerRequest as "AbortedLayerRequest" and add?
-				logger.info("User is not authorized to download: '" + layerId +"'");
+				logger.info("User is not authorized to download: '" + layerSlug +"'");
 				continue;	
 			}
-			String requestedFormat = dlRequest.getRequestedFormatForLayerId(record.getLayerId());
+			String requestedFormat = dlRequest.getRequestedFormatForLayerSlug(record.getLayerSlug());
 			LayerRequest layerRequest = this.createLayerRequest(record, requestedFormat, dlRequest.getBounds(), dlRequest.getEmail());
 			
 			String currentClassKey = null;
@@ -129,7 +129,7 @@ public class DownloadHandlerImpl implements DownloadHandler {
 				logger.info("DownloadKey: " + currentClassKey);
 			} catch(Exception e) {
 				layerRequest.setStatus(Status.FAILED);
-				logger.info("No download method found for: '" + record.getLayerId() +"'");
+				logger.info("No download method found for: '" + record.getLayerSlug() +"'");
 				continue;
 			}
 
@@ -142,11 +142,12 @@ public class DownloadHandlerImpl implements DownloadHandler {
 
 	
 	private LayerRequest createLayerRequest(SolrRecord solrRecord, String requestedFormat, BoundingBox bounds, String emailAddress){
+		logger.info("Layer Request, creating layer request");
 		LayerRequest layer = new LayerRequest(solrRecord, requestedFormat);
 		layer.setRequestedBounds(bounds);
 		layer.setEmailAddress(emailAddress);
 		layer.setTargetDirectory(this.directoryRetriever.getDownloadDirectory());
-		if (LocationFieldUtils.hasWmsUrl(solrRecord.getLocation())){
+		if (LocationFieldUtils.hasWmsUrl(solrRecord.getServiceLocations())){
 			addOwsInfo(layer);
 		}
 		return layer;

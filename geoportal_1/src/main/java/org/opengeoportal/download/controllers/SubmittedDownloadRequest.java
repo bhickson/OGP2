@@ -113,12 +113,12 @@ public class SubmittedDownloadRequest {
 		return this.layerImage;
 	}
 	
-	public Set<String> getLayerIds(){
-		Set<String> layerIds = new HashSet<String>();
+	public Set<String> getLayerSlug(){
+		Set<String> layerSlug = new HashSet<String>();
 		for (LayerImage layerImage: this.layerImage){
-			layerIds.add(layerImage.getLayerId());
+			layerSlug.add(layerImage.getLayerSlug());
 		}
-		return layerIds;
+		return layerSlug;
 	}
 	
 	public UUID getRequestId() {
@@ -139,13 +139,13 @@ public class SubmittedDownloadRequest {
 
 	public static class LayerImage implements Comparable<LayerImage> {
 		@JsonIgnore
-		String name;
+		String serviceId;
 		@JsonProperty("opacity")
 		int opacity;
 		@JsonProperty("zIndex")
 		int zIndex;
-		@JsonProperty("layerId")
-		String layerId;
+		@JsonProperty("layerSlug")
+		String layerSlug;
 		String sld;
 		@JsonIgnore
 		String baseUrl;
@@ -160,18 +160,18 @@ public class SubmittedDownloadRequest {
 		@JsonIgnore
 		ImageStatus imageStatus = ImageStatus.PROCESSING;
 
-		public String getName() {
-			return name;
+		public String getServiceId() {
+			return serviceId;
 		}
-		public void setName(String name) {
-			this.name = name;
+		public void setServiceId(String serviceId) {
+			this.serviceId = serviceId;
 		}
 		
-		public String getLayerId() {
-			return layerId;
+		public String getLayerSlug() {
+			return layerSlug;
 		}
-		public void setLayerId(String layerId) {
-			this.layerId = layerId;
+		public void setLayerSlug(String layerSlug) {
+			this.layerSlug = layerSlug;
 		}
 		public String getSld() {
 			return sld;
@@ -247,7 +247,7 @@ public class SubmittedDownloadRequest {
 	        if (!(o instanceof LayerImage))
 	            return false;
 	        LayerImage n = (LayerImage) o;
-	        return n.layerId.equals(layerId);
+	        return n.layerSlug.equals(layerSlug);
 	    }
 	}
 }

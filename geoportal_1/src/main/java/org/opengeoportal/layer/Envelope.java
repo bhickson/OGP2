@@ -18,8 +18,8 @@ public class Envelope {
 	 * @param maxX
 	 * @param maxY
 	 */
-	public Envelope(Double minX, Double minY, Double maxX, Double maxY, String epsgCode){
-		this.init(minX, minY, maxX, maxY, epsgCode);
+	public Envelope(Double minX, Double maxX, Double maxY, Double minY, String epsgCode){  // W E N S
+		this.init(minX, maxX, maxY, minY, epsgCode);  // W E N S
 	}
 	
 	/**
@@ -29,11 +29,11 @@ public class Envelope {
 	 * @param maxX
 	 * @param maxY
 	 */
-	public Envelope(String minX, String minY, String maxX, String maxY, String epsgString){
-		this.init(Double.parseDouble(minX), Double.parseDouble(minY), Double.parseDouble(maxX), Double.parseDouble(maxY), epsgString);
+	public Envelope(String minX, String maxX, String maxY, String minY, String epsgString){  // W E N S
+		this.init(Double.parseDouble(minX), Double.parseDouble(maxX), Double.parseDouble(maxY), Double.parseDouble(minY), epsgString);
 	}
 	
-	private void init(Double minX, Double minY, Double maxX, Double maxY, String epsgCode){
+	private void init(Double minX, Double maxX, Double maxY, Double minY, String epsgCode){  // W E N S
 		this.minX = minX;
 		this.minY = minY;
 		this.maxX = maxX;

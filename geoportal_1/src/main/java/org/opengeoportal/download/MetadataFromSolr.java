@@ -1,3 +1,6 @@
+
+
+
 package org.opengeoportal.download;
 
 import java.util.*;
@@ -8,6 +11,21 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
+import org.opengeoportal.utilities.LocationFieldUtils;
+import org.opengeoportal.utilities.http.OgpHttpClient;
+import org.opengeoportal.solr.SolrRecord;
+
+
 import org.xml.sax.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -17,6 +35,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+
+
+
 /**
  * retrieves a layer's XML metadata from an OGP solr instance
  * @author chris
@@ -24,9 +50,16 @@ import org.w3c.dom.*;
  */
 
 public class MetadataFromSolr implements MetadataRetriever {
+	final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	private LayerInfoRetriever layerInfoRetriever;
-	private String layerId;
+
+	@Autowired
+	@Qualifier("httpClient.pooling")
+	OgpHttpClient ogpHttpClient;
+
+	private String layerSlug;
 	private Document xmlDocument;
 	private DocumentBuilder builder;
 	private Resource fgdcStyleSheet;
@@ -64,12 +97,12 @@ public class MetadataFromSolr implements MetadataRetriever {
 	 * @return the processed XML String
 	 * @throws TransformerException
 	 */
-	String filterXMLString(String layerId, String rawXMLString)
-	 throws TransformerException
-	 {
+	String filterXMLString(String layerSlug, String rawXMLString)
+	throws TransformerException
+	{
 		Document document = null;
 		try {
-			document = buildXMLDocFromString(layerId, rawXMLString);
+			document = buildXMLDocFromString(layerSlug, rawXMLString);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -86,14 +119,14 @@ public class MetadataFromSolr implements MetadataRetriever {
 		StreamResult streamResult = new StreamResult(stringWriter);
 		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        Transformer transformer = transformerFactory.newTransformer();
+        	transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		transformer.transform(xmlSource, streamResult);
 		String outputString = stringWriter.toString();
 
 		return outputString;
-	 }
+	}
 	
 	/**
 	 * takes the XML metadata string from the Solr instance, does some filtering, returns an xml document
@@ -104,8 +137,9 @@ public class MetadataFromSolr implements MetadataRetriever {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	Document buildXMLDocFromString(String layerId, String rawXMLString) throws ParserConfigurationException, SAXException, IOException{
-		if ((layerId.equalsIgnoreCase(this.layerId))&&(this.xmlDocument != null)){
+	Document buildXMLDocFromString(String layerSlug, String rawXMLString) throws ParserConfigurationException, SAXException, IOException{
+		logger.debug("Building XML Document From String"); 
+		if ((layerSlug.equalsIgnoreCase(this.layerSlug))&&(this.xmlDocument != null)){
 			return this.xmlDocument;
 		} else {
 			InputStream xmlInputStream = null;
@@ -123,6 +157,7 @@ public class MetadataFromSolr implements MetadataRetriever {
 				IOUtils.closeQuietly(xmlInputStream);
 			}
 		}
+
 	}
 	
 	/**
@@ -136,27 +171,90 @@ public class MetadataFromSolr implements MetadataRetriever {
 		if (descriptor.equalsIgnoreCase("name")){
 			int i = identifier.indexOf(":");
 			if (i > 0){
-				//String workSpace = layerName.substring(0, i);
-				//conditionsMap.put("WorkspaceName", workSpace);
 				identifier = identifier.substring(i + 1);
 			}
-			conditionsMap.put("Name", identifier);
-			this.layerId = null;
-		} else if(descriptor.equalsIgnoreCase("layerid")){
-			conditionsMap.put("LayerId", identifier);
-			this.layerId = identifier;
+			conditionsMap.put("layer_slug_s", identifier);
+			this.layerSlug = null;
+		} else if(descriptor.equalsIgnoreCase("layer_slug_s")){
+			conditionsMap.put("layer_slug_s", identifier);
+			this.layerSlug = identifier;
 		} else {
-			this.layerId = null;
+			this.layerSlug = null;
 			return null;
 		}
 
-		SolrQuery query = new SolrQuery();
-		query.setQuery( descriptor + ":" + identifier );
-		query.addField("FgdcText");
-		query.setRows(1);
+		// _____________________________________
 		
-		 SolrDocumentList docs = this.layerInfoRetriever.getSolrServer().query(query).getResults();
-		 return (String) docs.get(0).getFieldValue("FgdcText");
+		HttpClient httpclient = ogpHttpClient.getCloseableHttpClient();
+	        String metadataString = null;
+		String metadataLocation = null;
+		SolrRecord layerInfo = layerInfoRetriever.getAllLayerInfo(identifier);
+
+		// TODO - Add ability to get mods metadata (including stylesheet)
+		if (LocationFieldUtils.hasISO19139Url(layerInfo.getServiceLocations())){
+			metadataLocation = LocationFieldUtils.getISO19139Url(layerInfo.getServiceLocations());
+		} else if (LocationFieldUtils.hasFGDCUrl(layerInfo.getServiceLocations())){
+			metadataLocation = LocationFieldUtils.getFGDCUrl(layerInfo.getServiceLocations());
+		} else {
+			throw new Exception("No XML metadata location found for this layer.");
+		}
+
+        	HttpGet httpget = new HttpGet(metadataLocation);
+		
+
+        	try {
+	              	HttpResponse response = httpclient.execute(httpget);
+
+			if (response.getStatusLine().getStatusCode() != 200){
+	                        throw new Exception("Attempt to download " + layerSlug + " metadata failed.");
+                	}
+
+        	        HttpEntity entity = response.getEntity();
+	                String contentType = entity.getContentType().getValue();
+
+			InputStream inputStream = null;
+	                try {
+                        	inputStream = entity.getContent();
+
+		                if (contentType.toLowerCase().contains("xml")){
+					logger.debug("CONTENT CONTAINS XML");
+					String responseContent = EntityUtils.toString(entity);
+					metadataString = responseContent;
+				} else if (contentType.toLowerCase().contains("text/plain")) {
+					String responseContent = EntityUtils.toString(entity);
+                                        metadataString = responseContent;
+					 
+				} else {
+					// TODO need some other checker here for non xml metadata (MODS and HTML)
+					throw new Exception("Metadata retrieved is not XML formatted.");
+				}
+				logger.debug("METADATA STRING: ", metadataString);
+
+	                } catch (Exception e){
+
+                	} finally {
+	                        inputStream.close();
+                	}
+
+        	} catch (ClientProtocolException e) {
+	        // TODO Auto-generated catch block
+        	        e.printStackTrace();
+	        } catch (IOException e) {
+	                // TODO Auto-generated catch block
+                	e.printStackTrace();
+        	}
+	        return metadataString;
+
+		// _____________________________________
+	
+		/*SolrQuery query = new SolrQuery();
+		query.setQuery( descriptor + ":" + identifier );
+		query.addField("layer_slug_s");
+		query.setRows(1);
+		logger.info("QUERY:" + query);
+		
+		SolrDocumentList docs = this.layerInfoRetriever.getSolrServer().query(query).getResults();
+		return (String) docs.get(0).getFieldValue("layer_slug_s");*/
 	}
 	
 	/**
@@ -170,7 +268,7 @@ public class MetadataFromSolr implements MetadataRetriever {
 	public File getXMLFile(String metadataLayerName, File xmlFile) throws Exception{
 		OutputStream xmlFileOutputStream = null;
 		try{
-			String xmlString = this.getXMLStringFromSolr(metadataLayerName, "Name");
+			String xmlString = this.getXMLStringFromSolr(metadataLayerName, "layer_slug_s");
 			xmlString = this.filterXMLString("", xmlString);
 			//write this string to a file
 			xmlFileOutputStream = new FileOutputStream (xmlFile);
@@ -184,20 +282,21 @@ public class MetadataFromSolr implements MetadataRetriever {
 	}
 
 	@Override
-	public String getXMLStringFromId(String layerID, String xmlFormat) throws Exception {
-		String xmlString = this.getXMLStringFromSolr(layerID, "LayerId");
-		xmlString = this.filterXMLString(layerID, xmlString);
+	public String getXMLStringFromLayerSlug(String layerSlug) throws Exception {
+		String xmlString = this.getXMLStringFromSolr(layerSlug, "layer_slug_s");
+		xmlString = this.filterXMLString(layerSlug, xmlString);
 
 		return xmlString;
 	}
 	
 	@Override
-	public String getMetadataAsHtml(String layerID) throws Exception {
-		String xmlString = this.getXMLStringFromSolr(layerID, "LayerId");
+	public String getMetadataAsHtml(String layerSlug) throws Exception {
+		logger.debug("Getting Metadata As Html");
+		String xmlString = this.getXMLStringFromSolr(layerSlug, "layer_slug_s");
 		
 		Document document = null;
 		try {
-			document = buildXMLDocFromString(layerId, xmlString);
+			document = buildXMLDocFromString(layerSlug, xmlString);
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -208,6 +307,7 @@ public class MetadataFromSolr implements MetadataRetriever {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		logger.debug("XML Document:", document);
 
 		//get the metadata type and correct xslt document
 		
@@ -218,10 +318,10 @@ public class MetadataFromSolr implements MetadataRetriever {
 		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		
-        Source xslt = new StreamSource(getStyleSheet(document));
-        
-        Transformer transformer = transformerFactory.newTransformer(xslt);
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		Source xslt = new StreamSource(getStyleSheet(document));
+
+               	Transformer transformer = transformerFactory.newTransformer(xslt);
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		transformer.transform(xmlSource, streamResult);
 		String outputString = stringWriter.toString();
@@ -232,6 +332,7 @@ public class MetadataFromSolr implements MetadataRetriever {
 	
 	File getStyleSheet(Document document) throws Exception{
 		MetadataType metadataType = getMetadataType(document);
+		
 		//getMetadataType throws an exception if not fgdc or iso19139
 		if (metadataType.equals(MetadataType.FGDC)){
 			return this.getFgdcStyleSheet().getFile();
@@ -256,14 +357,12 @@ public class MetadataFromSolr implements MetadataRetriever {
         }
 
         try {
-
-            NodeList rootNodes = document.getElementsByTagNameNS("*", "MD_Metadata");
-            NodeList altRootNodes = document.getElementsByTagNameNS("*", "MI_Metadata");
-            int totalNodes = rootNodes.getLength() + altRootNodes.getLength();
-            if (totalNodes > 0){
-                    metadataType = MetadataType.ISO_19139;
-                
-            }
+		NodeList rootNodes = document.getElementsByTagName("MD_Metadata");
+		NodeList altRootNodes = document.getElementsByTagName("MI_Metadata");
+		int totalNodes = rootNodes.getLength() + altRootNodes.getLength();
+		if (totalNodes > 0){
+			metadataType = MetadataType.ISO_19139;
+		}
         } catch (Exception e){/*ignore*/}
 
         if (metadataType == null){
@@ -297,9 +396,9 @@ public class MetadataFromSolr implements MetadataRetriever {
 </ptcontac>
  * 
  */
-	public NodeList getContactNodeList(String layerID) throws Exception{
-		String xmlString = this.getXMLStringFromSolr(layerID, "LayerId");
-		Document document = buildXMLDocFromString(layerID, xmlString);
+	public NodeList getContactNodeList(String layerSlug) throws Exception{
+		String xmlString = this.getXMLStringFromSolr(layerSlug, "layer_slug_s");
+		Document document = buildXMLDocFromString(layerSlug, xmlString);
 		NodeList contactInfo = document.getElementsByTagName("ptcontac");
 		for (int i = 0; i < contactInfo.getLength(); i++){
 			Node currentNode = contactInfo.item(i);
@@ -310,10 +409,10 @@ public class MetadataFromSolr implements MetadataRetriever {
 		return null;
 	}
 	
-	public Node getContactInfo(String layerID, String nodeName){
+	public Node getContactInfo(String layerSlug, String nodeName){
 		NodeList contactInfo = null;
 		try {
-			contactInfo = this.getContactNodeList(layerID);
+			contactInfo = this.getContactNodeList(layerSlug);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -336,17 +435,17 @@ public class MetadataFromSolr implements MetadataRetriever {
 		return null;
 	}
 	
-	public String getContactPhoneNumber(String layerID){
-		return this.getContactInfo(layerID, "cntvoice").getNodeValue().trim();
+	public String getContactPhoneNumber(String layerSlug){
+		return this.getContactInfo(layerSlug, "cntvoice").getNodeValue().trim();
 	}
 	
-	public String getContactName(String layerID){
-		String contactName =  this.getContactInfo(layerID, "cntpos").getNodeValue().trim();
+	public String getContactName(String layerSlug){
+		String contactName =  this.getContactInfo(layerSlug, "cntpos").getNodeValue().trim();
 		return contactName;
 	}
 	
-	public String getContactAddress(String layerID){
-		Node addressNode = this.getContactInfo(layerID, "cntaddr");
+	public String getContactAddress(String layerSlug){
+		Node addressNode = this.getContactInfo(layerSlug, "cntaddr");
 		NodeList addressNodeList = addressNode.getChildNodes();
 		
 		String address = "";

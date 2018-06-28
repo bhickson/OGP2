@@ -11,5 +11,5 @@ import org.opengeoportal.layer.BoundingBox;
  *
  */
 public interface QuickDownload {
-	public File downloadZipFile(String layerId, BoundingBox bounds) throws Exception;
+	public File downloadZipFile(String layerSlug, BoundingBox bounds) throws Exception;
 }

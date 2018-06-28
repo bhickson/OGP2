@@ -125,16 +125,16 @@ public class GetCapabilitiesWFSProxy implements HttpRequestHandler {
     		layers = URLDecoder.decode(layers, "UTF-8");
     	}
 
-    	String[] layerIds = layers.split(",");
-   		Set<String> layerIdSet = new HashSet<String>();
+    	String[] layerSlugs = layers.split(",");
+   		Set<String> layerSlugSet = new HashSet<String>();
    		
-		for (int i = 0; i < layerIds.length; i++){
-			layerIdSet.add(layerIds[i]); 
+		for (int i = 0; i < layerSlugs.length; i++){
+			layerSlugSet.add(layerSlugs[i]); 
    		}
 
    		List<SolrRecord> layerInfoList = null;
 		try {
-			layerInfoList = this.layerInfoRetriever.fetchAllLayerInfo(layerIdSet);
+			layerInfoList = this.layerInfoRetriever.fetchAllLayerInfo(layerSlugSet);
 		} catch (Exception e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -152,7 +152,7 @@ public class GetCapabilitiesWFSProxy implements HttpRequestHandler {
 		 * 
 		 */
    		//String institution = layerInfoList.get(0).getInstitution();
-		//String servicePoint = layerInfoMap.get(layerIds[0]).get("Location");
+		//String servicePoint = layerInfoMap.get(layerSlugs[0]).get("Location");
 		//servicePoint = ParseJSONSolrLocationField.getWmsUrl(servicePoint);
    		//String serverName = servicePoint.substring(0, servicePoint.indexOf("/wms"));
    		//String serverName = "http://geoserver-dev.atech.tufts.edu:80";
@@ -164,8 +164,8 @@ public class GetCapabilitiesWFSProxy implements HttpRequestHandler {
    		}
    		this.featureNodesDocument = this.createXMLDocument();
 		for (SolrRecord layer: layerInfoList){
-   			String workspace = layer.getWorkspaceName();
-   			String layerName = layer.getName();
+   			String workspace = layer.getServiceId().split(":")[0];
+   			String layerName = layer.getServiceId().split(":")[1];
    			//System.out.println(serverName + "/" + workspace + "/" + layerName + "/wfs?request=GetCapabilities&version=" + version);
    			URL getCapabilitiesUrl = new URL(serverName + "/" + workspace + "/" + layerName + "/wfs?request=GetCapabilities&version=" + version);
    			

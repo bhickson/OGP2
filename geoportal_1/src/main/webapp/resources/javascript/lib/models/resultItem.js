@@ -12,8 +12,8 @@ if (typeof OpenGeoportal.Models == 'undefined'){
 
 
 OpenGeoportal.Models.ResultItem = Backbone.Model.extend({
-	//there are some cases where the LayerId doesn't make a good id for a Backbone model
-    //idAttribute: "LayerId"
+	//there are some cases where the layer_slug_s doesn't make a good id for a Backbone model
+    //idAttribute: "layer_slug_s"
 
 });
 
@@ -32,19 +32,17 @@ OpenGeoportal.ResultsCollection = Backbone.Collection.extend({
 	},
 	
 	fetchOn: false,
-
 	searcher: null,
 
 	url : function(){
+		url = this.searcher.getSearchRequest();
 		return this.searcher.getSearchRequest();
 	},
 
 	totalResults: 0,
-
 	parse: function(resp) {
-        	return this.solrToCollection(resp);
+	        return this.solrToCollection(resp);
 	},
-
 	// converts solr response object to backbone models
 	solrToCollection: function(dataObj) {
 		// dataObj is a Javascript object (usually) returned by Solr
@@ -54,49 +52,48 @@ OpenGeoportal.ResultsCollection = Backbone.Collection.extend({
 		var ids = [];
 		var previewed = OpenGeoportal.ogp.appState.get("previewed").each(function(model){
 			if (model.get("preview") === "on"){
-				ids.push(model.get("LayerId"));
+				ids.push(model.get("layer_slug_s"));
 			}
 		});
 
 		// solr docs holds an array of hashtables, each hashtable contains a
 		// layer
 		var arrModels = [];
-			
+		
 		_.each(solrLayers, function(solrLayer){
-
 			solrLayer.resultNum = start;
-				start++;
-					
+			start++;
+			
 			//filter out layers in the preview pane
 
-			if (_.contains(ids, solrLayer.LayerId)){
+			if (_.contains(ids, solrLayer.layer_slug_s)){
 				solrLayer.hidden = true;
 			}
-				
+			
 			//just parse the json here, so we can use the results elsewhere
 			var locationParsed = {};
 			try {
-				var rawVal = solrLayer.Location;
+				var rawVal = solrLayer.dct_references_s;
 				if (rawVal.length > 2){
 					locationParsed = jQuery.parseJSON(rawVal);
 				}
 			} catch (err){
-				console.log([solrLayer["LayerId"], err]);
+				console.log([solrLayer["layer_slug_s"], err]);
 			}
-			solrLayer.Location = locationParsed;
+			solrLayer.dct_references_s = locationParsed;
 
 	                // Collapse these values to "Paper Map".
-        	        var dType = solrLayer.DataType;
-                	dType = dType.replace(/\s/g, "").toLowerCase();
-	                if (dType === "scannedmap" || dType === "papermap") {
-        	            solrLayer.DataType = "Paper Map";
-                	}
-
-				arrModels.push(solrLayer);
-			});
-			return arrModels;
-		},
+        	        var dType = solrLayer.layer_geom_type_s;
+	                dType = dType.replace(/\s/g, "").toLowerCase();
+        	        if (dType === "scannedmap" || dType === "papermap") {
+                	    solrLayer.layer_geom_type_s = "Paper Map";
+	                }
+			arrModels.push(solrLayer);
+		});
+		return arrModels;
+	},
 	    
+		
 	enableFetch: function() {
 	      this.fetchOn = true;
 	},
@@ -113,41 +110,38 @@ OpenGeoportal.ResultsCollection = Backbone.Collection.extend({
 		start: 0,
 		rows: 50
 	},
-		
-	fetchStatus: null,
 	
+	fetchStatus: null,
+		
 	newSearch: function(){
 		if (!this.fetchOn && typeof this.fetchStatus !== "undefined" && this.fetchStatus !== null){
-		console.log("abort called");
+			console.log("abort called");
 			this.fetchStatus.abort();
 		}
-			
-	        this.disableFetch();
+		
+		this.disableFetch();
 	        this.pageParams.start = 0;
 	        var that = this;
 
-        	var xhr = this.fetch({
-        		dataType: "jsonp",
+	        var xhr = this.fetch({
+			dataType: "jsonp",
 			jsonp: "json.wrf",
-		        complete: function(){
-				that.fetchComplete.apply(that, arguments); jQuery(document).trigger("newResults");
-			},
-          		reset: true,
-		        data: $.extend(this.pageParams, this.extraParams)
-        	});
-	       	this.fetchStatus = xhr;
-	       	return xhr;
+			complete: function(){that.fetchComplete.apply(that, arguments); jQuery(document).trigger("newResults");},
+			reset: true,
+	        	data: $.extend(this.pageParams, this.extraParams)
+	        });
+	        this.fetchStatus = xhr;
+	        return xhr;
 	},
-		
+	
 	nextPage: function(){
 		if (!this.fetchOn){
 			return;
 		}
 			
 		this.disableFetch();
-	       
+	        
 		this.pageParams.start = this.last().get("resultNum") + 1;
-	       
 		if (this.pageParams.start > this.totalResults){
 			return;
 		}
@@ -156,12 +150,12 @@ OpenGeoportal.ResultsCollection = Backbone.Collection.extend({
 			dataType: "jsonp",
 			jsonp: "json.wrf",
 
-	        	// success: this.fetchSuccess,
-		        // error: this.fetchError,
+			// success: this.fetchSuccess,
+			// error: this.fetchError,
 			complete: function(){that.fetchComplete.apply(that, arguments);},
 			remove: false,
 			data: $.extend(this.pageParams, this.extraParams)
-	        });
+		});
 	},
 
 	fetchComplete: function(){

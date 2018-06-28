@@ -304,19 +304,16 @@ OpenGeoportal.Utility.arrayContainsIgnoreCase = function(arr, val) {
 };
 
 OpenGeoportal.Utility.hasLocationValueIgnoreCase = function(location, keyArr) {
-
+	var loc = Object.assign({}, location);
 	var keyArrLower = OpenGeoportal.Utility.getArrayToLower(_.keys(location));
 	var lowerArr = OpenGeoportal.Utility.getArrayToLower(keyArr);
-
 	var hasKey = false;
 
 	for ( var i in lowerArr) {
 		if (_.has(lowerArr, i)) {
-
 			if (_.indexOf(keyArrLower, lowerArr[i]) >= 0) {
 				hasKey = true;
 			}
-
 		}
 	}
 
