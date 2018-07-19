@@ -52,11 +52,6 @@
 					<i class="fa fa-sort-desc" aria-hidden="true"></i>  Toggle Advanced Search
 				</button>
 			</div>
-			<div class="basicSearch searchFormRow searchRow2">
-				<button id="moreSearchOptions" class="searchToggle button offsetColor" tabindex="0">
-					<i class="fa fa-sort-desc" aria-hidden="true"></i>  Toggle Advanced Search
-				</button>
-			</div>	
 			<div class="advancedSearch searchFormRow searchRow1">
 				<label for="advancedOriginatorText">Originator:</label> <input
 					name="advancedOriginatorText" type="search" class="searchFormInput"
