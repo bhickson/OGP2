@@ -2,7 +2,6 @@ package org.opengeoportal.download.methods;
 
 import java.io.InputStream;
 import java.util.HashSet;
-
 import java.util.List;
 import java.util.Set;
 
@@ -61,9 +60,9 @@ public class WcsDownloadMethod extends AbstractDownloadMethod implements PerLaye
 		Envelope env = describeLayerInfo.getLonLatEnvelope();
 		BoundingBox nativeBounds = new BoundingBox(env.getMinX(), env.getMaxX(), env.getMaxY(), env.getMinY());
 		logger.info("reqLatLon" + this.currentLayer.getRequestedBounds().toStringLatLon());
-		logger.info("natLatLon" + nativeLatLon.toStringLatLon());
+		//logger.info("natLatLon" + nativeLatLon.toStringLatLon());
 
-		BoundingBox bounds = nativeLatLon.getIntersection(this.currentLayer.getRequestedBounds());
+		BoundingBox bounds = nativeBounds.getIntersection(this.currentLayer.getRequestedBounds());
 		logger.info("intLatLon" + bounds.toStringLatLon());
 
 		//  BEN ADDED... 
