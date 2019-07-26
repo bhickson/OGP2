@@ -17,6 +17,7 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 	events : {
 		"click .viewMetadataControl" : "viewMetadata",
 		"click .previewControl" : "togglePreview",
+		"click .downloadControl": "toggleDownload",
 		"click .previewLink"	: "handlePreviewLink",
 		"click .colExpand" : "toggleExpand",
 		"click .colTitle" : "toggleExpand",
@@ -212,6 +213,15 @@ OpenGeoportal.Views.LayerRow = Backbone.View.extend({
 
 		}
 	
+	},
+
+	toggleDownload : function(e) {
+		var layerSlug = this.model.get("layer_slug_s");
+		console.log("toggling download...", this.model);
+		var downloadURL = this.model.get("dct_references_s")["http://schema.org/downloadUrl"]; 
+		console.log("Layer Slug: ", downloadURL);
+		//window.location = downloadURL;
+		window.open(downloadURL, "_blank");
 	},
 
 	getModelFromPreviewed: function(){

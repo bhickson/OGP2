@@ -537,7 +537,48 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 
 											return that.tableControls.renderPreviewControl(previewable, hasAccess, canLogin, stateVal);
 									}
-									} ]);
+									},{
+                                                                        	order : 12,
+	                                                                        columnName : "DL",
+        	                                                                resizable : false,
+                	                                                        organize : false,
+                        	                                                visible : true,
+                                	                                        hideable : false,
+                                        	                                header : "Download",
+                                                	                        columnClass : "colDownload",
+                                                        	                width: 40,
+                                                                	        modelRender :  function(model) {
+                                                                        	        var layerSlug = model.get("layer_slug_s");
+                                                                                	var locations = model.get("dct_references_s");
+	                                                                                var access = model.get("dc_rights_s").toLowerCase();
+        	                                                                        var institution = model.get("dct_provenance_s").toLowerCase();
+                	                                                                var hasAccess = true;
+                        	                                                        var canLogin = true;
+											var geomType = model.get("layer_geom_type_s");
+
+
+											var canDownload = function(locations, geomType) {
+												canDirectDownload =  OpenGeoportal.Utility.hasLocationValueIgnoreCase(
+													locations, ["http://schema.org/downloadUrl"
+														  // ,"http://www.opengis.net/def/serviceType/ogc/wcs",
+														  // ,"http://www.opengis.net/def/serviceType/ogc/wms"
+														  ]);
+												return canDirectDownload
+											};
+
+											var downloadable = canDownload(locations, geomType);
+
+											if (downloadable) {
+												var loginModel = OpenGeoportal.ogp.appState.get("login").model;
+												hasAccess = loginModel.hasAccessLogic(access, institution);
+												canLogin = loginModel.canLoginLogic(institution);
+
+											}
+
+                                	                                                return that.tableControls.renderDownloadControl(downloadable, hasAccess, canLogin, locations);
+                                        	                                }
+									}
+								 ]);
 				}
 
 

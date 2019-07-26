@@ -1588,6 +1588,10 @@ preview controls
 	height: 17px;
 	position: relative;
 }
+.downloadControl {
+	font-size: 1.6em;
+	color: #227db2;	
+}
 
 .sliderControl>div {
 	color: #231F20;
