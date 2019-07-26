@@ -544,9 +544,9 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
                 	                                                        organize : false,
                         	                                                visible : true,
                                 	                                        hideable : false,
-                                        	                                header : "Download",
+                                        	                                header : "DL",
                                                 	                        columnClass : "colDownload",
-                                                        	                width: 40,
+                                                        	                width: 30,
                                                                 	        modelRender :  function(model) {
                                                                         	        var layerSlug = model.get("layer_slug_s");
                                                                                 	var locations = model.get("dct_references_s");
