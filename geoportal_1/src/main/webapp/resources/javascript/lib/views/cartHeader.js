@@ -151,8 +151,8 @@ OpenGeoportal.Views.CartHeader = Backbone.View.extend({
 		
 		this.addCartHeaderButton("removeFromCartButton", "Remove", removeHtml,
 				"removeFromCart", removeClick, removeHover);
-		this.addCartHeaderButton("downloadButton", "Download", downloadHtml,
-				"download", downloadClick, downloadHover);
+		/*this.addCartHeaderButton("downloadButton", "Download", downloadHtml,
+				"download", downloadClick, downloadHover);*/
 		this.addCartHeaderButton("webServiceButton", "Web Service",
 				webServiceHtml, "webService", webServicesClick,
 				webServicesHover);

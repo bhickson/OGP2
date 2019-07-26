@@ -1058,7 +1058,6 @@ OpenGeoportal.MapController = function() {
 				break
 			} 
 		};
-		console.log("layer:", layer);
 
 		var layerSlug = layer.wmsParams.layers;
 
@@ -1067,7 +1066,6 @@ OpenGeoportal.MapController = function() {
 			var layerModel = this.previewed.findWhere({
                                 qualifiedName : layerSlug
                         });
-			console.log('layer model:', layerModel);
 
 			// generate the query string
 			var layerSlug = layerModel.attributes.layer_slug_s;
@@ -1094,8 +1092,6 @@ OpenGeoportal.MapController = function() {
 					height: pixelBounds.getSize().y,
 					width: pixelBounds.getSize().x
 			};
-			console.log("searchString:", searchString);
-			console.log("params:", params);
 
 			var dialogTitle = layerModel.get("dc_title_s");
 			var institution = layerModel.get("dct_provenance_s");
@@ -1139,7 +1135,6 @@ OpenGeoportal.MapController = function() {
 
 			this.currentAttributeRequests.push({layerSlug: layerSlug, featureRequest: jQuery.ajax(ajaxParams)});
 
-			console.log("currentAttributeRequests", this.currentAttributeRequests);
 			analytics.track("Layer Attributes Viewed", institution, layerSlug);
 		} else {
 			//new OpenGeoportal.ErrorObject(new Error(),"This layer has not been previewed. <br/>You must preview it before getting attribute information.");
