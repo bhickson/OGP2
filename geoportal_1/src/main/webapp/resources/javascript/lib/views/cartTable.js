@@ -80,9 +80,10 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 				}
 
 				if (groupType != undefined) {
+console.log("GROUPTYPE :", groupType);
 					solr.getLayerInfoFromSolr(groupType, value,
 							function(){ that.getLayerInfoSuccess.apply(that, arguments); }, 
-							function(){ that.getLayerInfoJsonpError.apply(that, arguments); });
+							function(){ that.getLayerInfoJsonpError.apply(that, arguments); }) ;
 					return true;
 				} else {
 					return false;
@@ -101,12 +102,12 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 					});
 				};
 
-				if (data.response.numFound < 6) {
+				/*if (data.response.numFound < 6) {
 					this.previewed.add(arr);
 					this.previewed.each(function(model){
 						model.set({preview: "on"});
 					});
-				};
+				};*/
 
 				if (OpenGeoportal.Config.shareBbox !== "-180,-90,180,90") {
 					bounds = OpenGeoportal.Config.shareBbox;
@@ -207,7 +208,7 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 										columnClass : "colType",
 										width : 30,
 										modelRender : function(model) {
-											var dataType = model.get("DataType");
+											var dataType = model.get("layer_geom_type_s");
 											return that.tableControls.renderTypeIcon(dataType);
 										}
 

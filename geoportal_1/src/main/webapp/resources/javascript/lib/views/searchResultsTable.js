@@ -154,7 +154,7 @@ OpenGeoportal.Views.SearchResultsTable = OpenGeoportal.Views.LayerTable
 						function(event, ui) {
 							var numPreviewedLayers = OpenGeoportal.ogp.map.previewLayerGroup.getLayers().length;
 							$(".previewedLayers .rowContainer").children(".tableRow").each( function(){
-								var layerSlug = $(this).attr("id")
+								var layerSlug = $(this).attr("layerid")
 								var index = $(this).index();
 								var zindex = (numPreviewedLayers - index) + 200;
 
