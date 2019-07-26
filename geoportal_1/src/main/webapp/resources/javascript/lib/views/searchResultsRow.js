@@ -104,6 +104,16 @@ OpenGeoportal.Views.SearchResultsRow = OpenGeoportal.Views.LayerRow.extend({
 			}
 		};
 	},
+
+	downloadFile: function() {
+		var location = this.model.get("Location");
+		if (location.hasOwnProperty("fileDownload")) {
+			var url = this.model.get("Location").fileDownload;
+			OpenGeoportal.ogp.widgets.iframeDownload("directDownload", url);
+		} else {
+			//notify user that fileDownload is not available, but it should never get here
+		}
+	},
 	
 	toggleExpand : function() {
 		var controls = this.model.get("showControls");

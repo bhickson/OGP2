@@ -497,7 +497,7 @@ OpenGeoportal.Views.LayerTable = Backbone.View
 										width : 21,
 										modelRender : function(model) {
 											
-											return that.tableControls.renderDownloadControl(model.get("isChecked"));
+											return that.tableControls.renderCartDownloadControl(model.get("isChecked"));
 											
 										}
 									},

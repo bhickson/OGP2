@@ -76,7 +76,7 @@ OpenGeoportal.TableItems = function TableItems() {
 				return this.renderCheckboxPreviewControl(stateVal);
 			} else {
 				if (canLogin) {
-					return this.renderLoginPreviewControl();
+					return this.renderLoginControl();
 				} else {
 					return this.renderLinkControl();
 				}
@@ -98,7 +98,7 @@ OpenGeoportal.TableItems = function TableItems() {
 		return template.genericControl(params);
 	};
 
-	this.renderLoginPreviewControl = function() {
+	this.renderLoginControl = function() {
 		var params = {};
 		params.controlClass = "loginButton";
 		params.text = "";
@@ -145,7 +145,37 @@ OpenGeoportal.TableItems = function TableItems() {
 			date = "?";
 		}
 		return date;
-	};
+	}
+
+	this.renderDownloadButton = function(locations) {
+                var params = {};
+                params.controlClass = "downloadControl";
+                params.text = ""
+                params.displayClass = "fa fa-download";
+                params.tooltip = "Download Dataset";
+
+                if (locations.hasOwnProperty("http://schema.org/downloadUrl")) {
+                        return template.genericControl(params);
+                } else {
+			console.log("No Direct download for model in locations: ", locations);
+		}
+        };
+
+        this.renderDownloadControl =  function(canDownload, hasAccess, canLogin, locations) {
+                if (canDownload) {
+                        if (hasAccess) {
+                                return this.renderDownloadButton(locations);
+                        } else {
+                                if (canLogin) {
+                                        return this.renderLoginControl();
+                                } else {
+                                        return this.renderLinkControl();
+                                }
+                        }
+                } else {
+                        return "";
+                }
+        };
 
 	// maps returned source type to appropriate image
 	this.renderRepositoryIcon = function(repository) {
@@ -206,9 +236,8 @@ OpenGeoportal.TableItems = function TableItems() {
 
 		return template.genericControl(params);
 	};
-
-	this.renderDownloadControl = function(isChecked) {
+	
+	this.renderCartDownloadControl = function(isChecked) {
 		return template.defaultDownloadCheckbox({isChecked: isChecked});
 	};
-
 };

@@ -191,7 +191,7 @@ OpenGeoportal.Views.CartTable = OpenGeoportal.Views.LayerTable
 										width : 21,
 										modelRender : function(model) {
 											
-											return that.tableControls.renderDownloadControl(model.get("isChecked"));
+											return that.tableControls.renderCartDownloadControl(model.get("isChecked"));
 											
 										}
 									},
